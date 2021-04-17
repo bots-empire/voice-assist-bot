@@ -1,0 +1,24 @@
+package assets
+
+import (
+	"encoding/json"
+	"os"
+)
+
+var (
+	AvailableLang      = []string{"en", "de", "it", "pt", "es"}
+	AvailableLangIndex = map[string]int{"en": 0, "de": 1, "it": 2, "pt": 3, "es": 4}
+	Language           = make([]map[string]string, 5)
+)
+
+func ParseLangMap() {
+	for i, lang := range AvailableLang {
+		bytes, _ := os.ReadFile("./assets/language/" + lang + ".json")
+		_ = json.Unmarshal(bytes, &Language[i])
+	}
+}
+
+func GetLangText(lang, key string) string {
+	index, _ := AvailableLangIndex[lang]
+	return Language[index][key]
+}

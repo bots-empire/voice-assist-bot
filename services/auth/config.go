@@ -1,0 +1,11 @@
+package auth
+
+type User struct {
+	ID             int    `json:"id"`
+	Balance        int    `json:"balance"`
+	Completed      int    `json:"completed"`
+	CompletedToday int    `json:"completed_today"`
+	LastVoice      int64  `json:"last_voice"`
+	ReferralCount  int    `json:"referral_count"`
+	Language       string `json:"language"`
+}
