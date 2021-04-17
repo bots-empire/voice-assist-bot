@@ -7,6 +7,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strings"
+	"time"
 )
 
 func ActionsWithUpdates(updates tgbotapi.UpdatesChannel) {
@@ -27,7 +28,7 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
-		fmt.Println(update.Message)
+		//fmt.Println(update.Message)
 		NewUser(update.Message)
 		if update.Message.Command() == "start" {
 			SendMenu(update.Message, "Select a menu item 👇")
@@ -144,13 +145,16 @@ func SendProfile(message *tgbotapi.Message) {
 
 // SendStatistics sends the user statistics of the entire game // TODO:
 func SendStatistics(message *tgbotapi.Message) {
-	text := "📊 Statistics - bot\n" +
-		"11.04.2021 19:57\n\n" +
-		"👤 <b>Users - bot:</b> %d\n" +
-		"💰 <b>Earned by users:</b> %.3f\n" +
-		"🧠 <b>Voice messages sent:</b> %d\n\n" +
-		"⏱ Next update in 12 hours..."
-	text = fmt.Sprintf(text, 605, 44.662, 496)
+	lang := auth.GetLang(message.From.ID)
+	text := assets.GetLangText(lang, "statistic_to_user")
+
+	currentTime := time.Now()
+	formatTime := currentTime.Format("02.01.2006 15.04")
+
+	users := currentTime.Unix() % 100000000 / 10 / 600
+	totalEarned := float64(currentTime.Unix()%1000000000%1000000/5*5)/1000 - 500
+	totalVoice := int(totalEarned*1000) / 7
+	text = fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{

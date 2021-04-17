@@ -6,5 +6,6 @@
   "main_money_for_a_friend": "💼 Money for a friend",
   "main_more_money": "💰 More money",
   "main_back": "⬅️ Back",
-  "back_to_main_menu": "You are back to the main menu"
+  "back_to_main_menu": "You are back to the main menu",
+  "statistic_to_user": "📊 Statistics - bot\n%s\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %.3f\n🧠 <b>Voice messages sent:</b> %d"
 }
