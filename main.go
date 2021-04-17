@@ -12,8 +12,7 @@ import (
 func main() {
 	var updates tgbotapi.UpdatesChannel
 
-	db.UploadDataBase()
-	assets.ParseLangMap()
+	startServices()
 	services.Bot, updates = startBot()
 
 	services.ActionsWithUpdates(updates)
@@ -42,4 +41,10 @@ func startBot() (*tgbotapi.BotAPI, tgbotapi.UpdatesChannel) {
 func takeBotToken() string {
 	content, _ := os.ReadFile("./botToken.txt")
 	return string(content)
+}
+
+func startServices() {
+	db.UploadDataBase()
+	assets.ParseLangMap()
+	assets.UploadAdminSettings()
 }

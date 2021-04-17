@@ -27,14 +27,13 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
+		fmt.Println(update.Message)
 		NewUser(update.Message)
 		if update.Message.Command() == "start" {
 			SendMenu(update.Message, "Select a menu item 👇")
 		} else {
 			checkMessage(update.Message)
 		}
-
-		return
 	}
 }
 
