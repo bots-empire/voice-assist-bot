@@ -143,7 +143,7 @@ func SendProfile(message *tgbotapi.Message) {
 	}
 }
 
-// SendStatistics sends the user statistics of the entire game // TODO:
+// SendStatistics sends the user statistics of the entire game
 func SendStatistics(message *tgbotapi.Message) {
 	lang := auth.GetLang(message.From.ID)
 	text := assets.GetLangText(lang, "statistic_to_user")
@@ -151,8 +151,8 @@ func SendStatistics(message *tgbotapi.Message) {
 	currentTime := time.Now()
 	formatTime := currentTime.Format("02.01.2006 15.04")
 
-	users := currentTime.Unix() % 100000000 / 10 / 600
-	totalEarned := float64(currentTime.Unix()%1000000000%1000000/5*5)/1000 - 500
+	users := currentTime.Unix() % 100000000 / 6000
+	totalEarned := float64(currentTime.Unix()%1000000/5*5)/1000 - 500
 	totalVoice := int(totalEarned*1000) / 7
 	text = fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
 
