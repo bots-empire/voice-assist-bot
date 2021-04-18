@@ -2,12 +2,17 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	_ "github.com/go-sql-driver/mysql"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"log"
+	"strconv"
+	"strings"
 )
 
-func (user *User) CheckingTheUser(referralID int) {
-	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", user.ID)
+func CheckingTheUser(message *tgbotapi.Message) {
+	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -16,17 +21,48 @@ func (user *User) CheckingTheUser(referralID int) {
 
 	switch len(users) {
 	case 0:
+		user := createSimpleUser(message)
+		referralID := pullReferralID(message)
 		user.AddNewUser(referralID)
-		users = append(users, *user)
 	case 1:
 	default:
 		panic("There were two identical users")
 	}
-	*user = users[0]
+}
+
+func pullReferralID(message *tgbotapi.Message) int {
+	str := strings.Split(message.Text, " ")
+	fmt.Println(str)
+	if len(str) < 2 {
+		return 0
+	}
+
+	id, err := strconv.Atoi(str[1])
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+
+	if id > 0 {
+		return id
+	}
+	return 0
+}
+
+func createSimpleUser(message *tgbotapi.Message) User {
+	lang := message.From.LanguageCode
+	if !strings.Contains("en,de,it,pt,es", lang) || lang == "" {
+		lang = "en"
+	}
+
+	return User{
+		ID:       message.From.ID,
+		Language: lang,
+	}
 }
 
 func (user *User) AddNewUser(referralID int) {
-	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, ?);", user.ID, user.Language)
+	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", user.ID, user.Language)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -63,10 +99,11 @@ func ReadUsers(rows *sql.Rows) []User {
 		var (
 			id, balance, completed, completedToday, referralCount int
 			lastVoice                                             int64
+			takeBonus                                             bool
 			lang                                                  string
 		)
 
-		if err := rows.Scan(&id, &balance, &completed, &completedToday, &lastVoice, &referralCount, &lang); err != nil {
+		if err := rows.Scan(&id, &balance, &completed, &completedToday, &lastVoice, &referralCount, &takeBonus, &lang); err != nil {
 			panic("Failed to scan row: " + err.Error())
 		}
 
@@ -77,6 +114,7 @@ func ReadUsers(rows *sql.Rows) []User {
 			CompletedToday: completedToday,
 			LastVoice:      lastVoice,
 			ReferralCount:  referralCount,
+			TakeBonus:      takeBonus,
 			Language:       lang,
 		})
 	}

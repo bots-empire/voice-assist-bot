@@ -13,7 +13,7 @@ func main() {
 	var updates tgbotapi.UpdatesChannel
 
 	startServices()
-	services.Bot, updates = startBot()
+	assets.Bot, updates = startBot()
 
 	services.ActionsWithUpdates(updates)
 }

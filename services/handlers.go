@@ -6,7 +6,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -23,55 +22,38 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
-		if update.Message.Voice != nil {
-			fmt.Println("It's gs")
-		}
+		checkMessage(update.Message)
 	}
 
-	if update.Message != nil {
-		if update.Message.Command() == "start" {
-			NewUser(update.Message)
-			SendMenu(update.Message, "Select a menu item 👇")
-		} else {
-			checkMessage(update.Message)
-		}
+	if update.CallbackQuery != nil {
+		checkCallbackQuery(update.CallbackQuery)
 	}
-}
-
-func NewUser(message *tgbotapi.Message) {
-	lang := message.From.LanguageCode
-	if !strings.Contains("en,de,it,pt,es", lang) || lang == "" {
-		lang = "en"
-	}
-
-	user := auth.User{
-		ID:       message.From.ID,
-		Language: lang,
-	}
-
-	referralID := PullReferralID(message)
-	user.CheckingTheUser(referralID)
-}
-
-func PullReferralID(message *tgbotapi.Message) int {
-	str := strings.Split(message.Text, " ")
-	if len(str) < 2 {
-		return 0
-	}
-
-	id, err := strconv.Atoi(str[1])
-	if err != nil {
-		log.Println(err)
-		return 0
-	}
-
-	if id > 0 {
-		return id
-	}
-	return 0
 }
 
 func checkMessage(message *tgbotapi.Message) {
+	auth.CheckingTheUser(message)
+	if message.Voice != nil {
+		fmt.Println("It's gs")
+	}
+
+	if message.Command() == "start" {
+		lang := auth.GetLang(message.From.ID)
+		SendMenu(message, assets.LangText(lang, "main_select_menu"))
+	} else {
+		checkTextOfMessage(message)
+	}
+}
+
+func checkCallbackQuery(callbackQuery *tgbotapi.CallbackQuery) {
+	callbackData := callbackQuery.Data
+	data := strings.Split(callbackData, "/")
+	switch data[0] {
+	case "moreMoney":
+		GetBonus(callbackQuery)
+	}
+}
+
+func checkTextOfMessage(message *tgbotapi.Message) {
 	msgText := message.Text
 	lang := auth.GetLang(message.From.ID)
 
@@ -93,28 +75,30 @@ func checkMessage(message *tgbotapi.Message) {
 	}
 }
 
-// SendMenu sends the keyboard with the main menu  // TODO:
+// SendMenu sends the keyboard with the main menu
 func SendMenu(message *tgbotapi.Message, text string) {
+	user := auth.GetUser(message.From.ID)
+
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 
-	makeMoney := tgbotapi.NewKeyboardButton("👨🏻‍💻 Make money")
+	makeMoney := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_make_money"))
 	row1 := tgbotapi.NewKeyboardButtonRow(makeMoney)
 
-	profile := tgbotapi.NewKeyboardButton("👤 Profile")
-	statistic := tgbotapi.NewKeyboardButton("📊 Statistics")
+	profile := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_profile"))
+	statistic := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_statistic"))
 	row2 := tgbotapi.NewKeyboardButtonRow(profile, statistic)
 
-	withdrawal := tgbotapi.NewKeyboardButton("💳 Withdrawal of money")
-	moneyForAFriend := tgbotapi.NewKeyboardButton("💼 Money for a friend")
+	withdrawal := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_withdrawal_of_money"))
+	moneyForAFriend := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_money_for_a_friend"))
 	row3 := tgbotapi.NewKeyboardButtonRow(withdrawal, moneyForAFriend)
 
-	moreMoney := tgbotapi.NewKeyboardButton("💰 More money")
+	moreMoney := tgbotapi.NewKeyboardButton(assets.LangText(user.Language, "main_more_money"))
 	row4 := tgbotapi.NewKeyboardButtonRow(moreMoney)
 
 	markUp := tgbotapi.NewReplyKeyboard(row1, row2, row3, row4)
 	msg.ReplyMarkup = markUp
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
@@ -122,29 +106,25 @@ func SendMenu(message *tgbotapi.Message, text string) {
 // MakeMoney allows you to earn money
 // by accepting voice messages from the user // TODO:
 func MakeMoney(message *tgbotapi.Message) {
+	user := auth.GetUser(message.From.ID)
+
 	msg := tgbotapi.NewMessage(message.Chat.ID, "✅ You have already sent 20/20 voice messages! "+
 		"Come back in 24 hours to continue earning money...")
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 
-	SendMenu(message, "You are back to the main menu")
+	SendMenu(message, assets.LangText(user.Language, "back_to_main_menu"))
 }
 
-// SendProfile sends the user its statistics // TODO:
+// SendProfile sends the user its statistics
 func SendProfile(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := "👤 My profile:\n\n" +
-		"<b>Name:</b> %s\n" +
-		"<b>Username:</b> %s\n" +
-		"<b>Balance:</b> %d $\n" +
-		"<b>Voice messages that you have sent:</b> %d\n" +
-		"<b>Invited:</b> %d" // получить исходя из языка
-
+	text := assets.LangText(user.Language, "profile_text")
 	text = fmt.Sprintf(text, message.From.FirstName, message.From.UserName,
-		user.Balance, user.Completed, user.ReferralCount) //вставить баланс, количество гс и инвайтов
+		user.Balance, user.Completed, user.ReferralCount)
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
@@ -156,7 +136,7 @@ func SendProfile(message *tgbotapi.Message) {
 		DisableWebPagePreview: false,
 	}
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
@@ -184,12 +164,12 @@ func SendStatistics(message *tgbotapi.Message) {
 		DisableWebPagePreview: false,
 	}
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
 
-// WithdrawalMoney performs money withdrawal
+// WithdrawalMoney performs money withdrawal //TODO: visualization of output
 func WithdrawalMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
@@ -200,8 +180,8 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	channelURL := tgbotapi.NewInlineKeyboardButtonURL(advertisingText, assets.AdminSettings.AdvertisingURL)
 	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
 
-	bonusText := assets.LangText(user.Language, "get_bonus_button")
-	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "WithdrawalMoney/getBonus")
+	bonusText := assets.LangText(user.Language, "withdraw_money_button")
+	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "withdrawalMoney/getBonus")
 	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
 	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
 
@@ -215,7 +195,7 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 		ParseMode: "HTML",
 	}
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
@@ -237,28 +217,32 @@ func SendReferralLink(message *tgbotapi.Message) {
 		DisableWebPagePreview: false,
 	}
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
 
 // MoreMoney it is used to get a daily bonus
-// and bonuses from other projects // TODO:
+// and bonuses from other projects
 func MoreMoney(message *tgbotapi.Message) {
-	text := "Earn more !\n\n" +
-		"To earn an extra £ 50, subscribe to the partner channel and watch the previous 15 posts !"
+	user := auth.GetUser(message.From.ID)
 
-	channelURL := tgbotapi.NewInlineKeyboardButtonURL("📲 Go to the channel", "https://t.me/joinchat/Vm991h1lG-GNnoK6")
+	text := assets.LangText(user.Language, "more_money_text")
+	text = fmt.Sprintf(text, assets.AdminSettings.BonusAmount)
+
+	advertisingText := assets.LangText(user.Language, "advertising_button")
+	channelURL := tgbotapi.NewInlineKeyboardButtonURL(advertisingText, assets.AdminSettings.AdvertisingURL)
 	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
 
-	getBonus := tgbotapi.NewInlineKeyboardButtonData("💰 Get bonus", "MoreMoney/getBonus")
+	bonusText := assets.LangText(user.Language, "get_bonus_button")
+	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "moreMoney/getBonus")
 	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
 	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyMarkup = markUp
 
-	if _, err := Bot.Send(msg); err != nil {
+	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }

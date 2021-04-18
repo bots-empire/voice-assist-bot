@@ -7,5 +7,6 @@ type User struct {
 	CompletedToday int    `json:"completed_today"`
 	LastVoice      int64  `json:"last_voice"`
 	ReferralCount  int    `json:"referral_count"`
+	TakeBonus      bool   `json:"take_bonus"`
 	Language       string `json:"language"`
 }

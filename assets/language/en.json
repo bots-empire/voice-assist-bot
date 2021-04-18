@@ -1,4 +1,5 @@
 {
+  "main_select_menu": "Select a menu item 👇",
   "main_make_money": "👨🏻‍💻 Make money",
   "main_profile": "👤 Profile",
   "main_statistic": "📊 Statistics",
@@ -7,9 +8,14 @@
   "main_more_money": "💰 More money",
   "main_back": "⬅️ Back",
   "back_to_main_menu": "You are back to the main menu",
+  "profile_text": "👤 My profile:\n\n<b>Name:</b> %s\n<b>Username:</b> %s\n<b>Balance:</b> %d $\n<b>Voice messages that you have sent:</b> %d\n<b>Invited:</b> %d",
   "statistic_to_user": "📊 Statistics - bot\n%s\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %.3f\n🧠 <b>Voice messages sent:</b> %d",
   "withdrawal_money": "💰 <b>Balance:</b> %d $.\n\nIf you desire to withdraw funds, choose where you want to put them !",
   "advertising_button": "📲 Go to the channel",
   "get_bonus_button": "💰 Get bonus",
-  "referral_text": "💼 Get bonuses inviting your friends\n📲 Send a link to friends - https://t.me/testingAPIforvoice_bot?start=%d\n\n%d $ - for each invited friend.\n\n\nYou have invited: %d (number of people)"
+  "withdraw_money_button": "💰 Withdraw money",
+  "referral_text": "💼 Get bonuses inviting your friends\n📲 Send a link to friends - https://t.me/testingAPIforvoice_bot?start=%d\n\n%d $ - for each invited friend.\n\n\nYou have invited: %d (number of people)",
+  "more_money_text": "Earn more !\n\nTo earn an extra £ %d, subscribe to the partner channel and watch the previous 15 posts !",
+  "bonus_already_have": "You already have got a bonus",
+  "bonus_have_received": "You have received a bonus"
 }
