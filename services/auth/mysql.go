@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func (user *User) CheckingTheUser() {
+func (user *User) CheckingTheUser(referralID int) {
 	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", user.ID)
 	if err != nil {
 		panic(err.Error())
@@ -16,7 +16,7 @@ func (user *User) CheckingTheUser() {
 
 	switch len(users) {
 	case 0:
-		user.AddNewUser()
+		user.AddNewUser(referralID)
 		users = append(users, *user)
 	case 1:
 	default:
@@ -25,11 +25,33 @@ func (user *User) CheckingTheUser() {
 	*user = users[0]
 }
 
-func (user *User) AddNewUser() {
+func (user *User) AddNewUser(referralID int) {
 	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, ?);", user.ID, user.Language)
 	if err != nil {
 		panic(err.Error())
 	}
+
+	if referralID == user.ID || referralID == 0 {
+		return
+	}
+
+	baseUser := GetUser(referralID)
+	_, err = db.DataBase.Query("UPDATE users SET referral_count = ? WHERE id = ?;",
+		baseUser.ReferralCount+1, baseUser.ID)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func GetUser(id int) User {
+	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	users := ReadUsers(rows)
+
+	return users[0]
 }
 
 func ReadUsers(rows *sql.Rows) []User {

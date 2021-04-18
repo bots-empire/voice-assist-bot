@@ -18,7 +18,7 @@ func ParseLangMap() {
 	}
 }
 
-func GetLangText(lang, key string) string {
+func LangText(lang, key string) string {
 	index, _ := AvailableLangIndex[lang]
 	return Language[index][key]
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,9 +29,8 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
-		//fmt.Println(update.Message)
-		NewUser(update.Message)
 		if update.Message.Command() == "start" {
+			NewUser(update.Message)
 			SendMenu(update.Message, "Select a menu item 👇")
 		} else {
 			checkMessage(update.Message)
@@ -49,7 +49,26 @@ func NewUser(message *tgbotapi.Message) {
 		Language: lang,
 	}
 
-	user.CheckingTheUser()
+	referralID := PullReferralID(message)
+	user.CheckingTheUser(referralID)
+}
+
+func PullReferralID(message *tgbotapi.Message) int {
+	str := strings.Split(message.Text, " ")
+	if len(str) < 2 {
+		return 0
+	}
+
+	id, err := strconv.Atoi(str[1])
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+
+	if id > 0 {
+		return id
+	}
+	return 0
 }
 
 func checkMessage(message *tgbotapi.Message) {
@@ -57,20 +76,20 @@ func checkMessage(message *tgbotapi.Message) {
 	lang := auth.GetLang(message.From.ID)
 
 	switch msgText {
-	case assets.GetLangText(lang, "main_make_money"):
+	case assets.LangText(lang, "main_make_money"):
 		MakeMoney(message)
-	case assets.GetLangText(lang, "main_profile"):
+	case assets.LangText(lang, "main_profile"):
 		SendProfile(message)
-	case assets.GetLangText(lang, "main_statistic"):
+	case assets.LangText(lang, "main_statistic"):
 		SendStatistics(message)
-	case assets.GetLangText(lang, "main_withdrawal_of_money"):
+	case assets.LangText(lang, "main_withdrawal_of_money"):
 		WithdrawalMoney(message)
-	case assets.GetLangText(lang, "main_money_for_a_friend"):
+	case assets.LangText(lang, "main_money_for_a_friend"):
 		SendReferralLink(message)
-	case assets.GetLangText(lang, "main_more_money"):
+	case assets.LangText(lang, "main_more_money"):
 		MoreMoney(message)
-	case assets.GetLangText(lang, "main_back"):
-		SendMenu(message, assets.GetLangText(lang, "back_to_main_menu"))
+	case assets.LangText(lang, "main_back"):
+		SendMenu(message, assets.LangText(lang, "back_to_main_menu"))
 	}
 }
 
@@ -113,10 +132,9 @@ func MakeMoney(message *tgbotapi.Message) {
 	SendMenu(message, "You are back to the main menu")
 }
 
-// SendProfile sends the user its statistics
+// SendProfile sends the user its statistics // TODO:
 func SendProfile(message *tgbotapi.Message) {
-	user := auth.User{ID: message.From.ID}
-	user.CheckingTheUser()
+	user := auth.GetUser(message.From.ID)
 
 	text := "👤 My profile:\n\n" +
 		"<b>Name:</b> %s\n" +
@@ -146,7 +164,7 @@ func SendProfile(message *tgbotapi.Message) {
 // SendStatistics sends the user statistics of the entire game
 func SendStatistics(message *tgbotapi.Message) {
 	lang := auth.GetLang(message.From.ID)
-	text := assets.GetLangText(lang, "statistic_to_user")
+	text := assets.LangText(lang, "statistic_to_user")
 
 	currentTime := time.Now()
 	formatTime := currentTime.Format("02.01.2006 15.04")
@@ -171,17 +189,20 @@ func SendStatistics(message *tgbotapi.Message) {
 	}
 }
 
-// WithdrawalMoney performs money withdrawal // TODO:
+// WithdrawalMoney performs money withdrawal
 func WithdrawalMoney(message *tgbotapi.Message) {
-	text := "💰 <b>Balance:</b> %d $.\n\n" +
-		"If you desire to withdraw funds, choose where you want to put them !"
-	text = fmt.Sprintf(text, 150)
+	user := auth.GetUser(message.From.ID)
 
-	channelURL := tgbotapi.NewInlineKeyboardButtonURL("📲 Go to the channel", "https://t.me/joinchat/Vm991h1lG-GNnoK6")
+	text := assets.LangText(user.Language, "withdrawal_money")
+	text = fmt.Sprintf(text, user.Balance)
+
+	advertisingText := assets.LangText(user.Language, "advertising_button")
+	channelURL := tgbotapi.NewInlineKeyboardButtonURL(advertisingText, assets.AdminSettings.AdvertisingURL)
 	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
 
-	getBonuse := tgbotapi.NewInlineKeyboardButtonData("💰 Get bonus", "WithdrawalMoney/getBonuse")
-	row2 := tgbotapi.NewInlineKeyboardRow(getBonuse)
+	bonusText := assets.LangText(user.Language, "get_bonus_button")
+	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "WithdrawalMoney/getBonus")
+	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
 	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
 
 	msg := tgbotapi.MessageConfig{
@@ -190,9 +211,8 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 			ReplyToMessageID: 0,
 			ReplyMarkup:      markUp,
 		},
-		Text:                  text,
-		ParseMode:             "HTML",
-		DisableWebPagePreview: false,
+		Text:      text,
+		ParseMode: "HTML",
 	}
 
 	if _, err := Bot.Send(msg); err != nil {
@@ -200,13 +220,12 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	}
 }
 
-// SendReferralLink generates a referral link and sends it to the user // TODO:
+// SendReferralLink generates a referral link and sends it to the user
 func SendReferralLink(message *tgbotapi.Message) {
-	text := "💼 Get bonuses inviting your friends\n" +
-		"📲 Send a link to friends - https://t.me/anglvokale_bot?start=%d\n\n" +
-		"15 $ - for each invited friend.\n\n\n" +
-		"You have invited: %d (number of people)"
-	text = fmt.Sprintf(text, message.From.ID, 0)
+	user := auth.GetUser(message.From.ID)
+
+	text := assets.LangText(user.Language, "referral_text")
+	text = fmt.Sprintf(text, user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
@@ -232,8 +251,8 @@ func MoreMoney(message *tgbotapi.Message) {
 	channelURL := tgbotapi.NewInlineKeyboardButtonURL("📲 Go to the channel", "https://t.me/joinchat/Vm991h1lG-GNnoK6")
 	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
 
-	getBonuse := tgbotapi.NewInlineKeyboardButtonData("💰 Get bonus", "MoreMoney/getBonuse")
-	row2 := tgbotapi.NewInlineKeyboardRow(getBonuse)
+	getBonus := tgbotapi.NewInlineKeyboardButtonData("💰 Get bonus", "MoreMoney/getBonus")
+	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
 	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)

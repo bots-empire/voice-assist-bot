@@ -7,11 +7,13 @@ import (
 )
 
 type Admin struct {
-	AdminID     []int
-	BonusAmount int
-	VoiceAmount int
-	TotalUsers  int
-	ActiveUsers int
+	AdminID        []int
+	BonusAmount    int
+	VoiceAmount    int
+	ReferralAmount int
+	AdvertisingURL string
+	TotalUsers     int
+	ActiveUsers    int
 }
 
 var AdminSettings *Admin

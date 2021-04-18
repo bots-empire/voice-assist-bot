@@ -1,7 +1,11 @@
 {
-  "AdminID": [1418862576],
+  "AdminID": [
+    1418862576
+  ],
   "BonusAmount": 50,
   "VoiceAmount": 5,
+  "ReferralAmount": 15,
+  "AdvertisingURL": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
   "TotalUsers": 0,
   "ActiveUsers": 0
 }

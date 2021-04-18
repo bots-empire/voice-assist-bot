@@ -7,5 +7,9 @@
   "main_more_money": "💰 More money",
   "main_back": "⬅️ Back",
   "back_to_main_menu": "You are back to the main menu",
-  "statistic_to_user": "📊 Statistics - bot\n%s\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %.3f\n🧠 <b>Voice messages sent:</b> %d"
+  "statistic_to_user": "📊 Statistics - bot\n%s\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %.3f\n🧠 <b>Voice messages sent:</b> %d",
+  "withdrawal_money": "💰 <b>Balance:</b> %d $.\n\nIf you desire to withdraw funds, choose where you want to put them !",
+  "advertising_button": "📲 Go to the channel",
+  "get_bonus_button": "💰 Get bonus",
+  "referral_text": "💼 Get bonuses inviting your friends\n📲 Send a link to friends - https://t.me/testingAPIforvoice_bot?start=%d\n\n%d $ - for each invited friend.\n\n\nYou have invited: %d (number of people)"
 }
