@@ -47,4 +47,6 @@ func startServices() {
 	db.UploadDataBase()
 	assets.ParseLangMap()
 	assets.UploadAdminSettings()
+
+	log.Println("All services are running successfully")
 }

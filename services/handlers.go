@@ -32,10 +32,18 @@ func checkUpdate(update *tgbotapi.Update) {
 
 func checkMessage(message *tgbotapi.Message) {
 	auth.CheckingTheUser(message)
-	if message.Voice != nil {
-		fmt.Println("It's gs")
+	level := auth.GetLevel(message.From.ID)
+	//if message.Voice != nil {
+	//	fmt.Println("It's gs")
+	//}
+	data := strings.Split(level, "/")
+	switch data[0] {
+	case "main":
+		mainLevel(message)
 	}
+}
 
+func mainLevel(message *tgbotapi.Message) {
 	if message.Command() == "start" {
 		lang := auth.GetLang(message.From.ID)
 		SendMenu(message, assets.LangText(lang, "main_select_menu"))
