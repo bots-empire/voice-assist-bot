@@ -45,6 +45,7 @@ func takeBotToken() string {
 
 func startServices() {
 	db.UploadDataBase()
+	db.StartRedis()
 	assets.ParseLangMap()
 	assets.UploadAdminSettings()
 

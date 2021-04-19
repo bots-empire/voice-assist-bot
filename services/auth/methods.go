@@ -7,6 +7,13 @@ import (
 	"log"
 )
 
+func (user User) UpdateUserLevel(level string) {
+	_, err := db.DataBase.Query("UPDATE users_level SET level = ? WHERE id = ?;", level, user.ID)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
 func (user User) GetABonus() {
 	if user.TakeBonus {
 		text := assets.LangText(user.Language, "bonus_already_have")

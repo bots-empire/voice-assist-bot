@@ -40,6 +40,8 @@ func checkMessage(message *tgbotapi.Message) {
 	switch data[0] {
 	case "main":
 		mainLevel(message)
+	case "withdrawal":
+
 	}
 }
 
@@ -206,6 +208,8 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
+
+	user.UpdateUserLevel("")
 }
 
 // SendReferralLink generates a referral link and sends it to the user
