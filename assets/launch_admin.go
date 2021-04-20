@@ -11,6 +11,7 @@ type Admin struct {
 	BonusAmount         int
 	MinWithdrawalAmount int
 	VoiceAmount         int
+	MaxOfVoicePerDay    int
 	ReferralAmount      int
 	AdvertisingURL      string
 	TotalUsers          int

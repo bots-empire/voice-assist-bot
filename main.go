@@ -6,10 +6,13 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 )
 
 func main() {
+	rand.Seed(time.Now().Unix())
 	var updates tgbotapi.UpdatesChannel
 
 	startServices()
@@ -47,6 +50,7 @@ func startServices() {
 	db.UploadDataBase()
 	db.StartRedis()
 	assets.ParseLangMap()
+	assets.ParseSiriTasks()
 	assets.UploadAdminSettings()
 
 	log.Println("All services are running successfully")

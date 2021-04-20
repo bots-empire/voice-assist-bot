@@ -5,6 +5,7 @@
   "BonusAmount": 50,
   "MinWithdrawalAmount": 300,
   "VoiceAmount": 5,
+  "MaxOfVoicePerDay": 20,
   "ReferralAmount": 15,
   "AdvertisingURL": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
   "TotalUsers": 0,

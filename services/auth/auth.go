@@ -157,7 +157,8 @@ func GetLangFromRow(rows *sql.Rows) string {
 }
 
 func GetLevel(id int) string {
-	value, err := db.Rdb.Get(strconv.Itoa(id)).Result()
+	userID := UserIDToRdb(id)
+	value, err := db.Rdb.Get(userID).Result()
 	if err != nil && err.Error() != "redis: nil" {
 		log.Println(err)
 	}
