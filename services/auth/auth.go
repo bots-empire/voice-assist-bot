@@ -67,11 +67,6 @@ func (user *User) AddNewUser(referralID int) {
 		panic(err.Error())
 	}
 
-	_, err = db.DataBase.Query("INSERT INTO users_level VALUES(?, 'main');", user.ID)
-	if err != nil {
-		panic(err.Error())
-	}
-
 	if referralID == user.ID || referralID == 0 {
 		return
 	}
@@ -162,33 +157,13 @@ func GetLangFromRow(rows *sql.Rows) string {
 }
 
 func GetLevel(id int) string {
-	rows, err := db.DataBase.Query("SELECT level FROM users_level WHERE id = ?;", id)
-	if err != nil {
-		panic(err.Error())
+	value, err := db.Rdb.Get(strconv.Itoa(id)).Result()
+	if err != nil && err.Error() != "redis: nil" {
+		log.Println(err)
 	}
 
-	return GetLevelFromRow(rows)
-}
-
-func GetLevelFromRow(rows *sql.Rows) string {
-	defer rows.Close()
-
-	var levels []string
-
-	for rows.Next() {
-		var (
-			level string
-		)
-
-		if err := rows.Scan(&level); err != nil {
-			panic("Failed to scan row: " + err.Error())
-		}
-
-		levels = append(levels, level)
+	if value == "" {
+		return "main"
 	}
-
-	if len(levels) != 1 {
-		panic("The number if users fond is not equal to one")
-	}
-	return levels[0]
+	return value
 }

@@ -3,9 +3,11 @@ package services
 import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -32,16 +34,19 @@ func checkUpdate(update *tgbotapi.Update) {
 
 func checkMessage(message *tgbotapi.Message) {
 	auth.CheckingTheUser(message)
+	if message.Text == "❌ Cancel" {
+		lang := auth.GetLang(message.From.ID)
+		SendMenu(message, assets.LangText(lang, "main_select_menu"))
+		return
+	}
+
 	level := auth.GetLevel(message.From.ID)
-	//if message.Voice != nil {
-	//	fmt.Println("It's gs")
-	//}
 	data := strings.Split(level, "/")
 	switch data[0] {
 	case "main":
 		mainLevel(message)
 	case "withdrawal":
-
+		checkWithdrawalLevel(message, level)
 	}
 }
 
@@ -54,12 +59,96 @@ func mainLevel(message *tgbotapi.Message) {
 	}
 }
 
+func checkWithdrawalLevel(message *tgbotapi.Message, level string) {
+	data := strings.Split(level, "/")
+	if len(data) == 1 {
+		checkSelectedPaymentMethod(message)
+		return
+	}
+	level = strings.Replace(level, "withdrawal/", "", 1)
+	switch level {
+	case "paypal":
+		reqWithdrawalAmount(message)
+	case "credit_card":
+		reqWithdrawalAmount(message)
+	case "req_amount":
+		user := auth.GetUser(message.From.ID)
+		if user.WithdrawMoneyFromBalance(message.Text) {
+			SendMenu(message, assets.LangText(user.Language, "main_select_menu"))
+		}
+		return
+	}
+
+	_, err := db.Rdb.Set(strconv.Itoa(message.From.ID), "withdrawal/req_amount", 0).Result()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func checkSelectedPaymentMethod(message *tgbotapi.Message) {
+	switch message.Text {
+	case "📱 PayPal":
+		paypalReq(message)
+	case "💳 Credit card":
+		creditCardReq(message)
+	case "⬅️ Back":
+		lang := auth.GetLang(message.From.ID)
+		SendMenu(message, assets.LangText(lang, "main_select_menu"))
+	}
+}
+
+func paypalReq(message *tgbotapi.Message) {
+	_, err := db.Rdb.Append(strconv.Itoa(message.From.ID), "/paypal").Result()
+	if err != nil {
+		log.Println(err)
+	}
+
+	lang := auth.GetLang(message.From.ID)
+	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
+	cancel := tgbotapi.NewKeyboardButton(assets.LangText(lang, "withdraw_cancel"))
+	row := tgbotapi.NewKeyboardButtonRow(cancel)
+	markUp := tgbotapi.NewReplyKeyboard(row)
+	msg.ReplyMarkup = markUp
+
+	if _, err = assets.Bot.Send(msg); err != nil {
+		log.Println(err)
+	}
+}
+
+func creditCardReq(message *tgbotapi.Message) {
+	_, err := db.Rdb.Append(strconv.Itoa(message.From.ID), "/credit_card").Result()
+	if err != nil {
+		log.Println(err)
+	}
+
+	lang := auth.GetLang(message.From.ID)
+	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "credit_card_number"))
+	cancel := tgbotapi.NewKeyboardButton(assets.LangText(lang, "withdraw_cancel"))
+	row := tgbotapi.NewKeyboardButtonRow(cancel)
+	markUp := tgbotapi.NewReplyKeyboard(row)
+	msg.ReplyMarkup = markUp
+
+	if _, err = assets.Bot.Send(msg); err != nil {
+		log.Println(err)
+	}
+}
+
+func reqWithdrawalAmount(message *tgbotapi.Message) {
+	lang := auth.GetLang(message.From.ID)
+	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "req_withdrawal_amount"))
+
+	if _, err := assets.Bot.Send(msg); err != nil {
+		log.Println(err)
+	}
+}
+
 func checkCallbackQuery(callbackQuery *tgbotapi.CallbackQuery) {
-	callbackData := callbackQuery.Data
-	data := strings.Split(callbackData, "/")
+	data := strings.Split(callbackQuery.Data, "/")
 	switch data[0] {
 	case "moreMoney":
 		GetBonus(callbackQuery)
+	case "withdrawalMoney":
+		Withdrawal(callbackQuery)
 	}
 }
 
@@ -82,12 +171,21 @@ func checkTextOfMessage(message *tgbotapi.Message) {
 		MoreMoney(message)
 	case assets.LangText(lang, "main_back"):
 		SendMenu(message, assets.LangText(lang, "back_to_main_menu"))
+	default:
+		msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "user_level_not_defined"))
+		if _, err := assets.Bot.Send(msg); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
 // SendMenu sends the keyboard with the main menu
 func SendMenu(message *tgbotapi.Message, text string) {
 	user := auth.GetUser(message.From.ID)
+	_, err := db.Rdb.Del(strconv.Itoa(user.ID)).Result()
+	if err != nil {
+		log.Println(err)
+	}
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 
@@ -108,13 +206,13 @@ func SendMenu(message *tgbotapi.Message, text string) {
 	markUp := tgbotapi.NewReplyKeyboard(row1, row2, row3, row4)
 	msg.ReplyMarkup = markUp
 
-	if _, err := assets.Bot.Send(msg); err != nil {
+	if _, err = assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
 }
 
 // MakeMoney allows you to earn money
-// by accepting voice messages from the user // TODO:
+// by accepting voice messages from the user // TODO: make session
 func MakeMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
@@ -138,12 +236,10 @@ func SendProfile(message *tgbotapi.Message) {
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
-			ChatID:           message.Chat.ID,
-			ReplyToMessageID: 0,
+			ChatID: message.Chat.ID,
 		},
-		Text:                  text,
-		ParseMode:             "HTML",
-		DisableWebPagePreview: false,
+		Text:      text,
+		ParseMode: "HTML",
 	}
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -166,12 +262,10 @@ func SendStatistics(message *tgbotapi.Message) {
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
-			ChatID:           message.Chat.ID,
-			ReplyToMessageID: 0,
+			ChatID: message.Chat.ID,
 		},
-		Text:                  text,
-		ParseMode:             "HTML",
-		DisableWebPagePreview: false,
+		Text:      text,
+		ParseMode: "HTML",
 	}
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -179,7 +273,7 @@ func SendStatistics(message *tgbotapi.Message) {
 	}
 }
 
-// WithdrawalMoney performs money withdrawal //TODO: visualization of output
+// WithdrawalMoney performs money withdrawal
 func WithdrawalMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
@@ -197,9 +291,8 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
-			ChatID:           message.Chat.ID,
-			ReplyToMessageID: 0,
-			ReplyMarkup:      markUp,
+			ChatID:      message.Chat.ID,
+			ReplyMarkup: markUp,
 		},
 		Text:      text,
 		ParseMode: "HTML",
@@ -208,8 +301,6 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
 	}
-
-	user.UpdateUserLevel("")
 }
 
 // SendReferralLink generates a referral link and sends it to the user
@@ -221,12 +312,10 @@ func SendReferralLink(message *tgbotapi.Message) {
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
-			ChatID:           message.Chat.ID,
-			ReplyToMessageID: 0,
+			ChatID: message.Chat.ID,
 		},
-		Text:                  text,
-		ParseMode:             "HTML",
-		DisableWebPagePreview: false,
+		Text:      text,
+		ParseMode: "HTML",
 	}
 
 	if _, err := assets.Bot.Send(msg); err != nil {

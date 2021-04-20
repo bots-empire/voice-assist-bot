@@ -14,8 +14,24 @@
   "advertising_button": "📲 Go to the channel",
   "get_bonus_button": "💰 Get bonus",
   "withdraw_money_button": "💰 Withdraw money",
+  "select_payment": "Select the payment method",
+  "withdraw_cancel": "❌ Cancel",
+  "paypal_method": "📱 PayPal",
+  "paypal_email": "Enter with your email address",
+  "credit_card_method": "💳 Credit card",
+  "credit_card_number": "Enter your credit card number",
+  "req_withdrawal_amount": "Specify the withdrawal amount \uD83D\uDC47",
+  "incorrect_amount": "Incorrect input\n\nSpecify the withdrawal amount \uD83D\uDC47",
+  "lack_of_funds": "Funds not enough !\n\nSpecify the withdrawal amount \uD83D\uDC47",
+  "minimum_amount_not_reached": "Error! Minimum withdrawal amount is %d $.\n\nSpecify the withdrawal amount \uD83D\uDC47",
+  "successfully_withdrawn": "✅ The request was sent to the payment gateway...\n\nIl Payment can take up to 3 business days !",
   "referral_text": "💼 Get bonuses inviting your friends\n📲 Send a link to friends - https://t.me/testingAPIforvoice_bot?start=%d\n\n%d $ - for each invited friend.\n\n\nYou have invited: %d (number of people)",
   "more_money_text": "Earn more !\n\nTo earn an extra £ %d, subscribe to the partner channel and watch the previous 15 posts !",
   "bonus_already_have": "You already have got a bonus",
-  "bonus_have_received": "You have received a bonus"
+  "bonus_have_received": "You have received a bonus",
+  "unfinished_action": "Please complete the current action",
+  "user_level_not_defined": "Please press the cancel or back button to return to the main menu",
+
+
+  "AdvertisingText": "\uD83D\uDCB0 Get $ 5,800 here and now! \uD83D\uDCB0\n\n\uD83D\uDE31 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n\uD83D\uDE31 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n\uD83D\uDC47 The link is available for 2 hours. Hurry up..."
 }
