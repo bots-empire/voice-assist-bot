@@ -32,7 +32,7 @@ func Withdrawal(callbackQuery *tgbotapi.CallbackQuery) {
 	}
 
 	userID := auth.UserIDToRdb(callbackQuery.From.ID)
-	_, err := db.Rdb.Set(userID, "withdrawal", 0).Result() //todo
+	_, err := db.Rdb.Set(userID, "withdrawal", 0).Result()
 	if err != nil {
 		log.Println(err)
 	}
