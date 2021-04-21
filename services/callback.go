@@ -18,7 +18,7 @@ func GetBonus(callbackQuery *tgbotapi.CallbackQuery) {
 
 func Withdrawal(callbackQuery *tgbotapi.CallbackQuery) {
 	level := auth.GetLevel(callbackQuery.From.ID)
-	if level != "main" {
+	if level != "main" && level != "empty" {
 		lang := auth.GetLang(callbackQuery.From.ID)
 		notice := tgbotapi.CallbackConfig{
 			CallbackQueryID: callbackQuery.ID,
@@ -90,25 +90,20 @@ func ChangeLanguage(callbackQuery *tgbotapi.CallbackQuery) {
 }
 
 func setLanguage(userID int, lang string) {
-	if lang == "back" {
-		stringUserID := auth.UserIDToRdb(userID)
-		_, err := db.Rdb.Del(stringUserID).Result()
-		if err != nil {
-			log.Println(err)
-		}
-
-		SendMenu(userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
-	}
-
-	_, err := db.DataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	userIDToRdb := auth.UserIDToRdb(userID)
-	_, err = db.Rdb.Del(userIDToRdb).Result()
+	stringUserID := auth.UserIDToRdb(userID)
+	_, err := db.Rdb.Set(stringUserID, "main", 0).Result()
 	if err != nil {
 		log.Println(err)
+	}
+
+	if lang == "back" {
+		SendMenu(userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
+		return
+	}
+
+	_, err = db.DataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
+	if err != nil {
+		panic(err.Error())
 	}
 }
 

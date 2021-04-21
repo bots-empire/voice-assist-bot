@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"fmt"
+	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	_ "github.com/go-sql-driver/mysql"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -158,13 +159,22 @@ func GetLangFromRow(rows *sql.Rows) string {
 
 func GetLevel(id int) string {
 	userID := UserIDToRdb(id)
-	value, err := db.Rdb.Get(userID).Result()
-	if err != nil && err.Error() != "redis: nil" {
+	have, err := db.Rdb.Exists(userID).Result()
+	if err != nil {
 		log.Println(err)
 	}
+	if have == 0 {
+		return "empty"
+	}
 
-	if value == "" {
-		return "main"
+	value, err := db.Rdb.Get(userID).Result()
+	if err != nil {
+		log.Println(err)
 	}
 	return value
+}
+
+func StringGoToMainButton(id int) string {
+	lang := GetLang(id)
+	return assets.LangText(lang, "all_back_main_button")
 }

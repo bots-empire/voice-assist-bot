@@ -33,8 +33,8 @@ func checkUpdate(update *tgbotapi.Update) {
 
 func checkMessage(message *tgbotapi.Message) {
 	auth.CheckingTheUser(message)
-	if message.Text == "❌ Cancel" || message.Text == "⬅️ Main menu" {
-		lang := auth.GetLang(message.From.ID)
+	lang := auth.GetLang(message.From.ID)
+	if strings.Contains(auth.StringGoToMainButton(message.From.ID), message.Text) {
 		SendMenu(message.From.ID, assets.LangText(lang, "main_select_menu"))
 		return
 	}
@@ -42,12 +42,17 @@ func checkMessage(message *tgbotapi.Message) {
 	level := auth.GetLevel(message.From.ID)
 	data := strings.Split(level, "/")
 	switch data[0] {
-	case "main":
+	case "main", "empty":
 		mainLevel(message)
 	case "withdrawal":
 		withdrawalLevel(message, level)
 	case "make_money":
 		makeMoneyLevel(message)
+		//case "empty":
+		//	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "user_level_not_defined"))
+		//	if _, err := assets.Bot.Send(msg); err != nil {
+		//		log.Println(err)
+		//	}
 	}
 }
 
@@ -185,20 +190,31 @@ func checkTextOfMessage(message *tgbotapi.Message) {
 		SendReferralLink(message)
 	case assets.LangText(lang, "main_more_money"):
 		MoreMoney(message)
-	case assets.LangText(lang, "main_back"):
-		SendMenu(message.From.ID, assets.LangText(lang, "back_to_main_menu"))
-		//default: // TODO: recovery bot
-		//	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "user_level_not_defined"))
-		//	if _, err := assets.Bot.Send(msg); err != nil {
-		//		log.Println(err)
-		//	}
+	default:
+		level := auth.GetLevel(message.From.ID)
+		if level == "empty" {
+			emptyLevel(message, lang)
+		}
+		return
+	}
+	userID := auth.UserIDToRdb(message.From.ID)
+	_, err := db.Rdb.Set(userID, "main", 0).Result()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func emptyLevel(message *tgbotapi.Message, lang string) {
+	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "user_level_not_defined"))
+	if _, err := assets.Bot.Send(msg); err != nil {
+		log.Println(err)
 	}
 }
 
 // SendMenu sends the keyboard with the main menu
 func SendMenu(ID int, text string) {
 	userID := auth.UserIDToRdb(ID)
-	_, err := db.Rdb.Del(userID).Result()
+	_, err := db.Rdb.Set(userID, "main", 0).Result()
 	if err != nil {
 		log.Println(err)
 	}
