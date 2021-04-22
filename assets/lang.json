@@ -1,0 +1,66 @@
+{
+  "common": {
+  },
+  "bot": {
+    "profile": "👤 Profilo",
+    "stats": "📊 Statistiche",
+    "withdraw": "💳 Prelievo di denaro",
+    "referal": "💼 Soldi per un amico",
+    "bonus": "💰 Più soldi"
+  },
+  "bonus": {
+    "msg_success": "Hai ricevuto un bonus",
+    "msg_failed": "Hai già ricevuto il bonus"
+  },
+  "conclusion": {
+    "enter_credit_card": "Inserisci la tua l'IBAN",
+    "enter_email": "Inserisci la tua mail",
+    "text": "💰 <b>Equilibrio:</b> %d EUR.\n\nSe vuoi prelevare fondi, scegli dove accreditarli!",
+    "choose_withdraw_method": "Scegli un metodo di output",
+    "paypal": "📱 Pay Pall",
+    "credit_card": "💳 L'IBAN",
+    "back": "⬅️ Indietro",
+    "cancel": "❌ Cancellazione",
+    "follow_channel": "📲 Vai al canale",
+    "get_bonus": "💰 Ottenere bonus",
+    "choose_withdraw_amount": "Specificare l'importo del prelievo 👇",
+    "input_error": "Input errato",
+    "low_balance": "Fondi insufficienti!",
+    "minimal_withdraw_amount_not_reached": "Errore! L'importo minimo di prelievo è %d EUR.",
+    "payment_success": "✅ La richiesta è stata inviata al gateway di pagamento...\n\nIl pagamento richiede fino a 3 giorni lavorativi!"
+  },
+  "earnings": {
+    "completed_today": "<b>Eseguito:</b> %d di 20",
+    "voices_amount": "<b>Guadagni con l'invio:</b> %d EUR.",
+    "balance": "💰 <b>Il tuo saldo:</b> %d EUR.",
+    "recorded_today": "<b>Messaggi vocali registrati:</b> %d",
+    "total_earned": "<b>Soldi guadagnati:</b> %d EUR.",
+    "cooldown_error": "✅ Hai già inviato 20/20 messaggi vocali!\nRitorna dopo 24 ore per continuare a guadagnare...",
+    "record_task": "🗣 <b>Registra un messaggio vocale con una frase:</b>\n«%s»",
+    "returned_to_main_menu": "Sei tornato al menu principale"
+  },
+  "friend": {
+    "invite_title": "💼 Ottieni bonus per gli amici invitati",
+    "invite_link": "📲 Invia un link ad un amico - %s",
+    "invite_price": "15€ - si ottiene per ogni amico invitato.",
+    "invited": "Hai invitato: %d (Numero di persone)"
+  },
+  "profile": {
+    "my_profile": "👤 Il mio profilo:",
+    "first_name": "<b>Nome:</b> %s",
+    "user_name": "<b>Username:</b> %s",
+    "balance": "<b>Saldo:</b> %d EUR",
+    "tasks_completed": "<b>Inviato messaggi vocali:</b> %d",
+    "users_invited": "<b>Invitato:</b> %d"
+  },
+  "start": {
+    "greetings": "Con questo bot puoi guadagnare soldi! Pagamenti giornalieri e bonus di affiliazione... 💰"
+  },
+  "statistic": {
+    "title": "📊 Statistiche Bot",
+    "users": "<b>👤 Utenti Bot:</b> %d",
+    "users_earned": "<b>💰 Guadagnato dagli utenti:</b> %d",
+    "messages_sent": "<b>🧠 Inviato messaggi vocali:</b> %d",
+    "next_update": "⏱ Prossimo aggiornamento dopo 12 ore..."
+  }
+}

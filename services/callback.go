@@ -84,10 +84,12 @@ func sendLanguages(callbackQuery *tgbotapi.CallbackQuery) {
 	msg := tgbotapi.NewMessage(int64(userID), assets.LangText(lang, "select_language"))
 
 	msg.ReplyMarkup = NewInlineMarkUp(
-		NewInlineRow(NewButton("lang_de", "change_lang/de")),
-		NewInlineRow(NewButton("lang_en", "change_lang/en")),
-		NewInlineRow(NewButton("lang_es", "change_lang/es")),
-		NewInlineRow(NewButton("back_to_main_menu_button", "change_lang/back")),
+		NewInlineDataRow(NewDataButton("lang_de", "change_lang/de")),
+		NewInlineDataRow(NewDataButton("lang_en", "change_lang/en")),
+		NewInlineDataRow(NewDataButton("lang_es", "change_lang/es")),
+		NewInlineDataRow(NewDataButton("lang_it", "change_lang/it")),
+		NewInlineDataRow(NewDataButton("lang_pt", "change_lang/pt")),
+		NewInlineDataRow(NewDataButton("back_to_main_menu_button", "change_lang/back")),
 	).Build(lang)
 
 	data, err := assets.Bot.Send(msg)

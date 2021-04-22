@@ -24,10 +24,12 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
+		fmt.Println(update.Message.From)
 		checkMessage(update.Message)
 	}
 
 	if update.CallbackQuery != nil {
+		fmt.Println(update.CallbackQuery)
 		checkCallbackQuery(update.CallbackQuery)
 	}
 }
@@ -224,7 +226,7 @@ func SendProfile(message *tgbotapi.Message) {
 		user.Balance, user.Completed, user.ReferralCount)
 
 	markUp := NewInlineMarkUp(
-		NewInlineRow(NewButton("change_lang_button", "change_lang")),
+		NewInlineDataRow(NewDataButton("change_lang_button", "change_lang")),
 	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
@@ -255,14 +257,10 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	text := assets.LangText(user.Language, "withdrawal_money")
 	text = fmt.Sprintf(text, user.Balance)
 
-	advertisingText := assets.LangText(user.Language, "advertising_button")
-	channelURL := tgbotapi.NewInlineKeyboardButtonURL(advertisingText, assets.AdminSettings.AdvertisingURL)
-	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
-
-	bonusText := assets.LangText(user.Language, "withdraw_money_button")
-	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "withdrawalMoney/getBonus")
-	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
-	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
+	markUp := NewInlineMarkUp(
+		NewInlineURLRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		NewInlineDataRow(NewDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
+	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
 
@@ -286,24 +284,18 @@ func SendReferralLink(message *tgbotapi.Message) {
 }
 
 // MoreMoney it is used to get a daily bonus
-// and bonuses from other projects //TODO: refactoring
+// and bonuses from other projects
 func MoreMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
 	text := assets.LangText(user.Language, "more_money_text")
 	text = fmt.Sprintf(text, assets.AdminSettings.BonusAmount)
 
-	advertisingText := assets.LangText(user.Language, "advertising_button")
-	channelURL := tgbotapi.NewInlineKeyboardButtonURL(advertisingText, assets.AdminSettings.AdvertisingURL)
-	row1 := tgbotapi.NewInlineKeyboardRow(channelURL)
-
-	bonusText := assets.LangText(user.Language, "get_bonus_button")
-	getBonus := tgbotapi.NewInlineKeyboardButtonData(bonusText, "moreMoney/getBonus")
-	row2 := tgbotapi.NewInlineKeyboardRow(getBonus)
-	markUp := tgbotapi.NewInlineKeyboardMarkup(row1, row2)
-
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
-	msg.ReplyMarkup = markUp
+	msg.ReplyMarkup = NewInlineMarkUp(
+		NewInlineURLRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		NewInlineDataRow(NewDataButton("get_bonus_button", "moreMoney/getBonus")),
+	).Build(user.Language)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
 		log.Println(err)
