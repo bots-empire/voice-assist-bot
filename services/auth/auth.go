@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	_ "github.com/go-sql-driver/mysql"
@@ -33,7 +32,6 @@ func CheckingTheUser(message *tgbotapi.Message) {
 
 func pullReferralID(message *tgbotapi.Message) int {
 	str := strings.Split(message.Text, " ")
-	fmt.Println(str)
 	if len(str) < 2 {
 		return 0
 	}
@@ -62,13 +60,13 @@ func createSimpleUser(message *tgbotapi.Message) User {
 	}
 }
 
-func (user *User) AddNewUser(referralID int) {
-	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", user.ID, user.Language)
+func (u *User) AddNewUser(referralID int) {
+	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	if referralID == user.ID || referralID == 0 {
+	if referralID == u.ID || referralID == 0 {
 		return
 	}
 
@@ -155,23 +153,6 @@ func GetLangFromRow(rows *sql.Rows) string {
 		panic("The number if users fond is not equal to one")
 	}
 	return users[0].Language
-}
-
-func GetLevel(id int) string {
-	userID := UserIDToRdb(id)
-	have, err := db.Rdb.Exists(userID).Result()
-	if err != nil {
-		log.Println(err)
-	}
-	if have == 0 {
-		return "empty"
-	}
-
-	value, err := db.Rdb.Get(userID).Result()
-	if err != nil {
-		log.Println(err)
-	}
-	return value
 }
 
 func StringGoToMainButton(id int) string {
