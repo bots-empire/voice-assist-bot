@@ -85,13 +85,13 @@ func withdrawalLevel(message *tgbotapi.Message, level string) {
 }
 
 func checkSelectedPaymentMethod(message *tgbotapi.Message) {
+	lang := auth.GetLang(message.From.ID)
 	switch message.Text {
-	case "📱 PayPal":
+	case assets.LangText(lang, "paypal_method"):
 		paypalReq(message)
-	case "💳 Credit card":
+	case assets.LangText(lang, "credit_card_method"):
 		creditCardReq(message)
-	case "⬅️ Back":
-		lang := auth.GetLang(message.From.ID)
+	case assets.LangText(lang, "main_back"):
 		SendMenu(message.From.ID, assets.LangText(lang, "main_select_menu"))
 	}
 }
