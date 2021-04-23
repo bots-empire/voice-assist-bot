@@ -7,11 +7,10 @@ import (
 )
 
 var (
-	AvailableLang      = []string{"en", "de", "it", "pt", "es"}
-	AvailableLangIndex = map[string]int{"en": 0, "de": 1, "it": 2, "pt": 3, "es": 4}
-	Language           = make([]map[string]string, 5)
-
-	Task = make([][]string, 5)
+	AvailableLang = []string{"en", "de", "it", "pt", "es"}
+	Language      = make([]map[string]string, 5)
+	AdminLibrary  = make([]map[string]string, 2)
+	Task          = make([][]string, 5)
 )
 
 func ParseLangMap() {
@@ -22,7 +21,7 @@ func ParseLangMap() {
 }
 
 func LangText(lang, key string) string {
-	index, _ := AvailableLangIndex[lang]
+	index := findLangIndex(lang)
 	return Language[index][key]
 }
 
@@ -34,7 +33,28 @@ func ParseSiriTasks() {
 }
 
 func SiriText(lang string) string {
-	index, _ := AvailableLangIndex[lang]
+	index := findLangIndex(lang)
 	num := rand.Intn(len(Task[index]))
 	return Task[index][num]
+}
+
+//func ParseAdminMap() {
+//	for i, lang := range AvailableLang {
+//		bytes, _ := os.ReadFile("./assets/admin/" + lang + ".json")
+//		_ = json.Unmarshal(bytes, &AdminLibrary[i])
+//	}
+//}
+
+func AdminText(lang, key string) string {
+	index := findLangIndex(lang)
+	return AdminLibrary[index][key]
+}
+
+func findLangIndex(lang string) int {
+	for i, elem := range AvailableLang {
+		if elem == lang {
+			return i
+		}
+	}
+	return 0
 }

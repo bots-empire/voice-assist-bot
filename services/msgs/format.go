@@ -1,6 +1,7 @@
 package msgs
 
 import (
+	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -36,4 +37,9 @@ func SendAnswerCallback(callbackQuery *tgbotapi.CallbackQuery, lang, text string
 	if _, err := assets.Bot.AnswerCallbackQuery(answerCallback); err != nil {
 		log.Println(err)
 	}
+}
+
+func GetFormatText(lang, text string, values ...interface{}) string {
+	formatText := assets.LangText(lang, text)
+	return fmt.Sprintf(formatText, values...)
 }

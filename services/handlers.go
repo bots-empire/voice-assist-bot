@@ -221,12 +221,11 @@ func MakeMoney(message *tgbotapi.Message) {
 func SendProfile(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := assets.LangText(user.Language, "profile_text")
-	text = fmt.Sprintf(text, message.From.FirstName, message.From.UserName,
-		user.Balance, user.Completed, user.ReferralCount)
+	text := msgs.GetFormatText(user.Language, "profile_text",
+		message.From.FirstName, message.From.UserName, user.Balance, user.Completed, user.ReferralCount)
 
 	markUp := NewInlineMarkUp(
-		NewInlineDataRow(NewDataButton("change_lang_button", "change_lang")),
+		NewInlineRow(NewDataButton("change_lang_button", "change_lang")),
 	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
@@ -254,12 +253,12 @@ func SendStatistics(message *tgbotapi.Message) {
 func WithdrawalMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := assets.LangText(user.Language, "withdrawal_money")
-	text = fmt.Sprintf(text, user.Balance)
+	text := msgs.GetFormatText(user.Language, "withdrawal_money",
+		user.Balance)
 
 	markUp := NewInlineMarkUp(
-		NewInlineURLRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		NewInlineDataRow(NewDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
+		NewInlineRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		NewInlineRow(NewDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
 	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
@@ -273,8 +272,8 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 func SendReferralLink(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := assets.LangText(user.Language, "referral_text") //TODO: make beautiful gettext
-	text = fmt.Sprintf(text, user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
+	text := msgs.GetFormatText(user.Language, "referral_text",
+		user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
 
 	msg := msgs.NewParseMessage(message.Chat.ID, text)
 
@@ -288,13 +287,13 @@ func SendReferralLink(message *tgbotapi.Message) {
 func MoreMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := assets.LangText(user.Language, "more_money_text")
-	text = fmt.Sprintf(text, assets.AdminSettings.BonusAmount)
+	text := msgs.GetFormatText(user.Language, "more_money_text",
+		assets.AdminSettings.BonusAmount)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyMarkup = NewInlineMarkUp(
-		NewInlineURLRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		NewInlineDataRow(NewDataButton("get_bonus_button", "moreMoney/getBonus")),
+		NewInlineRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		NewInlineRow(NewDataButton("get_bonus_button", "moreMoney/getBonus")),
 	).Build(user.Language)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
