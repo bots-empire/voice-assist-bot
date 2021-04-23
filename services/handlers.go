@@ -103,8 +103,8 @@ func paypalReq(message *tgbotapi.Message) {
 
 	lang := auth.GetLang(message.From.ID)
 	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
-	msg.ReplyMarkup = NewMarkUp(
-		NewRow("withdraw_cancel"),
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow("withdraw_cancel"),
 	).Build(lang)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -117,8 +117,8 @@ func creditCardReq(message *tgbotapi.Message) {
 
 	lang := auth.GetLang(message.From.ID)
 	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "credit_card_number"))
-	msg.ReplyMarkup = NewMarkUp(
-		NewRow("withdraw_cancel"),
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow("withdraw_cancel"),
 	).Build(lang)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -195,11 +195,11 @@ func SendMenu(ID int, text string) {
 	db.RdbSetUser(ID, "main")
 
 	msg := tgbotapi.NewMessage(int64(ID), text)
-	msg.ReplyMarkup = NewMarkUp(
-		NewRow("main_make_money"),
-		NewRow("main_profile", "main_statistic"),
-		NewRow("main_withdrawal_of_money", "main_money_for_a_friend"),
-		NewRow("main_more_money"),
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow("main_make_money"),
+		msgs.NewRow("main_profile", "main_statistic"),
+		msgs.NewRow("main_withdrawal_of_money", "main_money_for_a_friend"),
+		msgs.NewRow("main_more_money"),
 	).Build(auth.GetLang(ID))
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -224,8 +224,8 @@ func SendProfile(message *tgbotapi.Message) {
 	text := msgs.GetFormatText(user.Language, "profile_text",
 		message.From.FirstName, message.From.UserName, user.Balance, user.Completed, user.ReferralCount)
 
-	markUp := NewInlineMarkUp(
-		NewInlineRow(NewDataButton("change_lang_button", "change_lang")),
+	markUp := msgs.NewInlineMarkUp(
+		msgs.NewInlineRow(msgs.NewDataButton("change_lang_button", "change_lang")),
 	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
@@ -256,9 +256,9 @@ func WithdrawalMoney(message *tgbotapi.Message) {
 	text := msgs.GetFormatText(user.Language, "withdrawal_money",
 		user.Balance)
 
-	markUp := NewInlineMarkUp(
-		NewInlineRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		NewInlineRow(NewDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
+	markUp := msgs.NewInlineMarkUp(
+		msgs.NewInlineRow(msgs.NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		msgs.NewInlineRow(msgs.NewDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
 	).Build(user.Language)
 
 	msg := msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
@@ -291,9 +291,9 @@ func MoreMoney(message *tgbotapi.Message) {
 		assets.AdminSettings.BonusAmount)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
-	msg.ReplyMarkup = NewInlineMarkUp(
-		NewInlineRow(NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		NewInlineRow(NewDataButton("get_bonus_button", "moreMoney/getBonus")),
+	msg.ReplyMarkup = msgs.NewInlineMarkUp(
+		msgs.NewInlineRow(msgs.NewURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		msgs.NewInlineRow(msgs.NewDataButton("get_bonus_button", "moreMoney/getBonus")),
 	).Build(user.Language)
 
 	if _, err := assets.Bot.Send(msg); err != nil {

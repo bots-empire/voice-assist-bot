@@ -1,4 +1,4 @@
-package services
+package msgs
 
 import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
@@ -71,9 +71,9 @@ func NewInlineMarkUp(rows ...InlineRow) InlineMarkUp {
 func (m InlineMarkUp) Build(lang string) tgbotapi.InlineKeyboardMarkup {
 	var replyMarkUp tgbotapi.InlineKeyboardMarkup
 
-	for _, elem := range m.Rows {
+	for _, row := range m.Rows {
 		replyMarkUp.InlineKeyboard = append(replyMarkUp.InlineKeyboard,
-			elem.buildRow(lang))
+			row.buildRow(lang))
 	}
 	return replyMarkUp
 }
