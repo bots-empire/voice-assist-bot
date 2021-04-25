@@ -1,13 +1,25 @@
 {
-  "AdminID": [
-    1418862576
-  ],
+  "AdminID": {
+    "1418862576": {
+      "Language": "ru",
+      "FirstName": "Тимофей"
+    },
+    "613386961": {
+      "Language": "ru",
+      "FirstName": ""
+    }
+  },
   "BonusAmount": 50,
   "MinWithdrawalAmount": 300,
   "VoiceAmount": 5,
   "MaxOfVoicePerDay": 20,
   "ReferralAmount": 15,
   "AdvertisingURL": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-  "TotalUsers": 0,
-  "ActiveUsers": 0
+  "BlockedUsers": {
+    "de": 0,
+    "en": 0,
+    "es": 0,
+    "it": 0,
+    "pt": 0
+  }
 }

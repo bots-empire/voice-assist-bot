@@ -36,8 +36,9 @@ func sendPaymentMethod(callbackQuery *tgbotapi.CallbackQuery) {
 	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, assets.LangText(user.Language, "select_payment"))
 
 	msg.ReplyMarkup = msgs.NewMarkUp(
-		msgs.NewRow("paypal_method", "credit_card_method"),
-		msgs.NewRow("main_back"),
+		msgs.NewRow(msgs.NewDataButton("paypal_method"),
+			msgs.NewDataButton("credit_card_method")),
+		msgs.NewRow(msgs.NewDataButton("main_back")),
 	).Build(user.Language)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -83,13 +84,13 @@ func sendLanguages(callbackQuery *tgbotapi.CallbackQuery) {
 	lang := auth.GetLang(userID)
 	msg := tgbotapi.NewMessage(int64(userID), assets.LangText(lang, "select_language"))
 
-	msg.ReplyMarkup = msgs.NewInlineMarkUp(
-		msgs.NewInlineRow(msgs.NewDataButton("lang_de", "change_lang/de")),
-		msgs.NewInlineRow(msgs.NewDataButton("lang_en", "change_lang/en")),
-		msgs.NewInlineRow(msgs.NewDataButton("lang_es", "change_lang/es")),
-		msgs.NewInlineRow(msgs.NewDataButton("lang_it", "change_lang/it")),
-		msgs.NewInlineRow(msgs.NewDataButton("lang_pt", "change_lang/pt")),
-		msgs.NewInlineRow(msgs.NewDataButton("back_to_main_menu_button", "change_lang/back")),
+	msg.ReplyMarkup = msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_de", "change_lang/de")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_en", "change_lang/en")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_es", "change_lang/es")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_it", "change_lang/it")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_pt", "change_lang/pt")),
+		msgs.NewIlRow(msgs.NewIlDataButton("back_to_main_menu_button", "change_lang/back")),
 	).Build(lang)
 
 	data, err := assets.Bot.Send(msg)

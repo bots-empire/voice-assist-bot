@@ -7,15 +7,19 @@ import (
 )
 
 type Admin struct {
-	AdminID             []int
+	AdminID             map[int]*AdminUser
 	BonusAmount         int
 	MinWithdrawalAmount int
 	VoiceAmount         int
 	MaxOfVoicePerDay    int
 	ReferralAmount      int
 	AdvertisingURL      string
-	TotalUsers          int
-	ActiveUsers         int
+	BlockedUsers        map[string]int
+}
+
+type AdminUser struct {
+	Language  string
+	FirstName string
 }
 
 var AdminSettings *Admin
@@ -41,7 +45,7 @@ func SaveAdminSettings() {
 		panic(err)
 	}
 
-	if err := os.WriteFile("assets/admin.json", data, 0600); err != nil {
+	if err = os.WriteFile("assets/admin.json", data, 0600); err != nil {
 		panic(err)
 	}
 }

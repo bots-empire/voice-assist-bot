@@ -134,17 +134,13 @@ func (u *User) minAmountNotReached() {
 	text := assets.LangText(u.Language, "minimum_amount_not_reached")
 	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
 
-	msg := msgs.NewParseMessage(int64(u.ID), text)
-
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs.NewParseMessage(int64(u.ID), text)
 }
 
 func (u User) GetABonus() {
 	if u.TakeBonus {
 		text := assets.LangText(u.Language, "bonus_already_have")
-		sendSimpleMsg(int64(u.ID), text)
+		msgs.SendSimpleMsg(int64(u.ID), text)
 		return
 	}
 
@@ -155,13 +151,5 @@ func (u User) GetABonus() {
 	}
 
 	text := assets.LangText(u.Language, "bonus_have_received")
-	sendSimpleMsg(int64(u.ID), text)
-}
-
-func sendSimpleMsg(chatID int64, text string) {
-	msg := tgbotapi.NewMessage(chatID, text)
-
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs.SendSimpleMsg(int64(u.ID), text)
 }

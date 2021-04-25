@@ -51,7 +51,7 @@ func startServices() {
 	db.StartRedis()
 	assets.ParseLangMap()
 	assets.ParseSiriTasks()
-	//assets.ParseAdminMap()
+	assets.ParseAdminMap()
 	assets.UploadAdminSettings()
 
 	log.Println("All services are running successfully")

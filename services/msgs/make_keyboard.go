@@ -22,10 +22,14 @@ func NewMarkUp(rows ...Row) MarkUp {
 }
 
 type Row struct {
-	Buttons []string
+	Buttons []Buttons
 }
 
-func NewRow(buttons ...string) Row {
+type Buttons interface {
+	build(lang string) tgbotapi.KeyboardButton
+}
+
+func NewRow(buttons ...Buttons) Row {
 	return Row{
 		Buttons: buttons,
 	}
@@ -34,22 +38,51 @@ func NewRow(buttons ...string) Row {
 func (m MarkUp) Build(lang string) tgbotapi.ReplyKeyboardMarkup {
 	var replyMarkUp tgbotapi.ReplyKeyboardMarkup
 
-	for _, elem := range m.Rows {
+	for _, row := range m.Rows {
 		replyMarkUp.Keyboard = append(replyMarkUp.Keyboard,
-			elem.build(lang))
+			row.buildRow(lang))
 	}
 	replyMarkUp.ResizeKeyboard = true
 	return replyMarkUp
 }
 
-func (r Row) build(lang string) []tgbotapi.KeyboardButton {
+func (r Row) buildRow(lang string) []tgbotapi.KeyboardButton {
 	var replyRow []tgbotapi.KeyboardButton
 
-	for _, text := range r.Buttons {
-		button := tgbotapi.NewKeyboardButton(assets.LangText(lang, text))
-		replyRow = append(replyRow, button)
+	for _, butt := range r.Buttons {
+		replyRow = append(replyRow, butt.build(lang))
 	}
 	return replyRow
+}
+
+type DataButton struct {
+	Text string
+}
+
+func NewDataButton(text string) DataButton {
+	return DataButton{
+		Text: text,
+	}
+}
+
+func (b DataButton) build(lang string) tgbotapi.KeyboardButton {
+	text := assets.LangText(lang, b.Text)
+	return tgbotapi.NewKeyboardButton(text)
+}
+
+type AdminButton struct {
+	Text string
+}
+
+func NewAdminButton(text string) AdminButton {
+	return AdminButton{
+		Text: text,
+	}
+}
+
+func (b AdminButton) build(lang string) tgbotapi.KeyboardButton {
+	text := assets.AdminText(lang, b.Text)
+	return tgbotapi.NewKeyboardButton(text)
 }
 
 /*
@@ -62,9 +95,23 @@ type InlineMarkUp struct {
 	Rows []InlineRow
 }
 
-func NewInlineMarkUp(rows ...InlineRow) InlineMarkUp {
+func NewIlMarkUp(rows ...InlineRow) InlineMarkUp {
 	return InlineMarkUp{
 		Rows: rows,
+	}
+}
+
+type InlineRow struct {
+	Buttons []InlineButtons
+}
+
+type InlineButtons interface {
+	build(lang string) tgbotapi.InlineKeyboardButton
+}
+
+func NewIlRow(buttons ...InlineButtons) InlineRow {
+	return InlineRow{
+		Buttons: buttons,
 	}
 }
 
@@ -73,50 +120,12 @@ func (m InlineMarkUp) Build(lang string) tgbotapi.InlineKeyboardMarkup {
 
 	for _, row := range m.Rows {
 		replyMarkUp.InlineKeyboard = append(replyMarkUp.InlineKeyboard,
-			row.buildRow(lang))
+			row.buildInlineRow(lang))
 	}
 	return replyMarkUp
 }
 
-type InlineRow struct {
-	Buttons []Buttons
-}
-
-type Buttons interface {
-	build(lang string) tgbotapi.InlineKeyboardButton
-}
-
-func NewInlineRow(buttons ...Buttons) InlineRow {
-	return InlineRow{
-		Buttons: buttons,
-	}
-}
-
-type DataButton struct {
-	Text string
-	Data string
-}
-
-func NewDataButton(text, data string) DataButton {
-	return DataButton{
-		Text: text,
-		Data: data,
-	}
-}
-
-type URLButton struct {
-	Text string
-	Url  string
-}
-
-func NewURLButton(text, url string) URLButton {
-	return URLButton{
-		Text: text,
-		Url:  url,
-	}
-}
-
-func (r InlineRow) buildRow(lang string) []tgbotapi.InlineKeyboardButton {
+func (r InlineRow) buildInlineRow(lang string) []tgbotapi.InlineKeyboardButton {
 	var replyRow []tgbotapi.InlineKeyboardButton
 
 	for _, butt := range r.Buttons {
@@ -125,12 +134,53 @@ func (r InlineRow) buildRow(lang string) []tgbotapi.InlineKeyboardButton {
 	return replyRow
 }
 
-func (u URLButton) build(lang string) tgbotapi.InlineKeyboardButton {
-	text := assets.LangText(lang, u.Text)
-	return tgbotapi.NewInlineKeyboardButtonURL(text, u.Url)
+type InlineDataButton struct {
+	Text string
+	Data string
 }
 
-func (d DataButton) build(lang string) tgbotapi.InlineKeyboardButton {
-	text := assets.LangText(lang, d.Text)
-	return tgbotapi.NewInlineKeyboardButtonData(text, d.Data)
+func NewIlDataButton(text, data string) InlineDataButton {
+	return InlineDataButton{
+		Text: text,
+		Data: data,
+	}
+}
+
+func (b InlineDataButton) build(lang string) tgbotapi.InlineKeyboardButton {
+	text := assets.LangText(lang, b.Text)
+	return tgbotapi.NewInlineKeyboardButtonData(text, b.Data)
+}
+
+type InlineURLButton struct {
+	Text string
+	Url  string
+}
+
+func NewIlURLButton(text, url string) InlineURLButton {
+	return InlineURLButton{
+		Text: text,
+		Url:  url,
+	}
+}
+
+func (b InlineURLButton) build(lang string) tgbotapi.InlineKeyboardButton {
+	text := assets.LangText(lang, b.Text)
+	return tgbotapi.NewInlineKeyboardButtonURL(text, b.Url)
+}
+
+type InlineAdminButton struct {
+	Text string
+	Data string
+}
+
+func NewIlAdminButton(text, data string) InlineAdminButton {
+	return InlineAdminButton{
+		Text: text,
+		Data: data,
+	}
+}
+
+func (b InlineAdminButton) build(lang string) tgbotapi.InlineKeyboardButton {
+	text := assets.AdminText(lang, b.Text)
+	return tgbotapi.NewInlineKeyboardButtonData(text, b.Data)
 }
