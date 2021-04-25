@@ -19,6 +19,16 @@
   "admin_list_button": "Администраторы \uD83D\uDC68\u200D\uD83D\uDCBB",
   "add_in_future": "Мы добавим этот раздел в будущем",
   "make_money_setting_text": "<b>Настройки Заработка</b> \uD83D\uDCB8\n\nВыберите параметр который вы хотели бы изменить:",
-  "change_bonus_amount_button": "Разовый бонус ",
+  "change_bonus_amount_button": "Разовый бонус \uD83D\uDCB0",
+  "set_new_amount_text": "<b>%s:</b> %d\n\nВведите новое значение на клавиатуре ⤵️",
+  "change_min_withdrawal_amount_button": "Минимум для вывода \uD83D\uDCB3",
+  "change_voice_amount_button": "Голосовой доход \uD83D\uDDE3",
+  "change_voice_pd_amount_button": "Количество голосовых \uD83E\uDDEE",
+  "change_referral_amount_button": "Реферальный доход \uD83D\uDCBC",
+  "back_to_make_money_setting": "← Назад к ⚙️ Заработка",
+  "operation_canceled": "Операция изменения отменена ❎",
+  "operation_completed": "Параметр успешно изменен ✅",
+  "incorrect_make_money_change_input": "<b>Некорректные данные</b>\n\nЗначение должно быть целым и положительным. Проверьте правильность данных и порпобуйте снова ⤵️",
+
   "statistic_text": "<b>Статистика бота</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Всего пользователей: %d\n\n❌ Неактивных пользователей: %d\n✅ Активных пользователей: %d"
 }
