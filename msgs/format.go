@@ -3,10 +3,16 @@ package msgs
 import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/db"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
+
+func SendMessageToChat(msg tgbotapi.MessageConfig) bool {
+	if _, err := assets.Bot.Send(msg); err != nil {
+		return false
+	}
+	return true
+}
 
 func NewParseMessage(chatID int64, text string) {
 	msg := tgbotapi.MessageConfig{
@@ -54,11 +60,11 @@ func NewIDParseMarkUpMessage(chatID int64, markUp interface{}, text string) int 
 	return message.MessageID
 }
 
-func NewEditMarkUpMessage(userID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) {
+func NewEditMarkUpMessage(userID, msgID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) {
 	msg := tgbotapi.EditMessageTextConfig{
 		BaseEdit: tgbotapi.BaseEdit{
 			ChatID:      int64(userID),
-			MessageID:   db.RdbGetAdminMsgID(userID),
+			MessageID:   msgID,
 			ReplyMarkup: markUp,
 		},
 		Text:      text,

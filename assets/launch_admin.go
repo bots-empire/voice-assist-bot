@@ -15,6 +15,8 @@ type Admin struct {
 	ReferralAmount      int
 	AdvertisingURL      string
 	BlockedUsers        map[string]int
+	LangSelectedMap     map[string]bool
+	AdvertisingText     map[string]string
 }
 
 type AdminUser struct {

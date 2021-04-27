@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
+	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/admin"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
-	"github.com/Stepan1328/voice-assist-bot/services/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strings"
@@ -25,7 +25,7 @@ func checkUpdate(update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
-		fmt.Println(update.Message.From)
+		fmt.Println(update.Message.From.ID)
 		checkMessage(update.Message)
 	}
 
@@ -112,8 +112,8 @@ func paypalReq(message *tgbotapi.Message) {
 
 	lang := auth.GetLang(message.From.ID)
 	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
-	msg.ReplyMarkup = msgs.NewMarkUp(
-		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	msg.ReplyMarkup = msgs2.NewMarkUp(
+		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
 	).Build(lang)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -126,8 +126,8 @@ func creditCardReq(message *tgbotapi.Message) {
 
 	lang := auth.GetLang(message.From.ID)
 	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "credit_card_number"))
-	msg.ReplyMarkup = msgs.NewMarkUp(
-		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	msg.ReplyMarkup = msgs2.NewMarkUp(
+		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
 	).Build(lang)
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -206,13 +206,13 @@ func SendMenu(userID int, text string) {
 	db.RdbSetUser(userID, "main")
 
 	msg := tgbotapi.NewMessage(int64(userID), text)
-	msg.ReplyMarkup = msgs.NewMarkUp(
-		msgs.NewRow(msgs.NewDataButton("main_make_money")),
-		msgs.NewRow(msgs.NewDataButton("main_profile"),
-			msgs.NewDataButton("main_statistic")),
-		msgs.NewRow(msgs.NewDataButton("main_withdrawal_of_money"),
-			msgs.NewDataButton("main_money_for_a_friend")),
-		msgs.NewRow(msgs.NewDataButton("main_more_money")),
+	msg.ReplyMarkup = msgs2.NewMarkUp(
+		msgs2.NewRow(msgs2.NewDataButton("main_make_money")),
+		msgs2.NewRow(msgs2.NewDataButton("main_profile"),
+			msgs2.NewDataButton("main_statistic")),
+		msgs2.NewRow(msgs2.NewDataButton("main_withdrawal_of_money"),
+			msgs2.NewDataButton("main_money_for_a_friend")),
+		msgs2.NewRow(msgs2.NewDataButton("main_more_money")),
 	).Build(auth.GetLang(userID))
 
 	if _, err := assets.Bot.Send(msg); err != nil {
@@ -234,14 +234,14 @@ func MakeMoney(message *tgbotapi.Message) {
 func SendProfile(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := msgs.GetFormatText(user.Language, "profile_text",
+	text := msgs2.GetFormatText(user.Language, "profile_text",
 		message.From.FirstName, message.From.UserName, user.Balance, user.Completed, user.ReferralCount)
 
-	markUp := msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlDataButton("change_lang_button", "change_lang")),
+	markUp := msgs2.NewIlMarkUp(
+		msgs2.NewIlRow(msgs2.NewIlDataButton("change_lang_button", "change_lang")),
 	).Build(user.Language)
 
-	msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
+	msgs2.NewParseMarkUpMessage(int64(user.ID), markUp, text)
 }
 
 // SendStatistics sends the user statistics of the entire game
@@ -251,32 +251,32 @@ func SendStatistics(message *tgbotapi.Message) {
 
 	text = getDate(text)
 
-	msgs.NewParseMessage(message.Chat.ID, text)
+	msgs2.NewParseMessage(message.Chat.ID, text)
 }
 
 // WithdrawalMoney performs money withdrawal
 func WithdrawalMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := msgs.GetFormatText(user.Language, "withdrawal_money",
+	text := msgs2.GetFormatText(user.Language, "withdrawal_money",
 		user.Balance)
 
-	markUp := msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		msgs.NewIlRow(msgs.NewIlDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
+	markUp := msgs2.NewIlMarkUp(
+		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		msgs2.NewIlRow(msgs2.NewIlDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
 	).Build(user.Language)
 
-	msgs.NewParseMarkUpMessage(int64(user.ID), markUp, text)
+	msgs2.NewParseMarkUpMessage(int64(user.ID), markUp, text)
 }
 
 // SendReferralLink generates a referral link and sends it to the user
 func SendReferralLink(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := msgs.GetFormatText(user.Language, "referral_text",
+	text := msgs2.GetFormatText(user.Language, "referral_text",
 		user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
 
-	msgs.NewParseMessage(message.Chat.ID, text)
+	msgs2.NewParseMessage(message.Chat.ID, text)
 }
 
 // MoreMoney it is used to get a daily bonus
@@ -284,13 +284,13 @@ func SendReferralLink(message *tgbotapi.Message) {
 func MoreMoney(message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := msgs.GetFormatText(user.Language, "more_money_text",
+	text := msgs2.GetFormatText(user.Language, "more_money_text",
 		assets.AdminSettings.BonusAmount)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
-	msg.ReplyMarkup = msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
-		msgs.NewIlRow(msgs.NewIlDataButton("get_bonus_button", "moreMoney/getBonus")),
+	msg.ReplyMarkup = msgs2.NewIlMarkUp(
+		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL)),
+		msgs2.NewIlRow(msgs2.NewIlDataButton("get_bonus_button", "moreMoney/getBonus")),
 	).Build(user.Language)
 
 	if _, err := assets.Bot.Send(msg); err != nil {

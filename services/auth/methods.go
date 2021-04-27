@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
-	"github.com/Stepan1328/voice-assist-bot/services/msgs"
+	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strconv"
@@ -134,13 +134,13 @@ func (u *User) minAmountNotReached() {
 	text := assets.LangText(u.Language, "minimum_amount_not_reached")
 	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
 
-	msgs.NewParseMessage(int64(u.ID), text)
+	msgs2.NewParseMessage(int64(u.ID), text)
 }
 
 func (u User) GetABonus() {
 	if u.TakeBonus {
 		text := assets.LangText(u.Language, "bonus_already_have")
-		msgs.SendSimpleMsg(int64(u.ID), text)
+		msgs2.SendSimpleMsg(int64(u.ID), text)
 		return
 	}
 
@@ -151,5 +151,5 @@ func (u User) GetABonus() {
 	}
 
 	text := assets.LangText(u.Language, "bonus_have_received")
-	msgs.SendSimpleMsg(int64(u.ID), text)
+	msgs2.SendSimpleMsg(int64(u.ID), text)
 }
