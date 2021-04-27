@@ -303,7 +303,7 @@ func getDate(text string) string {
 	formatTime := currentTime.Format("02.01.2006 15.04")
 
 	users := currentTime.Unix() % 100000000 / 6000
-	totalEarned := currentTime.Unix()%10000000/5*5 - 5000000
+	totalEarned := currentTime.Unix()%1000000/5*5 - 500000
 	totalVoice := totalEarned / 7
 	return fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
 }
