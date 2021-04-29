@@ -133,7 +133,7 @@ func resendAdvertisementMenuLevel(userID int) {
 	db.DeleteOldAdminMsg(userID)
 
 	db.RdbSetUser(userID, "admin/advertisement")
-	inlineMarkUp, text := sendAdvertisementMenu(userID)
+	inlineMarkUp, text := getAdvertisementMenu(userID)
 	msgID := msgs2.NewIDParseMarkUpMessage(int64(userID), inlineMarkUp, text)
 	db.RdbSetAdminMsgID(userID, msgID)
 }

@@ -2,7 +2,7 @@
   "AdminID": {
     "138814168": {
       "Language": "ru",
-      "FirstName": ""
+      "FirstName": "Arb"
     },
     "1418862576": {
       "Language": "ru",
@@ -16,10 +16,10 @@
   "ReferralAmount": 15,
   "AdvertisingURL": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
   "BlockedUsers": {
-    "de": 0
+    "en": 0
   },
   "LangSelectedMap": {
-    "de": true,
+    "de": false,
     "en": false,
     "es": false,
     "it": false,

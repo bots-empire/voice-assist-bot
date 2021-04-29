@@ -205,13 +205,11 @@ func analyzeChangeParameterCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) 
 		level := db.GetLevel(userID)
 		if strings.Count(level, "/") == 2 {
 			setAdminBackButton(userID, "operation_canceled")
-			resendMakeMenuLevel(userID)
-			msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
-			return
+			db.DeleteOldAdminMsg(userID)
 		}
 
 		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
-		sendAdminMainMenu(callbackQuery.From.ID)
+		sendAdminMainMenu(userID)
 		return
 	}
 
@@ -248,9 +246,19 @@ func settingAdvertisementCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 		return
 	}
 
+	sendAdvertisementMenu(callbackQuery)
+}
+
+func sendAdvertisementMenu(callbackQuery *tgbotapi.CallbackQuery) {
 	userID := callbackQuery.From.ID
-	markUp, text := sendAdvertisementMenu(userID)
-	msgs2.NewEditMarkUpMessage(userID, db.RdbGetAdminMsgID(userID), markUp, text)
+	msgID := db.RdbGetAdminMsgID(userID)
+	markUp, text := getAdvertisementMenu(userID)
+	if msgID == 0 {
+		msgs2.NewParseMarkUpMessage(int64(userID), markUp, text)
+	} else {
+		msgs2.NewEditMarkUpMessage(userID, msgID, markUp, text)
+	}
+
 	msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
 }
 
@@ -269,8 +277,15 @@ func analyzeAdvertisementCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 	case "mailing":
 		analyzeMailingCallbackLevel(callbackQuery)
 	case "back":
+		level := db.GetLevel(userID)
+		if strings.Count(level, "/") == 2 {
+			setAdminBackButton(userID, "operation_canceled")
+			db.DeleteOldAdminMsg(userID)
+		}
+
 		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
-		sendAdminMainMenu(callbackQuery.From.ID)
+		sendAdminMainMenu(userID)
+		return
 	}
 }
 
@@ -298,13 +313,20 @@ func analyzeChangeTextCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 }
 
 func analyzeLangOfChangeTextLevel(callbackQuery *tgbotapi.CallbackQuery) {
+	userID := callbackQuery.From.ID
 	lang := strings.Replace(callbackQuery.Data, "change_text/", "", 1)
 	switch lang {
 	case "back":
+		level := db.GetLevel(userID)
+		if strings.Count(level, "/") == 3 {
+			setAdminBackButton(userID, "operation_canceled")
+			db.DeleteOldAdminMsg(userID)
+		}
+
+		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
 		callbackQuery.Data = "advertisement"
 		settingAdvertisementCallbackLevel(callbackQuery)
 	default:
-		userID := callbackQuery.From.ID
 		db.RdbSetUser(userID, "admin/advertisement/change_text/"+lang)
 		promptForInput(userID, "set_new_advertisement_text", assets.AdminSettings.AdvertisingText[lang])
 		msgs2.SendAdminAnswerCallback(callbackQuery, "type_the_text")
@@ -347,7 +369,7 @@ func parseMainLanguageButton(partition string) *msgs2.InlineMarkUp {
 	return &markUp
 }
 
-func sendAdvertisementMenu(userID int) (*tgbotapi.InlineKeyboardMarkup, string) {
+func getAdvertisementMenu(userID int) (*tgbotapi.InlineKeyboardMarkup, string) {
 	lang := assets.AdminLang(userID)
 	text := assets.AdminText(lang, "advertisement_setting_text")
 
