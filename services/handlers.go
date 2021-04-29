@@ -43,6 +43,11 @@ func checkMessage(message *tgbotapi.Message) {
 		return
 	}
 
+	if message.Command() == "start" || message.Command() == "exit" {
+		SendMenu(message.From.ID, assets.LangText(lang, "main_select_menu"))
+		return
+	}
+
 	if message.Command() == "admin" {
 		admin.SetAdminLevel(message)
 		return
@@ -52,7 +57,7 @@ func checkMessage(message *tgbotapi.Message) {
 	data := strings.Split(level, "/")
 	switch data[0] {
 	case "main", "empty":
-		mainLevel(message)
+		checkTextOfMessage(message)
 	case "withdrawal":
 		withdrawalLevel(message, level)
 	case "make_money":
@@ -62,15 +67,15 @@ func checkMessage(message *tgbotapi.Message) {
 	}
 }
 
-func mainLevel(message *tgbotapi.Message) {
-	switch message.Command() {
-	case "start":
-		lang := auth.GetLang(message.From.ID)
-		SendMenu(message.From.ID, assets.LangText(lang, "main_select_menu"))
-	default:
-		checkTextOfMessage(message)
-	}
-}
+//func mainLevel(message *tgbotapi.Message) {
+//	switch message.Command() {
+//	case "start":
+//		lang := auth.GetLang(message.From.ID)
+//		SendMenu(message.From.ID, assets.LangText(lang, "main_select_menu"))
+//	default:
+//		checkTextOfMessage(message)
+//	}
+//}
 
 func withdrawalLevel(message *tgbotapi.Message, level string) {
 	data := strings.Split(level, "/")
