@@ -71,7 +71,7 @@ func (u *User) AddNewUser(referralID int) {
 	}
 
 	baseUser := GetUser(referralID)
-	baseUser.Balance += assets.AdminSettings.ReferralAmount //TODO
+	baseUser.Balance += assets.AdminSettings.ReferralAmount
 	_, err = db.DataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
 	if err != nil {
