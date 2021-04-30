@@ -14,7 +14,13 @@
   "VoiceAmount": 5,
   "MaxOfVoicePerDay": 20,
   "ReferralAmount": 15,
-  "AdvertisingURL": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
+  "AdvertisingURL": {
+    "de": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
+    "en": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
+    "es": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
+    "it": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
+    "pt": "https://t.me/joinchat/Vm991h1lG-GNnoK6"
+  },
   "BlockedUsers": {
     "en": 0
   },

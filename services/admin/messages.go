@@ -4,7 +4,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
-	"github.com/Stepan1328/voice-assist-bot/regexp"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -101,33 +100,33 @@ func advertisementMessageLevel(message *tgbotapi.Message, level string) {
 	level = strings.Replace(level, "advertisement/", "", 1)
 	data := strings.Split(level, "/")
 	switch data[0] {
-	case "url":
-		changeUrlLevel(message)
+	case "change_url":
+		changeAdvertisementTextLevel(message, level, "change_url")
 	case "change_text":
-		changeAdvertisementTextLevel(message, level)
+		changeAdvertisementTextLevel(message, level, "change_text")
 	}
 }
 
-func changeUrlLevel(message *tgbotapi.Message) {
-	userID := message.From.ID
-	lang := assets.AdminLang(userID)
-	if !checkBackButton(message, lang, "back_to_advertisement_setting") {
-		setAdminBackButton(userID, "operation_canceled")
-		resendAdvertisementMenuLevel(userID)
-		return
-	}
-
-	if !regexp.InvitationLink.MatchString(message.Text) {
-		text := assets.AdminText(lang, "incorrect_url_change_input")
-		msgs2.NewParseMessage(int64(userID), text)
-		return
-	}
-
-	assets.AdminSettings.AdvertisingURL = message.Text
-	assets.SaveAdminSettings()
-	setAdminBackButton(userID, "operation_completed")
-	resendAdvertisementMenuLevel(userID)
-}
+//func changeUrlLevel(message *tgbotapi.Message) {
+//	userID := message.From.ID
+//	lang := assets.AdminLang(userID)
+//	if !checkBackButton(message, lang, "back_to_advertisement_setting") {
+//		setAdminBackButton(userID, "operation_canceled")
+//		resendAdvertisementMenuLevel(userID)
+//		return
+//	}
+//
+//	if !regexp.InvitationLink.MatchString(message.Text) {
+//		text := assets.AdminText(lang, "incorrect_url_change_input")
+//		msgs2.NewParseMessage(int64(userID), text)
+//		return
+//	}
+//
+//	assets.AdminSettings.AdvertisingURL[lang] = message.Text
+//	assets.SaveAdminSettings()
+//	setAdminBackButton(userID, "operation_completed")
+//	resendAdvertisementMenuLevel(userID)
+//}
 
 func resendAdvertisementMenuLevel(userID int) {
 	db.DeleteOldAdminMsg(userID)
@@ -138,26 +137,31 @@ func resendAdvertisementMenuLevel(userID int) {
 	db.RdbSetAdminMsgID(userID, msgID)
 }
 
-func changeAdvertisementTextLevel(message *tgbotapi.Message, level string) {
+func changeAdvertisementTextLevel(message *tgbotapi.Message, level, capitation string) {
 	if !strings.Contains(level, "/") {
 		return
 	}
 
-	textLang := strings.Replace(level, "change_text/", "", 1)
+	textLang := strings.Replace(level, capitation+"/", "", 1)
 	userID := message.From.ID
 	lang := assets.AdminLang(userID)
 	status := "operation_canceled"
 
 	if checkBackButton(message, lang, "back_to_advertisement_setting") {
-		assets.AdminSettings.AdvertisingText[textLang] = message.Text
+		switch capitation {
+		case "change_url":
+			assets.AdminSettings.AdvertisingURL[textLang] = message.Text
+		case "change_text":
+			assets.AdminSettings.AdvertisingText[textLang] = message.Text
+		}
 		assets.SaveAdminSettings()
 		status = "operation_completed"
 	}
 
 	setAdminBackButton(userID, status)
-	db.RdbSetUser(userID, "admin/advertisement/change_text")
+	db.RdbSetUser(userID, "admin/advertisement/"+capitation)
 	db.DeleteOldAdminMsg(userID)
-	sendChangeTextMenu(userID)
+	sendChangeWithLangMenu(userID, capitation)
 }
 
 // sendMenu is a local copy of global SendMenu

@@ -98,7 +98,7 @@ func fillMessageMap() {
 		text := assets.AdminSettings.AdvertisingText[lang]
 
 		markUp := msgs.NewIlMarkUp(
-			msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingURL)),
+			msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingURL[lang])),
 		).Build(lang)
 
 		message[lang] = tgbotapi.MessageConfig{

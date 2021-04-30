@@ -268,10 +268,8 @@ func analyzeAdvertisementCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 	callbackQuery.Data = strings.Replace(callbackQuery.Data, "advertisement/", "", 1)
 	data := strings.Split(callbackQuery.Data, "/")
 	switch data[0] {
-	case "url":
-		db.RdbSetUser(userID, "admin/advertisement/url")
-		promptForInput(userID, "set_new_url_text", assets.AdminSettings.AdvertisingURL)
-		msgs2.SendAdminAnswerCallback(callbackQuery, "type_the_text")
+	case "change_url":
+		analyzeChangeUrlLevel(callbackQuery)
 	case "change_text":
 		analyzeChangeTextCallbackLevel(callbackQuery)
 	case "mailing":
@@ -285,8 +283,18 @@ func analyzeAdvertisementCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 
 		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
 		sendAdminMainMenu(userID)
+	}
+}
+
+func analyzeChangeUrlLevel(callbackQuery *tgbotapi.CallbackQuery) {
+	if strings.Contains(callbackQuery.Data, "/") {
+		analyzeLangOfChangeTextOrUrlLevel(callbackQuery, "change_url")
 		return
 	}
+
+	db.RdbSetUser(callbackQuery.From.ID, "admin/advertisement/change_url")
+	sendChangeWithLangMenu(callbackQuery.From.ID, "change_url")
+	msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
 }
 
 func promptForInput(userID int, key string, values ...interface{}) {
@@ -303,18 +311,28 @@ func promptForInput(userID int, key string, values ...interface{}) {
 
 func analyzeChangeTextCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
 	if strings.Contains(callbackQuery.Data, "/") {
-		analyzeLangOfChangeTextLevel(callbackQuery)
+		analyzeLangOfChangeTextOrUrlLevel(callbackQuery, "change_text")
 		return
 	}
 
 	db.RdbSetUser(callbackQuery.From.ID, "admin/advertisement/change_text")
-	sendChangeTextMenu(callbackQuery.From.ID)
+	sendChangeWithLangMenu(callbackQuery.From.ID, "change_text")
 	msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
 }
 
-func analyzeLangOfChangeTextLevel(callbackQuery *tgbotapi.CallbackQuery) {
+func analyzeLangOfChangeTextOrUrlLevel(callbackQuery *tgbotapi.CallbackQuery, partition string) {
 	userID := callbackQuery.From.ID
-	lang := strings.Replace(callbackQuery.Data, "change_text/", "", 1)
+	lang := strings.Replace(callbackQuery.Data, partition+"/", "", 1)
+	var key, value string
+	switch partition {
+	case "change_text":
+		key = "set_new_advertisement_text"
+		value = assets.AdminSettings.AdvertisingText[lang]
+	case "change_url":
+		key = "set_new_url_text"
+		value = assets.AdminSettings.AdvertisingURL[lang]
+	}
+
 	switch lang {
 	case "back":
 		level := db.GetLevel(userID)
@@ -327,20 +345,21 @@ func analyzeLangOfChangeTextLevel(callbackQuery *tgbotapi.CallbackQuery) {
 		callbackQuery.Data = "advertisement"
 		settingAdvertisementCallbackLevel(callbackQuery)
 	default:
-		db.RdbSetUser(userID, "admin/advertisement/change_text/"+lang)
-		promptForInput(userID, "set_new_advertisement_text", assets.AdminSettings.AdvertisingText[lang])
+		db.RdbSetUser(userID, "admin/advertisement/"+partition+"/"+lang)
+		promptForInput(userID, key, value)
 		msgs2.SendAdminAnswerCallback(callbackQuery, "type_the_text")
 	}
 }
 
-func sendChangeTextMenu(userID int) {
+func sendChangeWithLangMenu(userID int, partition string) {
 	lang := assets.AdminLang(userID)
 	resetSelectedLang()
+	key := partition + "_of_advertisement_text"
 
-	text := assets.AdminText(lang, "change_text_of_advertisement_text")
-	markUp := parseMainLanguageButton("change_text")
+	text := assets.AdminText(lang, key)
+	markUp := parseMainLanguageButton(partition)
 	markUp.Rows = append(markUp.Rows, msgs2.NewIlRow(
-		msgs2.NewIlAdminButton("back_to_advertisement_setting", "admin/advertisement/change_text/back")),
+		msgs2.NewIlAdminButton("back_to_advertisement_setting", "admin/advertisement/"+partition+"/back")),
 	)
 	replyMarkUp := markUp.Build(lang)
 
@@ -374,7 +393,7 @@ func getAdvertisementMenu(userID int) (*tgbotapi.InlineKeyboardMarkup, string) {
 	text := assets.AdminText(lang, "advertisement_setting_text")
 
 	markUp := msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlAdminButton("change_url_button", "admin/advertisement/url")),
+		msgs2.NewIlRow(msgs2.NewIlAdminButton("change_url_button", "admin/advertisement/change_url")),
 		msgs2.NewIlRow(msgs2.NewIlAdminButton("change_text_button", "admin/advertisement/change_text")),
 		msgs2.NewIlRow(msgs2.NewIlAdminButton("distribute_button", "admin/advertisement/mailing")),
 		msgs2.NewIlRow(msgs2.NewIlAdminButton("back_to_main_menu", "admin/advertisement/back")),

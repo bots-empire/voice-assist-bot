@@ -10,7 +10,7 @@ var Rdb *redis.Client
 
 func UploadDataBase() {
 	var err error
-	DataBase, err = sql.Open("mysql", "root:root@/test")
+	DataBase, err = sql.Open("mysql", "root@/test")
 	if err != nil {
 		panic(err.Error())
 	}

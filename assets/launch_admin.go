@@ -13,7 +13,7 @@ type Admin struct {
 	VoiceAmount         int
 	MaxOfVoicePerDay    int
 	ReferralAmount      int
-	AdvertisingURL      string
+	AdvertisingURL      map[string]string
 	BlockedUsers        map[string]int
 	LangSelectedMap     map[string]bool
 	AdvertisingText     map[string]string
