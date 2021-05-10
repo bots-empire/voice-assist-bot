@@ -1,10 +1,20 @@
 package assets
 
 import (
+	"github.com/go-redis/redis"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 var (
-	// Bot is a structure used for sending messages to chats
-	Bot *tgbotapi.BotAPI
+	Bots = make(map[string]Handler)
 )
+
+type Handler struct {
+	Chanel tgbotapi.UpdatesChannel
+	Bot    *tgbotapi.BotAPI
+	Rdb    *redis.Client
+}
+
+func GetBot(botLang string) *tgbotapi.BotAPI {
+	return Bots[botLang].Bot
+}

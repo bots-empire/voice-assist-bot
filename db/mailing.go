@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -44,10 +43,25 @@ func MailToUser(rows *sql.Rows) {
 		if containsInAdmin(id) {
 			continue
 		}
-		fmt.Println(id, lang)
 
-		if !msgs.SendMessageToChat(msg) {
-			blockedUsers[lang] += 1
+		send := false
+		for _, selectedLang := range assets.AvailableLang {
+			if assets.AdminSettings.LangSelectedMap[selectedLang] && !send {
+				if msgs.SendMessageToChat(selectedLang, msg) {
+					send = true
+				}
+
+				if !send {
+					blockedUsers[selectedLang] += 1
+				}
+			}
+		}
+
+		for _, selectedLang := range assets.AvailableLang {
+			if !send {
+				blockedUsers[selectedLang] += 1
+				break
+			}
 		}
 	}
 

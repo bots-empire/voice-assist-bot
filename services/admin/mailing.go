@@ -8,55 +8,55 @@ import (
 	"strings"
 )
 
-func analyzeMailingCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
+func analyzeMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	if strings.Contains(callbackQuery.Data, "/") {
-		analyzeSelectedMailingCallbackLevel(callbackQuery)
+		analyzeSelectedMailingCallbackLevel(botLang, callbackQuery)
 		return
 	}
 
-	db.RdbSetUser(callbackQuery.From.ID, "admin/advertisement/change_text")
+	db.RdbSetUser(botLang, callbackQuery.From.ID, "admin/advertisement/change_text")
 	resetSelectedLang()
-	sendMailingMenu(callbackQuery.From.ID)
-	msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
+	sendMailingMenu(botLang, callbackQuery.From.ID)
+	msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
 }
 
-func analyzeSelectedMailingCallbackLevel(callbackQuery *tgbotapi.CallbackQuery) {
+func analyzeSelectedMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	callbackQuery.Data = strings.Replace(callbackQuery.Data, "mailing/", "", 1)
 	switch callbackQuery.Data {
 	case "send":
 		if !selectedLangAreNotEmpty() {
-			msgs2.SendAdminAnswerCallback(callbackQuery, "no_language_selected")
+			msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "no_language_selected")
 			return
 		}
 		db.StartMailing()
-		msgs2.SendAdminAnswerCallback(callbackQuery, "mailing_successful")
-		resendAdvertisementMenuLevel(callbackQuery.From.ID)
+		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "mailing_successful")
+		resendAdvertisementMenuLevel(botLang, callbackQuery.From.ID)
 	case "back":
 		callbackQuery.Data = "advertisement"
-		settingAdvertisementCallbackLevel(callbackQuery)
+		settingAdvertisementCallbackLevel(botLang, callbackQuery)
 	case "select_all", "deselect_all":
 		switchedSelectedLanguages()
-		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
-		sendMailingMenu(callbackQuery.From.ID)
+		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
+		sendMailingMenu(botLang, callbackQuery.From.ID)
 	default:
 		switchLangOnKeyboard(callbackQuery.Data)
-		msgs2.SendAdminAnswerCallback(callbackQuery, "make_a_choice")
-		sendMailingMenu(callbackQuery.From.ID)
+		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
+		sendMailingMenu(botLang, callbackQuery.From.ID)
 	}
 }
 
-func sendMailingMenu(userID int) {
+func sendMailingMenu(botLang string, userID int) {
 	lang := assets.AdminLang(userID)
 
 	text := assets.AdminText(lang, "change_text_of_advertisement_text")
 	markUp := createMailingMarkUp(lang)
 
-	if db.RdbGetAdminMsgID(userID) == 0 {
-		msgID := msgs2.NewIDParseMarkUpMessage(int64(userID), &markUp, text)
-		db.RdbSetAdminMsgID(userID, msgID)
+	if db.RdbGetAdminMsgID(botLang, userID) == 0 {
+		msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), &markUp, text)
+		db.RdbSetAdminMsgID(botLang, userID, msgID)
 		return
 	}
-	msgs2.NewEditMarkUpMessage(userID, db.RdbGetAdminMsgID(userID), &markUp, text)
+	msgs2.NewEditMarkUpMessage(botLang, userID, db.RdbGetAdminMsgID(botLang, userID), &markUp, text)
 }
 
 func createMailingMarkUp(lang string) tgbotapi.InlineKeyboardMarkup {

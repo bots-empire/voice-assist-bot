@@ -6,26 +6,25 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func (u *User) MakeMoney() bool {
+func (u *User) MakeMoney(botLang string) bool {
 	if time.Now().Unix()/86400 > u.LastVoice/86400 {
 		u.resetVoiceDayCounter()
 	}
 
 	if u.CompletedToday >= assets.AdminSettings.MaxOfVoicePerDay {
-		u.reachedMaxAmountPerDay()
+		u.reachedMaxAmountPerDay(botLang)
 		return false
 	}
 
-	db.RdbSetUser(u.ID, "make_money")
+	db.RdbSetUser(botLang, u.ID, "make_money")
 
-	u.sendMoneyStatistic()
-	u.sendInvitationToRecord()
+	u.sendMoneyStatistic(botLang)
+	u.sendInvitationToRecord(botLang)
 	return true
 }
 
@@ -40,19 +39,17 @@ func (u *User) resetVoiceDayCounter() {
 	}
 }
 
-func (u *User) sendMoneyStatistic() {
+func (u *User) sendMoneyStatistic(botLang string) {
 	text := assets.LangText(u.Language, "make_money_statistic")
 	text = fmt.Sprintf(text, u.CompletedToday, assets.AdminSettings.MaxOfVoicePerDay,
 		assets.AdminSettings.VoiceAmount, u.Balance, u.CompletedToday*assets.AdminSettings.VoiceAmount)
 	msg := tgbotapi.NewMessage(int64(u.ID), text)
 	msg.ParseMode = "HTML"
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 }
 
-func (u *User) sendInvitationToRecord() {
+func (u *User) sendInvitationToRecord(botLang string) {
 	text := assets.LangText(u.Language, "invitation_to_record_voice")
 	text = fmt.Sprintf(text, assets.SiriText(u.Language))
 	msg := tgbotapi.NewMessage(int64(u.ID), text)
@@ -63,22 +60,18 @@ func (u *User) sendInvitationToRecord() {
 	markUp := tgbotapi.NewReplyKeyboard(row)
 	msg.ReplyMarkup = markUp
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 }
 
-func (u *User) reachedMaxAmountPerDay() {
+func (u *User) reachedMaxAmountPerDay(botLang string) {
 	text := assets.LangText(u.Language, "reached_max_amount_per_day")
 	text = fmt.Sprintf(text, assets.AdminSettings.MaxOfVoicePerDay, assets.AdminSettings.MaxOfVoicePerDay)
 	msg := tgbotapi.NewMessage(int64(u.ID), text)
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 }
 
-func (u *User) AcceptVoiceMessage() bool {
+func (u *User) AcceptVoiceMessage(botLang string) bool {
 	u.Balance += assets.AdminSettings.VoiceAmount
 	u.Completed++
 	u.CompletedToday++
@@ -90,30 +83,26 @@ func (u *User) AcceptVoiceMessage() bool {
 		panic(err.Error())
 	}
 
-	return u.MakeMoney()
+	return u.MakeMoney(botLang)
 }
 
-func (u *User) WithdrawMoneyFromBalance(amount string) bool {
+func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) bool {
 	amount = strings.Replace(amount, " ", "", -1)
 	amountInt, err := strconv.Atoi(amount)
 	if err != nil {
 		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "incorrect_amount"))
-		if _, err = assets.Bot.Send(msg); err != nil {
-			log.Println(err)
-		}
+		msgs2.SendMsgToUser(botLang, msg)
 		return false
 	}
 
 	if amountInt < assets.AdminSettings.MinWithdrawalAmount {
-		u.minAmountNotReached()
+		u.minAmountNotReached(botLang)
 		return false
 	}
 
 	if u.Balance < amountInt {
 		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "lack_of_funds"))
-		if _, err = assets.Bot.Send(msg); err != nil {
-			log.Println(err)
-		}
+		msgs2.SendMsgToUser(botLang, msg)
 		return false
 	}
 
@@ -124,23 +113,21 @@ func (u *User) WithdrawMoneyFromBalance(amount string) bool {
 	}
 
 	msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "successfully_withdrawn"))
-	if _, err = assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 	return true
 }
 
-func (u *User) minAmountNotReached() {
+func (u *User) minAmountNotReached(botLang string) {
 	text := assets.LangText(u.Language, "minimum_amount_not_reached")
 	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
 
-	msgs2.NewParseMessage(int64(u.ID), text)
+	msgs2.NewParseMessage(botLang, int64(u.ID), text)
 }
 
-func (u User) GetABonus() {
+func (u User) GetABonus(botLang string) {
 	if u.TakeBonus {
 		text := assets.LangText(u.Language, "bonus_already_have")
-		msgs2.SendSimpleMsg(int64(u.ID), text)
+		msgs2.SendSimpleMsg(botLang, int64(u.ID), text)
 		return
 	}
 
@@ -151,5 +138,5 @@ func (u User) GetABonus() {
 	}
 
 	text := assets.LangText(u.Language, "bonus_have_received")
-	msgs2.SendSimpleMsg(int64(u.ID), text)
+	msgs2.SendSimpleMsg(botLang, int64(u.ID), text)
 }

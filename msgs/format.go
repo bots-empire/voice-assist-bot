@@ -7,14 +7,15 @@ import (
 	"log"
 )
 
-func SendMessageToChat(msg tgbotapi.MessageConfig) bool {
-	if _, err := assets.Bot.Send(msg); err != nil {
+func SendMessageToChat(botLang string, msg tgbotapi.MessageConfig) bool {
+	bot := assets.GetBot(botLang)
+	if _, err := bot.Send(msg); err != nil {
 		return false
 	}
 	return true
 }
 
-func NewParseMessage(chatID int64, text string) {
+func NewParseMessage(botLang string, chatID int64, text string) {
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
 			ChatID: chatID,
@@ -23,12 +24,10 @@ func NewParseMessage(chatID int64, text string) {
 		ParseMode: "HTML",
 	}
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	SendMsgToUser(botLang, msg)
 }
 
-func NewParseMarkUpMessage(chatID int64, markUp interface{}, text string) {
+func NewParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, text string) {
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
 			ChatID:      chatID,
@@ -38,12 +37,10 @@ func NewParseMarkUpMessage(chatID int64, markUp interface{}, text string) {
 		ParseMode: "HTML",
 	}
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	SendMsgToUser(botLang, msg)
 }
 
-func NewIDParseMarkUpMessage(chatID int64, markUp interface{}, text string) int {
+func NewIDParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, text string) int {
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
 			ChatID:      chatID,
@@ -53,14 +50,15 @@ func NewIDParseMarkUpMessage(chatID int64, markUp interface{}, text string) int 
 		ParseMode: "HTML",
 	}
 
-	message, err := assets.Bot.Send(msg)
+	bot := assets.GetBot(botLang)
+	message, err := bot.Send(msg)
 	if err != nil {
 		log.Println(err)
 	}
 	return message.MessageID
 }
 
-func NewEditMarkUpMessage(userID, msgID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) {
+func NewEditMarkUpMessage(botLang string, userID, msgID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) {
 	msg := tgbotapi.EditMessageTextConfig{
 		BaseEdit: tgbotapi.BaseEdit{
 			ChatID:      int64(userID),
@@ -71,32 +69,26 @@ func NewEditMarkUpMessage(userID, msgID int, markUp *tgbotapi.InlineKeyboardMark
 		ParseMode: "HTML",
 	}
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	SendMsgToUser(botLang, msg)
 }
 
-func SendAnswerCallback(callbackQuery *tgbotapi.CallbackQuery, lang, text string) {
+func SendAnswerCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery, lang, text string) {
 	answerCallback := tgbotapi.CallbackConfig{
 		CallbackQueryID: callbackQuery.ID,
 		Text:            assets.LangText(lang, text),
 	}
 
-	if _, err := assets.Bot.AnswerCallbackQuery(answerCallback); err != nil {
-		log.Println(err)
-	}
+	SendAnswerCallbackToUser(botLang, answerCallback)
 }
 
-func SendAdminAnswerCallback(callbackQuery *tgbotapi.CallbackQuery, text string) {
+func SendAdminAnswerCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery, text string) {
 	lang := assets.AdminLang(callbackQuery.From.ID)
 	answerCallback := tgbotapi.CallbackConfig{
 		CallbackQueryID: callbackQuery.ID,
 		Text:            assets.AdminText(lang, text),
 	}
 
-	if _, err := assets.Bot.AnswerCallbackQuery(answerCallback); err != nil {
-		log.Println(err)
-	}
+	SendAnswerCallbackToUser(botLang, answerCallback)
 }
 
 func GetFormatText(lang, text string, values ...interface{}) string {
@@ -104,10 +96,24 @@ func GetFormatText(lang, text string, values ...interface{}) string {
 	return fmt.Sprintf(formatText, values...)
 }
 
-func SendSimpleMsg(chatID int64, text string) {
+func SendSimpleMsg(botLang string, chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 
-	if _, err := assets.Bot.Send(msg); err != nil {
+	SendMsgToUser(botLang, msg)
+}
+
+func SendMsgToUser(botLang string, msg tgbotapi.Chattable) {
+	bot := assets.GetBot(botLang)
+
+	if _, err := bot.Send(msg); err != nil {
+		log.Println(err)
+	}
+}
+
+func SendAnswerCallbackToUser(botLang string, callback tgbotapi.CallbackConfig) {
+	bot := assets.GetBot(botLang)
+
+	if _, err := bot.AnswerCallbackQuery(callback); err != nil {
 		log.Println(err)
 	}
 }

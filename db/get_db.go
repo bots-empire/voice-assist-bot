@@ -6,7 +6,6 @@ import (
 )
 
 var DataBase *sql.DB
-var Rdb *redis.Client
 
 func UploadDataBase() {
 	var err error
@@ -16,11 +15,11 @@ func UploadDataBase() {
 	}
 }
 
-func StartRedis() {
+func StartRedis(k int) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "127.0.0.1:6379",
 		Password: "", // no password set
-		DB:       0,  // use default DB
+		DB:       k,  // use default DB
 	})
-	Rdb = rdb
+	return rdb
 }

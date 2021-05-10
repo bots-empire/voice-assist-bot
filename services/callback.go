@@ -11,26 +11,26 @@ import (
 	"strings"
 )
 
-func GetBonus(callbackQuery *tgbotapi.CallbackQuery) {
+func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	user := auth.GetUser(callbackQuery.From.ID)
 
-	user.GetABonus()
+	user.GetABonus(botLang)
 }
 
-func Withdrawal(callbackQuery *tgbotapi.CallbackQuery) {
-	level := db.GetLevel(callbackQuery.From.ID)
+func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
+	level := db.GetLevel(botLang, callbackQuery.From.ID)
 	if level != "main" && level != "empty" {
 		lang := auth.GetLang(callbackQuery.From.ID)
-		msgs2.SendAnswerCallback(callbackQuery, lang, "unfinished_action")
+		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
 		return
 	}
 
-	db.RdbSetUser(callbackQuery.From.ID, "withdrawal")
+	db.RdbSetUser(botLang, callbackQuery.From.ID, "withdrawal")
 
-	sendPaymentMethod(callbackQuery)
+	sendPaymentMethod(botLang, callbackQuery)
 }
 
-func sendPaymentMethod(callbackQuery *tgbotapi.CallbackQuery) {
+func sendPaymentMethod(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	user := auth.GetUser(callbackQuery.From.ID)
 
 	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, assets.LangText(user.Language, "select_payment"))
@@ -41,34 +41,32 @@ func sendPaymentMethod(callbackQuery *tgbotapi.CallbackQuery) {
 		msgs2.NewRow(msgs2.NewDataButton("main_back")),
 	).Build(user.Language)
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 }
 
-func ChangeLanguage(callbackQuery *tgbotapi.CallbackQuery) {
-	if db.GetLevel(callbackQuery.From.ID) != "main" {
+func ChangeLanguage(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
+	if db.GetLevel(botLang, callbackQuery.From.ID) != "main" {
 		lang := auth.GetLang(callbackQuery.From.ID)
-		msgs2.SendAnswerCallback(callbackQuery, lang, "unfinished_action")
+		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
 		return
 	}
 
 	data := strings.Split(callbackQuery.Data, "/")
 	if len(data) == 2 {
-		setLanguage(callbackQuery.From.ID, data[1])
-		msgs2.SendAnswerCallback(callbackQuery, data[1], "language_successful_set")
-		deleteTemporaryMessages(callbackQuery.From.ID)
+		setLanguage(botLang, callbackQuery.From.ID, data[1])
+		msgs2.SendAnswerCallback(botLang, callbackQuery, data[1], "language_successful_set")
+		deleteTemporaryMessages(botLang, callbackQuery.From.ID)
 		return
 	}
 
-	sendLanguages(callbackQuery)
+	sendLanguages(botLang, callbackQuery)
 }
 
-func setLanguage(userID int, lang string) {
-	db.RdbSetUser(userID, "main")
+func setLanguage(botLang string, userID int, lang string) {
+	db.RdbSetUser(botLang, userID, "main")
 
 	if lang == "back" {
-		SendMenu(userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
+		SendMenu(botLang, userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
 		return
 	}
 	_, err := db.DataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
@@ -76,10 +74,10 @@ func setLanguage(userID int, lang string) {
 		panic(err.Error())
 	}
 
-	SendMenu(userID, assets.LangText(lang, "back_to_main_menu"))
+	SendMenu(botLang, userID, assets.LangText(lang, "back_to_main_menu"))
 }
 
-func sendLanguages(callbackQuery *tgbotapi.CallbackQuery) {
+func sendLanguages(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	userID := callbackQuery.From.ID
 	lang := auth.GetLang(userID)
 	msg := tgbotapi.NewMessage(int64(userID), assets.LangText(lang, "select_language"))
@@ -93,18 +91,19 @@ func sendLanguages(callbackQuery *tgbotapi.CallbackQuery) {
 		msgs2.NewIlRow(msgs2.NewIlDataButton("back_to_main_menu_button", "change_lang/back")),
 	).Build(lang)
 
-	data, err := assets.Bot.Send(msg)
+	bot := assets.GetBot(botLang)
+	data, err := bot.Send(msg)
 	if err != nil {
 		log.Println(err)
 	}
 
-	msgs2.SendAnswerCallback(callbackQuery, lang, "make_a_choice")
+	msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "make_a_choice")
 
-	db.RdbSetTemporary(userID, data.MessageID)
+	db.RdbSetTemporary(botLang, userID, data.MessageID)
 }
 
-func deleteTemporaryMessages(userID int) {
-	result := db.RdbGetTemporary(userID)
+func deleteTemporaryMessages(botLang string, userID int) {
+	result := db.RdbGetTemporary(botLang, userID)
 
 	if result == "" {
 		return
@@ -116,7 +115,9 @@ func deleteTemporaryMessages(userID int) {
 	}
 
 	msg := tgbotapi.NewDeleteMessage(int64(userID), msgID)
-	if _, err = assets.Bot.Send(msg); err != nil && err.Error() != "message to delete not found" {
+
+	bot := assets.GetBot(botLang)
+	if _, err = bot.Send(msg); err != nil && err.Error() != "message to delete not found" {
 		log.Println(err)
 	}
 }

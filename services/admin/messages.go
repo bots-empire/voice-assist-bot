@@ -6,12 +6,11 @@ import (
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 	"strconv"
 	"strings"
 )
 
-func AnalyzeAdminMessage(message *tgbotapi.Message, level string) {
+func AnalyzeAdminMessage(botLang string, message *tgbotapi.Message, level string) {
 	userID := message.From.ID
 	lang := assets.AdminLang(userID)
 	level = strings.Replace(level, "admin/", "", 1)
@@ -19,42 +18,42 @@ func AnalyzeAdminMessage(message *tgbotapi.Message, level string) {
 
 	logOutText := assets.AdminText(lang, "exit")
 	if message.Text == logOutText {
-		db.DeleteOldAdminMsg(userID)
-		simpleMsg(userID, lang, "admin_log_out")
+		db.DeleteOldAdminMsg(botLang, userID)
+		simpleMsg(botLang, userID, lang, "admin_log_out")
 
 		text := assets.LangText(lang, "main_select_menu")
-		sendMenu(userID, text)
+		sendMenu(botLang, userID, text)
 		return
 	}
 
 	switch data[0] {
 	case "make_money":
-		makeMoneyMessageLevel(message, level)
+		makeMoneyMessageLevel(botLang, message, level)
 	case "advertisement":
-		advertisementMessageLevel(message, level)
+		advertisementMessageLevel(botLang, message, level)
 	}
 }
 
-func makeMoneyMessageLevel(message *tgbotapi.Message, level string) {
+func makeMoneyMessageLevel(botLang string, message *tgbotapi.Message, level string) {
 	if strings.Contains(level, "/") {
 		level = strings.Replace(level, "make_money/", "", 1)
-		changeMakeMoneySettingsLevel(message, level)
+		changeMakeMoneySettingsLevel(botLang, message, level)
 	}
 }
 
-func changeMakeMoneySettingsLevel(message *tgbotapi.Message, level string) {
+func changeMakeMoneySettingsLevel(botLang string, message *tgbotapi.Message, level string) {
 	userID := message.From.ID
 	lang := assets.AdminLang(userID)
 	if !checkBackButton(message, lang, "back_to_make_money_setting") {
-		setAdminBackButton(userID, "operation_canceled")
-		resendMakeMenuLevel(userID)
+		setAdminBackButton(botLang, userID, "operation_canceled")
+		resendMakeMenuLevel(botLang, userID)
 		return
 	}
 
 	newAmount, err := strconv.Atoi(message.Text)
 	if err != nil || newAmount <= 0 {
 		text := assets.AdminText(lang, "incorrect_make_money_change_input")
-		msgs2.NewParseMessage(int64(userID), text)
+		msgs2.NewParseMessage(botLang, int64(userID), text)
 		return
 	}
 
@@ -71,17 +70,17 @@ func changeMakeMoneySettingsLevel(message *tgbotapi.Message, level string) {
 		assets.AdminSettings.ReferralAmount = newAmount
 	}
 	assets.SaveAdminSettings()
-	setAdminBackButton(userID, "operation_completed")
-	resendMakeMenuLevel(userID)
+	setAdminBackButton(botLang, userID, "operation_completed")
+	resendMakeMenuLevel(botLang, userID)
 }
 
-func resendMakeMenuLevel(userID int) {
-	db.DeleteOldAdminMsg(userID)
+func resendMakeMenuLevel(botLang string, userID int) {
+	db.DeleteOldAdminMsg(botLang, userID)
 
-	db.RdbSetUser(userID, "admin/make_money")
-	inlineMarkUp, text := sendMakeMoneyMenu(userID)
-	msgID := msgs2.NewIDParseMarkUpMessage(int64(userID), inlineMarkUp, text)
-	db.RdbSetAdminMsgID(userID, msgID)
+	db.RdbSetUser(botLang, userID, "admin/make_money")
+	inlineMarkUp, text := sendMakeMoneyMenu(botLang, userID)
+	msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), inlineMarkUp, text)
+	db.RdbSetAdminMsgID(botLang, userID, msgID)
 }
 
 func checkBackButton(message *tgbotapi.Message, lang, key string) bool {
@@ -92,7 +91,7 @@ func checkBackButton(message *tgbotapi.Message, lang, key string) bool {
 	return false
 }
 
-func advertisementMessageLevel(message *tgbotapi.Message, level string) {
+func advertisementMessageLevel(botLang string, message *tgbotapi.Message, level string) {
 	if !strings.Contains(level, "/") {
 		return
 	}
@@ -101,9 +100,9 @@ func advertisementMessageLevel(message *tgbotapi.Message, level string) {
 	data := strings.Split(level, "/")
 	switch data[0] {
 	case "change_url":
-		changeAdvertisementTextLevel(message, level, "change_url")
+		changeAdvertisementTextLevel(botLang, message, level, "change_url")
 	case "change_text":
-		changeAdvertisementTextLevel(message, level, "change_text")
+		changeAdvertisementTextLevel(botLang, message, level, "change_text")
 	}
 }
 
@@ -128,16 +127,16 @@ func advertisementMessageLevel(message *tgbotapi.Message, level string) {
 //	resendAdvertisementMenuLevel(userID)
 //}
 
-func resendAdvertisementMenuLevel(userID int) {
-	db.DeleteOldAdminMsg(userID)
+func resendAdvertisementMenuLevel(botLang string, userID int) {
+	db.DeleteOldAdminMsg(botLang, userID)
 
-	db.RdbSetUser(userID, "admin/advertisement")
-	inlineMarkUp, text := getAdvertisementMenu(userID)
-	msgID := msgs2.NewIDParseMarkUpMessage(int64(userID), inlineMarkUp, text)
-	db.RdbSetAdminMsgID(userID, msgID)
+	db.RdbSetUser(botLang, userID, "admin/advertisement")
+	inlineMarkUp, text := getAdvertisementMenu(botLang, userID)
+	msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), inlineMarkUp, text)
+	db.RdbSetAdminMsgID(botLang, userID, msgID)
 }
 
-func changeAdvertisementTextLevel(message *tgbotapi.Message, level, capitation string) {
+func changeAdvertisementTextLevel(botLang string, message *tgbotapi.Message, level, capitation string) {
 	if !strings.Contains(level, "/") {
 		return
 	}
@@ -158,15 +157,15 @@ func changeAdvertisementTextLevel(message *tgbotapi.Message, level, capitation s
 		status = "operation_completed"
 	}
 
-	setAdminBackButton(userID, status)
-	db.RdbSetUser(userID, "admin/advertisement/"+capitation)
-	db.DeleteOldAdminMsg(userID)
-	sendChangeWithLangMenu(userID, capitation)
+	setAdminBackButton(botLang, userID, status)
+	db.RdbSetUser(botLang, userID, "admin/advertisement/"+capitation)
+	db.DeleteOldAdminMsg(botLang, userID)
+	sendChangeWithLangMenu(botLang, userID, capitation)
 }
 
 // sendMenu is a local copy of global SendMenu
-func sendMenu(userID int, text string) {
-	db.RdbSetUser(userID, "main")
+func sendMenu(botLang string, userID int, text string) {
+	db.RdbSetUser(botLang, userID, "main")
 
 	msg := tgbotapi.NewMessage(int64(userID), text)
 	msg.ReplyMarkup = msgs2.NewMarkUp(
@@ -178,7 +177,5 @@ func sendMenu(userID int, text string) {
 		msgs2.NewRow(msgs2.NewDataButton("main_more_money")),
 	).Build(auth.GetLang(userID))
 
-	if _, err := assets.Bot.Send(msg); err != nil {
-		log.Println(err)
-	}
+	msgs2.SendMsgToUser(botLang, msg)
 }
