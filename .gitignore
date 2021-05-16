@@ -1,4 +1,4 @@
 .idea
 ./services/admin
-tokens.txt
+cfg/tokens.json
 voice-assist-bot

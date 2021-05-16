@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/admin"
@@ -24,13 +25,13 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
-		fmt.Println(update.Message.From.ID)
 		checkMessage(botLang, update.Message)
+		return
 	}
 
 	if update.CallbackQuery != nil {
-		fmt.Println(update.CallbackQuery)
 		checkCallbackQuery(botLang, update.CallbackQuery)
+		return
 	}
 }
 
@@ -63,6 +64,8 @@ func checkMessage(botLang string, message *tgbotapi.Message) {
 		makeMoneyLevel(botLang, message)
 	case "admin":
 		admin.AnalyzeAdminMessage(botLang, message, level)
+	default:
+		emptyLevel(botLang, message, lang)
 	}
 }
 
@@ -175,7 +178,7 @@ func checkTextOfMessage(botLang string, message *tgbotapi.Message) {
 		MoreMoney(botLang, message)
 	default:
 		level := db.GetLevel(botLang, message.From.ID)
-		if level == "empty" {
+		if level == "empty" || level == "main" {
 			emptyLevel(botLang, message, lang)
 		}
 		return
@@ -257,7 +260,7 @@ func WithdrawalMoney(botLang string, message *tgbotapi.Message) {
 func SendReferralLink(botLang string, message *tgbotapi.Message) {
 	user := auth.GetUser(message.From.ID)
 
-	text := msgs2.GetFormatText(user.Language, "referral_text",
+	text := msgs2.GetFormatText(user.Language, "referral_text", cfg.GetBotConfig(botLang).Link,
 		user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
 
 	msgs2.NewParseMessage(botLang, message.Chat.ID, text)

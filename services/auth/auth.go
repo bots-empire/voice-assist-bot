@@ -151,7 +151,7 @@ func GetLangFromRow(rows *sql.Rows) string {
 	}
 
 	if len(users) != 1 {
-		panic("The number if users fond is not equal to one")
+		log.Println("The number if users fond is not equal to one")
 	}
 	return users[0].Language
 }

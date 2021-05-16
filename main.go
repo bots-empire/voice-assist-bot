@@ -2,13 +2,12 @@ package main
 
 import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"math/rand"
-	"os"
-	"strings"
 	"sync"
 	"time"
 )
@@ -23,16 +22,10 @@ func main() {
 }
 
 func startAllBot() {
-	file, err := os.ReadFile("./tokens.txt")
-	if err != nil {
-		panic(err)
-		return
-	}
-
-	pairSlice := strings.Split(string(file), "\n")
-	for k, pair := range pairSlice {
-		mas := strings.Split(pair, " ")
-		assets.Bots[mas[0]] = startBot(mas[1], k)
+	k := 0
+	for lang, bot := range cfg.Tokens {
+		assets.Bots[lang] = startBot(bot.Token, k)
+		k++
 	}
 
 	log.Println("All bots is running")
@@ -41,7 +34,8 @@ func startAllBot() {
 func startBot(botToken string, k int) assets.Handler {
 	bot, err := tgbotapi.NewBotAPI(botToken)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
+		return assets.Handler{}
 	}
 
 	u := tgbotapi.NewUpdate(0)
@@ -60,6 +54,7 @@ func startBot(botToken string, k int) assets.Handler {
 }
 
 func startServices() {
+	cfg.FillBotsConfig()
 	db.UploadDataBase()
 	assets.ParseLangMap()
 	assets.ParseSiriTasks()
