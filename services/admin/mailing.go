@@ -28,7 +28,7 @@ func analyzeSelectedMailingCallbackLevel(botLang string, callbackQuery *tgbotapi
 			msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "no_language_selected")
 			return
 		}
-		db.StartMailing()
+		db.StartMailing(botLang)
 		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "mailing_successful")
 		resendAdvertisementMenuLevel(botLang, callbackQuery.From.ID)
 	case "back":

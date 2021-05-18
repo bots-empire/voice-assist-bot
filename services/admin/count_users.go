@@ -3,12 +3,12 @@ package admin
 import (
 	"database/sql"
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/db"
 	"log"
 )
 
-func countUsers() int {
-	rows, err := db.DataBase.Query("SELECT COUNT(*) FROM users;")
+func countUsers(botLang string) int {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT COUNT(*) FROM users;")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -27,6 +27,18 @@ func readRows(rows *sql.Rows) int {
 	}
 
 	return count
+}
+
+func countAllUsers() int {
+	var sum int
+	for _, handler := range assets.Bots {
+		rows, err := handler.DataBase.Query("SELECT COUNT(*) FROM users;")
+		if err != nil {
+			log.Println(err.Error())
+		}
+		sum += readRows(rows)
+	}
+	return sum
 }
 
 func countBlockedUsers() int {

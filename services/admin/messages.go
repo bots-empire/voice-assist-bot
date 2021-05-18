@@ -106,27 +106,6 @@ func advertisementMessageLevel(botLang string, message *tgbotapi.Message, level 
 	}
 }
 
-//func changeUrlLevel(message *tgbotapi.Message) {
-//	userID := message.From.ID
-//	lang := assets.AdminLang(userID)
-//	if !checkBackButton(message, lang, "back_to_advertisement_setting") {
-//		setAdminBackButton(userID, "operation_canceled")
-//		resendAdvertisementMenuLevel(userID)
-//		return
-//	}
-//
-//	if !regexp.InvitationLink.MatchString(message.Text) {
-//		text := assets.AdminText(lang, "incorrect_url_change_input")
-//		msgs2.NewParseMessage(int64(userID), text)
-//		return
-//	}
-//
-//	assets.AdminSettings.AdvertisingURL[lang] = message.Text
-//	assets.SaveAdminSettings()
-//	setAdminBackButton(userID, "operation_completed")
-//	resendAdvertisementMenuLevel(userID)
-//}
-
 func resendAdvertisementMenuLevel(botLang string, userID int) {
 	db.DeleteOldAdminMsg(botLang, userID)
 
@@ -175,7 +154,7 @@ func sendMenu(botLang string, userID int, text string) {
 		msgs2.NewRow(msgs2.NewDataButton("main_withdrawal_of_money"),
 			msgs2.NewDataButton("main_money_for_a_friend")),
 		msgs2.NewRow(msgs2.NewDataButton("main_more_money")),
-	).Build(auth.GetLang(userID))
+	).Build(auth.GetLang(botLang, userID))
 
 	msgs2.SendMsgToUser(botLang, msg)
 }

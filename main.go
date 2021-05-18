@@ -24,14 +24,14 @@ func main() {
 func startAllBot() {
 	k := 0
 	for lang, bot := range cfg.Tokens {
-		assets.Bots[lang] = startBot(bot.Token, k)
+		assets.Bots[lang] = startBot(bot.Token, lang, k)
 		k++
 	}
 
 	log.Println("All bots is running")
 }
 
-func startBot(botToken string, k int) assets.Handler {
+func startBot(botToken, lang string, k int) assets.Handler {
 	bot, err := tgbotapi.NewBotAPI(botToken)
 	if err != nil {
 		log.Println(err)
@@ -46,16 +46,18 @@ func startBot(botToken string, k int) assets.Handler {
 	}
 
 	rdb := db.StartRedis(k)
+	dataBase := db.UploadDataBase(lang)
+
 	return assets.Handler{
-		Chanel: updates,
-		Bot:    bot,
-		Rdb:    rdb,
+		Chanel:   updates,
+		Bot:      bot,
+		Rdb:      rdb,
+		DataBase: dataBase,
 	}
 }
 
 func startServices() {
 	cfg.FillBotsConfig()
-	db.UploadDataBase()
 	assets.ParseLangMap()
 	assets.ParseSiriTasks()
 	assets.ParseAdminMap()

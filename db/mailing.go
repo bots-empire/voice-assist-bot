@@ -5,23 +5,23 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"strings"
 )
 
 var (
 	message = make(map[string]tgbotapi.MessageConfig, 5)
 )
 
-func StartMailing() {
-	rows, err := DataBase.Query("SELECT id, lang FROM users WHERE" + createAStringOfLang() + ";")
+func StartMailing(botLang string) {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT id, lang FROM users;")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	MailToUser(rows)
+	MailToUser(botLang, rows)
 }
 
-func MailToUser(rows *sql.Rows) {
+func MailToUser(botLang string, rows *sql.Rows) {
 	defer rows.Close()
 	fillMessageMap()
 
@@ -40,28 +40,13 @@ func MailToUser(rows *sql.Rows) {
 
 		msg := message[lang]
 		msg.ChatID = int64(id)
+
 		if containsInAdmin(id) {
 			continue
 		}
 
-		send := false
-		for _, selectedLang := range assets.AvailableLang {
-			if assets.AdminSettings.LangSelectedMap[selectedLang] && !send {
-				if msgs.SendMessageToChat(selectedLang, msg) {
-					send = true
-				}
-
-				if !send {
-					blockedUsers[selectedLang] += 1
-				}
-			}
-		}
-
-		for _, selectedLang := range assets.AvailableLang {
-			if !send {
-				blockedUsers[selectedLang] += 1
-				break
-			}
+		if !msgs.SendMessageToChat(botLang, msg) {
+			blockedUsers[botLang] += 1
 		}
 	}
 
@@ -96,16 +81,16 @@ func containsInAdmin(userID int) bool {
 	return false
 }
 
-func createAStringOfLang() string {
-	var str string
-
-	for _, lang := range assets.AvailableLang {
-		if assets.AdminSettings.LangSelectedMap[lang] {
-			str += " lang = '" + lang + "' OR"
-		}
-	}
-	return strings.TrimRight(str, " OR")
-}
+//func createAStringOfLang() string {
+//	var str string
+//
+//	for _, lang := range assets.AvailableLang {
+//		if assets.AdminSettings.LangSelectedMap[lang] {
+//			str += " lang = '" + lang + "' OR"
+//		}
+//	}
+//	return strings.TrimRight(str, " OR")
+//}
 
 func fillMessageMap() {
 	for _, lang := range assets.AvailableLang {

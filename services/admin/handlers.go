@@ -34,7 +34,7 @@ func containsInAdmin(userID int) bool {
 }
 
 func notAdmin(botLang string, userID int) {
-	lang := auth.GetLang(userID)
+	lang := auth.GetLang(botLang, userID)
 	text := assets.LangText(lang, "not_admin")
 	msgs2.SendSimpleMsg(botLang, int64(userID), text)
 }
@@ -406,10 +406,11 @@ func sendStatistic(botLang string, userID int) {
 	lang := assets.AdminLang(userID)
 
 	assets.UploadAdminSettings()
-	count := countUsers()
+	count := countUsers(botLang)
+	allCount := countAllUsers()
 	blocked := countBlockedUsers()
 	text := adminFormatText(lang, "statistic_text",
-		count, blocked, count-blocked)
+		allCount, count, blocked, count-blocked)
 
 	msgs2.NewParseMessage(botLang, int64(userID), text)
 	db.DeleteOldAdminMsg(botLang, userID)

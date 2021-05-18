@@ -12,7 +12,7 @@ import (
 )
 
 func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	user := auth.GetUser(callbackQuery.From.ID)
+	user := auth.GetUser(botLang, callbackQuery.From.ID)
 
 	user.GetABonus(botLang)
 }
@@ -20,7 +20,7 @@ func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	level := db.GetLevel(botLang, callbackQuery.From.ID)
 	if level != "main" && level != "empty" {
-		lang := auth.GetLang(callbackQuery.From.ID)
+		lang := auth.GetLang(botLang, callbackQuery.From.ID)
 		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
 		return
 	}
@@ -31,7 +31,7 @@ func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 }
 
 func sendPaymentMethod(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	user := auth.GetUser(callbackQuery.From.ID)
+	user := auth.GetUser(botLang, callbackQuery.From.ID)
 
 	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, assets.LangText(user.Language, "select_payment"))
 
@@ -46,7 +46,7 @@ func sendPaymentMethod(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 
 func ChangeLanguage(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	if db.GetLevel(botLang, callbackQuery.From.ID) != "main" {
-		lang := auth.GetLang(callbackQuery.From.ID)
+		lang := auth.GetLang(botLang, callbackQuery.From.ID)
 		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
 		return
 	}
@@ -66,10 +66,12 @@ func setLanguage(botLang string, userID int, lang string) {
 	db.RdbSetUser(botLang, userID, "main")
 
 	if lang == "back" {
-		SendMenu(botLang, userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
+		SendMenu(botLang, userID, assets.LangText(auth.GetLang(botLang, userID), "back_to_main_menu"))
 		return
 	}
-	_, err := db.DataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
+
+	dataBase := assets.GetDB(botLang)
+	_, err := dataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -79,7 +81,7 @@ func setLanguage(botLang string, userID int, lang string) {
 
 func sendLanguages(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	userID := callbackQuery.From.ID
-	lang := auth.GetLang(userID)
+	lang := auth.GetLang(botLang, userID)
 	msg := tgbotapi.NewMessage(int64(userID), assets.LangText(lang, "select_language"))
 
 	msg.ReplyMarkup = msgs2.NewIlMarkUp(

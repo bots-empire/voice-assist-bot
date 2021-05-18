@@ -3,7 +3,6 @@ package auth
 import (
 	"database/sql"
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/db"
 	_ "github.com/go-sql-driver/mysql"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -11,8 +10,9 @@ import (
 	"strings"
 )
 
-func CheckingTheUser(message *tgbotapi.Message) {
-	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
+func CheckingTheUser(botLang string, message *tgbotapi.Message) {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -23,7 +23,7 @@ func CheckingTheUser(message *tgbotapi.Message) {
 	case 0:
 		user := createSimpleUser(message)
 		referralID := pullReferralID(message)
-		user.AddNewUser(referralID)
+		user.AddNewUser(botLang, referralID)
 	case 1:
 	default:
 		panic("There were two identical users")
@@ -60,8 +60,9 @@ func createSimpleUser(message *tgbotapi.Message) User {
 	}
 }
 
-func (u *User) AddNewUser(referralID int) {
-	_, err := db.DataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
+func (u *User) AddNewUser(botLang string, referralID int) {
+	dataBase := assets.GetDB(botLang)
+	_, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -70,17 +71,18 @@ func (u *User) AddNewUser(referralID int) {
 		return
 	}
 
-	baseUser := GetUser(referralID)
+	baseUser := GetUser(botLang, referralID)
 	baseUser.Balance += assets.AdminSettings.ReferralAmount
-	_, err = db.DataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
+	_, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func GetUser(id int) User {
-	rows, err := db.DataBase.Query("SELECT * FROM users WHERE id = ?;", id)
+func GetUser(botLang string, id int) User {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", id)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -122,8 +124,9 @@ func ReadUsers(rows *sql.Rows) []User {
 	return users
 }
 
-func GetLang(id int) string {
-	rows, err := db.DataBase.Query("SELECT lang FROM users WHERE id = ?;", id)
+func GetLang(botLang string, id int) string {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT lang FROM users WHERE id = ?;", id)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -156,7 +159,7 @@ func GetLangFromRow(rows *sql.Rows) string {
 	return users[0].Language
 }
 
-func StringGoToMainButton(id int) string {
-	lang := GetLang(id)
+func StringGoToMainButton(botLang string, id int) string {
+	lang := GetLang(botLang, id)
 	return assets.LangText(lang, "all_back_main_button")
 }

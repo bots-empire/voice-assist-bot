@@ -56,5 +56,5 @@
   "no_language_selected": "Select at least one language",
   "mailing_successful": "Ad sent successfully",
 
-  "statistic_text": "<b>Bot statistics</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Total users: %d\n\n❌ Inactive users: %d\n✅ Active users: %d"
+  "statistic_text": "<b>Bot statistics</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Total users: %d\n\n\uD83D\uDC64 Users in this bot: %d\n❌ Inactive users: %d\n✅ Active users: %d"
 }

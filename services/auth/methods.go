@@ -13,7 +13,7 @@ import (
 
 func (u *User) MakeMoney(botLang string) bool {
 	if time.Now().Unix()/86400 > u.LastVoice/86400 {
-		u.resetVoiceDayCounter()
+		u.resetVoiceDayCounter(botLang)
 	}
 
 	if u.CompletedToday >= assets.AdminSettings.MaxOfVoicePerDay {
@@ -28,11 +28,12 @@ func (u *User) MakeMoney(botLang string) bool {
 	return true
 }
 
-func (u *User) resetVoiceDayCounter() {
+func (u *User) resetVoiceDayCounter(botLang string) {
 	u.CompletedToday = 0
 	u.LastVoice = time.Now().Unix()
 
-	_, err := db.DataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
+	dataBase := assets.GetDB(botLang)
+	_, err := dataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
 		u.CompletedToday, u.LastVoice, u.ID)
 	if err != nil {
 		panic(err.Error())
@@ -77,7 +78,8 @@ func (u *User) AcceptVoiceMessage(botLang string) bool {
 	u.CompletedToday++
 	u.LastVoice = time.Now().Unix()
 
-	_, err := db.DataBase.Query("UPDATE users SET balance = ?, completed = ?, completed_today = ?, last_voice = ? WHERE id = ?;",
+	dataBase := assets.GetDB(botLang)
+	_, err := dataBase.Query("UPDATE users SET balance = ?, completed = ?, completed_today = ?, last_voice = ? WHERE id = ?;",
 		u.Balance, u.Completed, u.CompletedToday, u.LastVoice, u.ID)
 	if err != nil {
 		panic(err.Error())
@@ -107,7 +109,8 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) bool {
 	}
 
 	u.Balance -= amountInt
-	_, err = db.DataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
+	dataBase := assets.GetDB(botLang)
+	_, err = dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -132,7 +135,8 @@ func (u User) GetABonus(botLang string) {
 	}
 
 	u.Balance += assets.AdminSettings.BonusAmount
-	_, err := db.DataBase.Query("UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;", u.Balance, true, u.ID)
+	dataBase := assets.GetDB(botLang)
+	_, err := dataBase.Query("UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;", u.Balance, true, u.ID)
 	if err != nil {
 		panic(err.Error())
 	}
