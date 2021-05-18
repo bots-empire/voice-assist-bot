@@ -9,7 +9,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/admin"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"math"
 	"strings"
 	"time"
 )
@@ -289,7 +288,7 @@ func getDate(text string) string {
 	formatTime := currentTime.Format("02.01.2006 15.04")
 
 	users := currentTime.Unix() % 100000000 / 6000
-	totalEarned := int64(math.Abs(float64(currentTime.Unix()%1000000/5*5 - 500000)))
+	totalEarned := currentTime.Unix() % 100000000 / 500 * 5
 	totalVoice := totalEarned / 7
 	return fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
 }
