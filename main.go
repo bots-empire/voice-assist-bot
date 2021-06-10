@@ -67,7 +67,7 @@ func startServices() {
 }
 
 func startHandlers() {
-	wg := new(sync.WaitGroup)
+	wg := &sync.WaitGroup{}
 
 	for botLang, handler := range assets.Bots {
 		wg.Add(1)

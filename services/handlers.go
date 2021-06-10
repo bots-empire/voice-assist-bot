@@ -224,11 +224,13 @@ func SendProfile(botLang string, message *tgbotapi.Message) {
 	text := msgs2.GetFormatText(user.Language, "profile_text",
 		message.From.FirstName, message.From.UserName, user.Balance, user.Completed, user.ReferralCount)
 
-	markUp := msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlDataButton("change_lang_button", "change_lang")),
-	).Build(user.Language)
+	msgs2.NewParseMessage(botLang, int64(user.ID), text)
 
-	msgs2.NewParseMarkUpMessage(botLang, int64(user.ID), markUp, text)
+	//markUp := msgs2.NewIlMarkUp(
+	//msgs2.NewIlRow(msgs2.NewIlDataButton("change_lang_button", "change_lang")),
+	//).Build(user.Language)
+
+	//msgs2.NewParseMarkUpMessage(botLang, int64(user.ID), markUp, text)
 }
 
 // SendStatistics sends the user statistics of the entire game
