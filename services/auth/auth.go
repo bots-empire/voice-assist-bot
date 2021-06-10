@@ -21,7 +21,7 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) {
 
 	switch len(users) {
 	case 0:
-		user := createSimpleUser(message)
+		user := createSimpleUser(message, botLang)
 		referralID := pullReferralID(message)
 		user.AddNewUser(botLang, referralID)
 	case 1:
@@ -48,15 +48,15 @@ func pullReferralID(message *tgbotapi.Message) int {
 	return 0
 }
 
-func createSimpleUser(message *tgbotapi.Message) User {
-	lang := message.From.LanguageCode
-	if !strings.Contains("en,de,it,pt,es", lang) || lang == "" {
-		lang = "en"
-	}
+func createSimpleUser(message *tgbotapi.Message, botLang string) User {
+	//lang := message.From.LanguageCode
+	//if !strings.Contains("en,de,it,pt,es", lang) || lang == "" {
+	//	lang = "en"
+	//}
 
 	return User{
 		ID:       message.From.ID,
-		Language: lang,
+		Language: botLang,
 	}
 }
 
