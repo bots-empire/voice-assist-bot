@@ -26,7 +26,7 @@
   "withdrawal_method_4": "EntroPay",
   "withdrawal_method_5": "Astropay",
   "withdrawal_method_6": "VISA/MASTER",
-  "credit_card_number": "Digite o número do cartão/correio",
+  "credit_card_number": "Digite o número do Correio/Número",
   "req_withdrawal_amount": "Informe o valor de retirada 👇",
   "incorrect_amount": "Dados incorretos\n\nInforme o valor de retirada 👇",
   "lack_of_funds": "Fundos insuficientes !\n\nInforme o valor de retirada 👇",

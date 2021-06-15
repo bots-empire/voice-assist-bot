@@ -25,7 +25,7 @@
   "withdrawal_method_3": "Skrill",
   "withdrawal_method_4": "VISA/MASTER",
   "withdrawal_method_5": "Pay pall",
-  "credit_card_number": "inserisci il numero della carta/posta",
+  "credit_card_number": "inserisci il numero della postale/numero",
   "req_withdrawal_amount": "Specificare l'importo del prelievo 👇",
   "incorrect_amount": "Input errato\n\nSpecificare l'importo del prelievo 👇",
   "lack_of_funds": "Fondi insufficienti !\n\nSpecificare l'importo del prelievo 👇",
