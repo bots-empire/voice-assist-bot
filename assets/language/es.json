@@ -25,7 +25,7 @@
   "withdrawal_method_3": "Perfect Money",
   "withdrawal_method_4": "Pay pal",
   "withdrawal_method_5": "VISA/MASTER",
-  "credit_card_number": "Introduzca el número de tarjeta / correo",
+  "credit_card_number": "Introduzca el número de número/correo",
   "req_withdrawal_amount": "Especificar el importe del retiro 👇",
   "incorrect_amount": "Error de entrada\n\nEspecificar el importe del retiro 👇",
   "lack_of_funds": "Fondos insuficientes!\n\nEspecificar el importe del retiro 👇",
