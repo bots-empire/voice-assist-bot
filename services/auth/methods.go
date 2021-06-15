@@ -88,38 +88,21 @@ func (u *User) AcceptVoiceMessage(botLang string) bool {
 	return u.MakeMoney(botLang)
 }
 
-func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) bool {
+func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) {
 	amount = strings.Replace(amount, " ", "", -1)
 	amountInt, err := strconv.Atoi(amount)
 	if err != nil {
 		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "incorrect_amount"))
 		msgs2.SendMsgToUser(botLang, msg)
-		return false
+		return
 	}
 
 	if amountInt < assets.AdminSettings.MinWithdrawalAmount {
 		u.minAmountNotReached(botLang)
-		return false
-	}
-
-	if u.Balance < amountInt {
-		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "lack_of_funds"))
-		msgs2.SendMsgToUser(botLang, msg)
-		return false
+		return
 	}
 
 	sendInvitationToSubs(botLang, u.ID, GetLang(botLang, u.ID), amount)
-
-	//u.Balance -= amountInt
-	//dataBase := assets.GetDB(botLang)
-	//_, err = dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
-	//if err != nil {
-	//	panic(err.Error())
-	//}
-	//
-	//msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "successfully_withdrawn"))
-	//msgs2.SendMsgToUser(botLang, msg)
-	return false
 }
 
 func (u *User) minAmountNotReached(botLang string) {
@@ -143,6 +126,9 @@ func sendInvitationToSubs(botLang string, userID int, userLang, amount string) {
 
 func (u *User) CheckSubscribeToWithdrawal(botLang string, callback *tgbotapi.CallbackQuery, userID, amount int) bool {
 	if u.Balance < amount {
+		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "lack_of_funds"))
+		msgs2.SendMsgToUser(botLang, msg)
+		db.RdbSetUser(botLang, userID, "withdrawal/req_amount")
 		return false
 	}
 

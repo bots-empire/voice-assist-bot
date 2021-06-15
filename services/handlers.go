@@ -81,9 +81,7 @@ func withdrawalLevel(botLang string, message *tgbotapi.Message, level string) {
 		reqWithdrawalAmount(botLang, message)
 	case "req_amount":
 		user := auth.GetUser(botLang, message.From.ID)
-		if user.WithdrawMoneyFromBalance(botLang, message.Text) {
-			SendMenu(botLang, message.From.ID, assets.LangText(user.Language, "main_select_menu"))
-		}
+		user.WithdrawMoneyFromBalance(botLang, message.Text)
 		return
 	}
 
