@@ -6,8 +6,9 @@ import (
 )
 
 type BotConfig struct {
-	Token string
-	Link  string
+	Token         string
+	Link          string
+	LanguageInBot string
 }
 
 var Tokens = make(map[string]BotConfig)

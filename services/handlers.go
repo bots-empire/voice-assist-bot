@@ -77,8 +77,6 @@ func withdrawalLevel(botLang string, message *tgbotapi.Message, level string) {
 	}
 	level = strings.Replace(level, "withdrawal/", "", 1)
 	switch level {
-	case "paypal":
-		reqWithdrawalAmount(botLang, message)
 	case "credit_card":
 		reqWithdrawalAmount(botLang, message)
 	case "req_amount":
@@ -95,26 +93,24 @@ func withdrawalLevel(botLang string, message *tgbotapi.Message, level string) {
 func checkSelectedPaymentMethod(botLang string, message *tgbotapi.Message) {
 	lang := auth.GetLang(botLang, message.From.ID)
 	switch message.Text {
-	case assets.LangText(lang, "paypal_method"):
-		paypalReq(botLang, message)
-	case assets.LangText(lang, "credit_card_method"):
-		creditCardReq(botLang, message)
 	case assets.LangText(lang, "main_back"):
 		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
+	default:
+		creditCardReq(botLang, message)
 	}
 }
 
-func paypalReq(botLang string, message *tgbotapi.Message) {
-	db.RdbSetUser(botLang, message.From.ID, "withdrawal/paypal")
-
-	lang := auth.GetLang(botLang, message.From.ID)
-	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
-	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
-	).Build(lang)
-
-	msgs2.SendMsgToUser(botLang, msg)
-}
+//func paypalReq(botLang string, message *tgbotapi.Message) {
+//	db.RdbSetUser(botLang, message.From.ID, "withdrawal/paypal")
+//
+//	lang := auth.GetLang(botLang, message.From.ID)
+//	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
+//	msg.ReplyMarkup = msgs2.NewMarkUp(
+//		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
+//	).Build(lang)
+//
+//	msgs2.SendMsgToUser(botLang, msg)
+//}
 
 func creditCardReq(botLang string, message *tgbotapi.Message) {
 	db.RdbSetUser(botLang, message.From.ID, "withdrawal/credit_card")
@@ -150,8 +146,10 @@ func checkCallbackQuery(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	switch strings.Split(callbackQuery.Data, "/")[0] {
 	case "moreMoney":
 		GetBonus(botLang, callbackQuery)
-	case "withdrawalMoney":
-		Withdrawal(botLang, callbackQuery)
+	//case "withdrawalMoney":
+	//	Withdrawal(botLang, callbackQuery)
+	case "withdrawal_exit":
+		CheckSubsAndWithdrawal(botLang, callbackQuery, callbackQuery.From.ID)
 	case "change_lang":
 		ChangeLanguage(botLang, callbackQuery)
 	case "admin":
@@ -245,17 +243,9 @@ func SendStatistics(botLang string, message *tgbotapi.Message) {
 
 // WithdrawalMoney performs money withdrawal
 func WithdrawalMoney(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(botLang, message.From.ID)
+	db.RdbSetUser(botLang, message.From.ID, "withdrawal")
 
-	text := msgs2.GetFormatText(user.Language, "withdrawal_money",
-		user.Balance)
-
-	markUp := msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL[user.Language])),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
-	).Build(user.Language)
-
-	msgs2.NewParseMarkUpMessage(botLang, int64(user.ID), markUp, text)
+	sendPaymentMethod(botLang, message)
 }
 
 // SendReferralLink generates a referral link and sends it to the user
@@ -274,11 +264,11 @@ func MoreMoney(botLang string, message *tgbotapi.Message) {
 	user := auth.GetUser(botLang, message.From.ID)
 
 	text := msgs2.GetFormatText(user.Language, "more_money_text",
-		assets.AdminSettings.BonusAmount)
+		assets.AdminSettings.BonusAmount, assets.AdminSettings.BonusAmount)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyMarkup = msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL[user.Language])),
+		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[botLang].Url)),
 		msgs2.NewIlRow(msgs2.NewIlDataButton("get_bonus_button", "moreMoney/getBonus")),
 	).Build(user.Language)
 

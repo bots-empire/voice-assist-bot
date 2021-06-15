@@ -17,31 +17,50 @@ func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	user.GetABonus(botLang)
 }
 
-func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	level := db.GetLevel(botLang, callbackQuery.From.ID)
-	if level != "main" && level != "empty" {
-		lang := auth.GetLang(botLang, callbackQuery.From.ID)
-		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
-		return
-	}
+//func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
+//	level := db.GetLevel(botLang, callbackQuery.From.ID)
+//	if level != "main" && level != "empty" {
+//		lang := auth.GetLang(botLang, callbackQuery.From.ID)
+//		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
+//		return
+//	}
+//
+//	db.RdbSetUser(botLang, callbackQuery.From.ID, "withdrawal")
+//
+//	sendPaymentMethod(botLang, callbackQuery)
+//}
 
-	db.RdbSetUser(botLang, callbackQuery.From.ID, "withdrawal")
+func sendPaymentMethod(botLang string, message *tgbotapi.Message) {
+	user := auth.GetUser(botLang, message.From.ID)
 
-	sendPaymentMethod(botLang, callbackQuery)
-}
-
-func sendPaymentMethod(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	user := auth.GetUser(botLang, callbackQuery.From.ID)
-
-	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, assets.LangText(user.Language, "select_payment"))
+	msg := tgbotapi.NewMessage(int64(message.From.ID), assets.LangText(user.Language, "select_payment"))
 
 	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("paypal_method"),
-			msgs2.NewDataButton("credit_card_method")),
+		msgs2.NewRow(msgs2.NewDataButton("withdrawal_method_1"),
+			msgs2.NewDataButton("withdrawal_method_2")),
+		msgs2.NewRow(msgs2.NewDataButton("withdrawal_method_3"),
+			msgs2.NewDataButton("withdrawal_method_4")),
+		msgs2.NewRow(msgs2.NewDataButton("withdrawal_method_5"),
+			msgs2.NewDataButton("withdrawal_method_6")),
 		msgs2.NewRow(msgs2.NewDataButton("main_back")),
 	).Build(user.Language)
 
 	msgs2.SendMsgToUser(botLang, msg)
+}
+
+func CheckSubsAndWithdrawal(botLang string, callBack *tgbotapi.CallbackQuery, userID int) {
+	amount := strings.Split(callBack.Data, "?")[1]
+
+	lang := auth.GetLang(botLang, userID)
+	msgs2.SendAnswerCallback(botLang, callBack, lang, "invitation_to_subscribe")
+	u := auth.GetUser(botLang, userID)
+	amountInt, _ := strconv.Atoi(amount)
+
+	if u.CheckSubscribeToWithdrawal(botLang, callBack, userID, amountInt) {
+		db.RdbSetUser(botLang, userID, "main")
+
+		SendMenu(botLang, userID, assets.LangText(lang, "main_select_menu"))
+	}
 }
 
 func ChangeLanguage(botLang string, callbackQuery *tgbotapi.CallbackQuery) {

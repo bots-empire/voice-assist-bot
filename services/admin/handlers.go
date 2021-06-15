@@ -329,7 +329,7 @@ func analyzeLangOfChangeTextOrUrlLevel(botLang string, callbackQuery *tgbotapi.C
 		value = assets.AdminSettings.AdvertisingText[lang]
 	case "change_url":
 		key = "set_new_url_text"
-		value = assets.AdminSettings.AdvertisingURL[lang]
+		value = assets.AdminSettings.AdvertisingChan[lang].Url
 	}
 
 	switch lang {

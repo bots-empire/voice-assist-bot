@@ -108,9 +108,53 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) bool {
 		return false
 	}
 
-	u.Balance -= amountInt
+	sendInvitationToSubs(botLang, u.ID, GetLang(botLang, u.ID), amount)
+
+	//u.Balance -= amountInt
+	//dataBase := assets.GetDB(botLang)
+	//_, err = dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//
+	//msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "successfully_withdrawn"))
+	//msgs2.SendMsgToUser(botLang, msg)
+	return false
+}
+
+func (u *User) minAmountNotReached(botLang string) {
+	text := assets.LangText(u.Language, "minimum_amount_not_reached")
+	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
+
+	msgs2.NewParseMessage(botLang, int64(u.ID), text)
+}
+
+func sendInvitationToSubs(botLang string, userID int, userLang, amount string) {
+	text := msgs2.GetFormatText(userLang, "withdrawal_not_subs_text")
+
+	msg := tgbotapi.NewMessage(int64(userID), text)
+	msg.ReplyMarkup = msgs2.NewIlMarkUp(
+		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[botLang].Url)),
+		msgs2.NewIlRow(msgs2.NewIlDataButton("im_subscribe_button", "withdrawal_exit/withdrawal_exit?"+amount)),
+	).Build(userLang)
+
+	msgs2.SendMsgToUser(botLang, msg)
+}
+
+func (u *User) CheckSubscribeToWithdrawal(botLang string, callback *tgbotapi.CallbackQuery, userID, amount int) bool {
+	if u.Balance < amount {
+		return false
+	}
+
+	if !u.CheckSubscribe(botLang, userID) {
+		lang := GetLang(botLang, userID)
+		msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
+		return false
+	}
+
+	u.Balance -= amount
 	dataBase := assets.GetDB(botLang)
-	_, err = dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
+	_, err := dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -120,11 +164,30 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) bool {
 	return true
 }
 
-func (u *User) minAmountNotReached(botLang string) {
-	text := assets.LangText(u.Language, "minimum_amount_not_reached")
-	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
+func (u *User) CheckSubscribe(botLang string, userID int) bool {
+	fmt.Println(assets.AdminSettings.AdvertisingChan[botLang].ChannelID)
+	member, err := assets.Bots[botLang].Bot.GetChatMember(tgbotapi.ChatConfigWithUser{
+		ChatID: assets.AdminSettings.AdvertisingChan[botLang].ChannelID,
+		UserID: userID,
+	})
 
-	msgs2.NewParseMessage(botLang, int64(u.ID), text)
+	if err == nil {
+		return checkMemberStatus(member)
+	}
+	return false
+}
+
+func checkMemberStatus(member tgbotapi.ChatMember) bool {
+	if member.IsAdministrator() {
+		return true
+	}
+	if member.IsCreator() {
+		return true
+	}
+	if member.IsMember() {
+		return true
+	}
+	return false
 }
 
 func (u User) GetABonus(botLang string) {

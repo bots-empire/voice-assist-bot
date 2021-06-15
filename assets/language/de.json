@@ -46,5 +46,10 @@
   "language_successful_set": "Sprache erfolgreich installiert",
   "all_back_main_button": "⬅️ Hauptmenü;⬅️ Zurück;❌ Abbrechen",
   "not_admin": "Sorry, aber du bist kein Administrator",
-  "advertisement_button_text": "✅ MAKE MONEY ✅"
+  "advertisement_button_text": "✅ MAKE MONEY ✅",
+
+  "withdrawal_not_subs_text": "Abonnieren Sie den gesponserten Kanal und sehen Sie sich die ersten 15 Beiträge an, um Ihr Geld abzuheben!",
+  "im_subscribe_button": "Ich habe die Bedingungen gemacht ✅",
+  "invitation_to_subscribe": "We checked your subscription",
+  "user_dont_subscribe": "du hast keinen Kanal abonniert"
 }

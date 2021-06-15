@@ -14,12 +14,27 @@
   "VoiceAmount": 5,
   "MaxOfVoicePerDay": 20,
   "ReferralAmount": 15,
-  "AdvertisingURL": {
-    "de": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "en": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "es": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "it": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "pt": "https://t.me/joinchat/Vm991h1lG-GNnoK6"
+  "AdvertisingChan": {
+    "de": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "en_1": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "es": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "it": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "pt": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    }
   },
   "BlockedUsers": {
     "de": 0,

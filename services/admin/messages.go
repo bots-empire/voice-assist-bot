@@ -128,7 +128,7 @@ func changeAdvertisementTextLevel(botLang string, message *tgbotapi.Message, lev
 	if checkBackButton(message, lang, "back_to_advertisement_setting") {
 		switch capitation {
 		case "change_url":
-			assets.AdminSettings.AdvertisingURL[textLang] = message.Text
+			assets.AdminSettings.AdvertisingChan[textLang].Url = message.Text
 		case "change_text":
 			assets.AdminSettings.AdvertisingText[textLang] = message.Text
 		}
