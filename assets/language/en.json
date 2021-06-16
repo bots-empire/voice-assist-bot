@@ -13,7 +13,7 @@
   "invitation_to_record_voice": "\uD83D\uDDE3 <b>Record a voice message with the phrase:</b>\n«%s»",
   "reached_max_amount_per_day": "✅ You have already sent %d/%d voice messages!\nCome back in 24 hours to continue earning money...",
   "profile_text": "👤 My profile:\n\n<b>Name:</b> %s\n<b>Username:</b> %s\n<b>Balance:</b> %d $\n<b>Voice messages that you have sent:</b> %d\n<b>Invited:</b> %d",
-  "statistic_to_user": "📊 Statistics - bot\n%s\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %d\n🧠 <b>Voice messages sent:</b> %d",
+  "statistic_to_user": "📊 Statistics - bot\n\n👤 <b>Users - bot:</b> %d\n💰 <b>Earned by users:</b> %d\n🧠 <b>Voice messages sent:</b> %d",
   "withdrawal_money": "💰 <b>Balance:</b> %d $.\n\nIf you desire to withdraw funds, choose where you want to put them !",
   "advertising_button": "📲 Go to the channel",
   "get_bonus_button": "💰 Get bonus",

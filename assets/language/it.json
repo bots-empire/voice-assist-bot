@@ -13,7 +13,7 @@
   "invitation_to_record_voice": "\uD83D\uDDE3 <b>Registra un messaggio vocale con una frase:</b>\n«%s»",
   "reached_max_amount_per_day": "✅ Hai già inviato %d/%d messaggi vocali!\nRitorna dopo 24 ore per continuare a guadagnare...",
   "profile_text": "👤 Il mio profilo:\n\n<b>Nome:</b> %s\n<b>Username:</b> %s\n<b>Saldo:</b> %d EUR.\n<b>Inviato messaggi vocali:</b> %d\n<b>Invitato:</b> %d",
-  "statistic_to_user": "📊 Statistiche Bot\n%s\n\n👤 <b>Utenti Bot:</b> %d\n💰 <b>Guadagnato dagli utenti:</b> %d\n🧠 <b>Inviato messaggi vocali</b> %d",
+  "statistic_to_user": "📊 Statistiche Bot\n\n👤 <b>Utenti Bot:</b> %d\n💰 <b>Guadagnato dagli utenti:</b> %d\n🧠 <b>Inviato messaggi vocali</b> %d",
   "withdrawal_money": "💰 <b>Equilibrio:</b> %d EUR.\n\nSe vuoi prelevare fondi, scegli dove accreditarli !",
   "advertising_button": "\uD83D\uDCF2 Iscriviti al canale",
   "get_bonus_button": "✅ Ottieni fondi",

@@ -13,7 +13,7 @@
   "invitation_to_record_voice": "\uD83D\uDDE3 <b>Nehmen Sie eine Sprachnachricht mit den Worten auf:</b>\n«%s»",
   "reached_max_amount_per_day": "✅ Sie haben bereits %d/%d Sprachnachrichten gesendet!\nKommen Sie 24 Stunden später zurück, um weiter zu verdienen...",
   "profile_text": "👤 Mein Profil:\n\n<b>Name:</b> %s\n<b>Benutzername:</b> %s\n<b>Balance:</b> %d EUR\n<b>Sprachnachricht versendet:</b> %d\n<b>Eingeladen:</b> %d",
-  "statistic_to_user": "\uD83D\uDCCA Statistik - des Bots\n%s\n\n👤 <b>Benutzer - des Bots:</b> %d\n💰 <b>Von den Benutzern verdient:</b> %d\n🧠 <b>Sprachnachrichten versendet:</b> %d",
+  "statistic_to_user": "\uD83D\uDCCA Statistik - des Bots\n\n👤 <b>Benutzer - des Bots:</b> %d\n💰 <b>Von den Benutzern verdient:</b> %d\n🧠 <b>Sprachnachrichten versendet:</b> %d",
   "withdrawal_money": "💰 <b>Balance:</b> %d EUR.\n\nWenn Sie Geld abheben möchten, dann wählen Sie den Bestimmungsort aus!",
   "advertising_button": "\uD83D\uDCF2 Zum Channel wechseln",
   "get_bonus_button": "\uD83D\uDCB0 Erhalten Sie Boni",

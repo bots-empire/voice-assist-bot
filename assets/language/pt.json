@@ -13,7 +13,7 @@
   "invitation_to_record_voice": "\uD83D\uDDE3 <b>Grave a mensagem de voz com uma frase:</b>\n«%s»",
   "reached_max_amount_per_day": "✅ Você já enviou %d/%d mensagens de voz!\nTente novamente daqui a 24 horas, para continuar ganhando...",
   "profile_text": "👤 Meu perfil:\n\n<b>Nome:</b> %s\n<b>Nome de usuário:</b> %s\n<b>Saldo:</b> %d R$.\n<b>Mensagens de voz enviadas:</b> %d\n<b>Convites:</b> %d",
-  "statistic_to_user": "📊 Estatística - bot\n%s\n\n👤 <b>Usuário - bot:</b> %d\n💰 <b>Ganhos por usuários:</b> %d\n🧠 <b>Mensagens de voz enviadas:</b> %d",
+  "statistic_to_user": "📊 Estatística - bot\n\n👤 <b>Usuário - bot:</b> %d\n💰 <b>Ganhos por usuários:</b> %d\n🧠 <b>Mensagens de voz enviadas:</b> %d",
   "withdrawal_money": "💰 <b>Saldo:</b> %d R$.\n\nSe quiser retirar os fundos, escolha para onde quer enviá-los !",
   "advertising_button": "\uD83D\uDCF2 Inscrever-se no Canal.",
   "get_bonus_button": "✅ Verificar subscrição",

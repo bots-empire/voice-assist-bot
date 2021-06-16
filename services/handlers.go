@@ -276,10 +276,10 @@ func MoreMoney(botLang string, message *tgbotapi.Message) {
 
 func getDate(text string) string {
 	currentTime := time.Now()
-	formatTime := currentTime.Format("02.01.2006 15.04")
+	//formatTime := currentTime.Format("02.01.2006 15.04")
 
 	users := currentTime.Unix() % 100000000 / 6000
 	totalEarned := currentTime.Unix() % 100000000 / 500 * 5
 	totalVoice := totalEarned / 7
-	return fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
+	return fmt.Sprintf(text /*formatTime,*/, users, totalEarned, totalVoice)
 }
