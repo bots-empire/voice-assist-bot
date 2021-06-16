@@ -24,7 +24,7 @@
   "withdrawal_method_2": "Neteller",
   "withdrawal_method_3": "Skrill",
   "withdrawal_method_4": "VISA/MASTER",
-  "withdrawal_method_5": "Pay pall",
+  "withdrawal_method_5": "Pay pal",
   "credit_card_number": "inserisci il numero della postale/numero",
   "req_withdrawal_amount": "Specificare l'importo del prelievo 👇",
   "incorrect_amount": "Input errato\n\nSpecificare l'importo del prelievo 👇",

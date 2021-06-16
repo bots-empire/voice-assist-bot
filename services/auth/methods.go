@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
@@ -159,8 +160,10 @@ func (u *User) CheckSubscribe(botLang string, userID int) bool {
 
 	if err == nil {
 		fmt.Println(member.Status)
+		addMemberToSubsBase(botLang, userID)
 		return checkMemberStatus(member)
 	}
+	fmt.Println(err, member)
 	return false
 }
 
@@ -175,6 +178,47 @@ func checkMemberStatus(member tgbotapi.ChatMember) bool {
 		return true
 	}
 	return false
+}
+
+func addMemberToSubsBase(botLang string, userId int) {
+	dataBase := assets.GetDB(botLang)
+	rows, err := dataBase.Query("SELECT * FROM subs WHERE id = ?;", userId)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	user := readUser(rows)
+	if user.ID != 0 {
+		return
+	}
+	_, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func readUser(rows *sql.Rows) User {
+	defer rows.Close()
+
+	var users []User
+
+	for rows.Next() {
+		var id int
+
+		if err := rows.Scan(&id); err != nil {
+			panic("Failed to scan row: " + err.Error())
+		}
+
+		users = append(users, User{
+			ID: id,
+		})
+	}
+	if len(users) == 0 {
+		users = append(users, User{
+			ID: 0,
+		})
+	}
+	return users[0]
 }
 
 func (u User) GetABonus(botLang string, callback *tgbotapi.CallbackQuery) {

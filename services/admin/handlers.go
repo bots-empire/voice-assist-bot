@@ -410,8 +410,9 @@ func sendStatistic(botLang string, userID int) {
 	count := countUsers(botLang)
 	allCount := countAllUsers()
 	blocked := countBlockedUsers()
+	subscribers := countSubscribers()
 	text := adminFormatText(lang, "statistic_text",
-		allCount, count, blocked, count-blocked)
+		allCount, count, blocked, subscribers, count-blocked)
 
 	msgs2.NewParseMessage(botLang, int64(userID), text)
 	db.DeleteOldAdminMsg(botLang, userID)
