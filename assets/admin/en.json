@@ -33,6 +33,7 @@
   "advertisement_setting_text": "<b>Ad Settings</b> \uD83D\uDCB5\n\nSelect the section you are interested in:",
   "change_url_button": "Change the link ↗️",
   "set_new_url_text": "<b>Current Link:</b> %s\n\nSend a new link ⤵️",
+  "chat_id_not_update": "The data is not updated, please try again",
   "incorrect_url_change_input": "<b>Invalid link</b>\n\nCheck that the data is correct and try again ⤵️",
   "back_to_advertisement_setting": "← Back to ⚙️ Advertising",
   "change_text_button": "Edit Text \uD83D\uDCE8",

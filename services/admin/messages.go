@@ -120,7 +120,6 @@ func changeAdvertisementTextLevel(botLang string, message *tgbotapi.Message, lev
 		return
 	}
 
-	textLang := strings.Replace(level, capitation+"/", "", 1)
 	userID := message.From.ID
 	lang := assets.AdminLang(userID)
 	status := "operation_canceled"
@@ -128,9 +127,16 @@ func changeAdvertisementTextLevel(botLang string, message *tgbotapi.Message, lev
 	if checkBackButton(message, lang, "back_to_advertisement_setting") {
 		switch capitation {
 		case "change_url":
-			assets.AdminSettings.AdvertisingChan[textLang].Url = message.Text
+			advertChan := getUrlAndChatID(message)
+			if advertChan.ChannelID == 0 {
+				text := assets.AdminText(lang, "chat_id_not_update")
+				msgs2.NewParseMessage(botLang, int64(userID), text)
+				return
+			}
+
+			assets.AdminSettings.AdvertisingChan[botLang] = advertChan
 		case "change_text":
-			assets.AdminSettings.AdvertisingText[textLang] = message.Text
+			assets.AdminSettings.AdvertisingText[botLang] = message.Text
 		}
 		assets.SaveAdminSettings()
 		status = "operation_completed"
@@ -139,7 +145,24 @@ func changeAdvertisementTextLevel(botLang string, message *tgbotapi.Message, lev
 	setAdminBackButton(botLang, userID, status)
 	db.RdbSetUser(botLang, userID, "admin/advertisement/"+capitation)
 	db.DeleteOldAdminMsg(botLang, userID)
-	sendChangeWithLangMenu(botLang, userID, capitation)
+	sendAdminMainMenu(botLang, userID)
+}
+
+func getUrlAndChatID(message *tgbotapi.Message) *assets.AdvertChannel {
+	data := strings.Split(message.Text, "\n")
+	if len(data) != 2 {
+		return &assets.AdvertChannel{}
+	}
+
+	chatId, err := strconv.Atoi(data[1])
+	if err != nil {
+		return &assets.AdvertChannel{}
+	}
+
+	return &assets.AdvertChannel{
+		Url:       data[0],
+		ChannelID: int64(chatId),
+	}
 }
 
 // sendMenu is a local copy of global SendMenu

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
@@ -14,7 +15,7 @@ import (
 func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	user := auth.GetUser(botLang, callbackQuery.From.ID)
 
-	user.GetABonus(botLang)
+	user.GetABonus(botLang, callbackQuery)
 }
 
 //func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
@@ -49,6 +50,7 @@ func sendPaymentMethod(botLang string, message *tgbotapi.Message) {
 }
 
 func CheckSubsAndWithdrawal(botLang string, callBack *tgbotapi.CallbackQuery, userID int) {
+	fmt.Println(callBack.Data)
 	amount := strings.Split(callBack.Data, "?")[1]
 
 	lang := auth.GetLang(botLang, userID)

@@ -24,6 +24,7 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 		return
 	}
 
+	fmt.Println(botLang)
 	if update.Message != nil {
 		checkMessage(botLang, update.Message)
 		return

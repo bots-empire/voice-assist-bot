@@ -264,9 +264,8 @@ func sendAdvertisementMenu(botLang string, callbackQuery *tgbotapi.CallbackQuery
 func analyzeAdvertisementCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
 	userID := callbackQuery.From.ID
 
-	callbackQuery.Data = strings.Replace(callbackQuery.Data, "advertisement/", "", 1)
 	data := strings.Split(callbackQuery.Data, "/")
-	switch data[0] {
+	switch data[1] {
 	case "change_url":
 		analyzeChangeUrlLevel(botLang, callbackQuery)
 	case "change_text":
@@ -286,14 +285,14 @@ func analyzeAdvertisementCallbackLevel(botLang string, callbackQuery *tgbotapi.C
 }
 
 func analyzeChangeUrlLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	if strings.Contains(callbackQuery.Data, "/") {
-		analyzeLangOfChangeTextOrUrlLevel(botLang, callbackQuery, "change_url")
-		return
-	}
-
-	db.RdbSetUser(botLang, callbackQuery.From.ID, "admin/advertisement/change_url")
-	sendChangeWithLangMenu(botLang, callbackQuery.From.ID, "change_url")
-	msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
+	//if strings.Contains(callbackQuery.Data, "/") {
+	analyzeLangOfChangeTextOrUrlLevel(botLang, callbackQuery, "change_url")
+	//	return
+	//}
+	//
+	//db.RdbSetUser(botLang, callbackQuery.From.ID, "admin/advertisement/change_url")
+	//sendChangeWithLangMenu(botLang, callbackQuery.From.ID, "change_url")
+	//msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
 }
 
 func promptForInput(botLang string, userID int, key string, values ...interface{}) {
@@ -309,27 +308,29 @@ func promptForInput(botLang string, userID int, key string, values ...interface{
 }
 
 func analyzeChangeTextCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	if strings.Contains(callbackQuery.Data, "/") {
-		analyzeLangOfChangeTextOrUrlLevel(botLang, callbackQuery, "change_text")
-		return
-	}
+	analyzeLangOfChangeTextOrUrlLevel(botLang, callbackQuery, "change_text")
 
-	db.RdbSetUser(botLang, callbackQuery.From.ID, "admin/advertisement/change_text")
-	sendChangeWithLangMenu(botLang, callbackQuery.From.ID, "change_text")
-	msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
+	//if strings.Contains(callbackQuery.Data, "/") {
+	//analyzeLangOfChangeTextOrUrlLevel(botLang, callbackQuery, "change_text")
+	//return
+	//}
+	//
+	//db.RdbSetUser(botLang, callbackQuery.From.ID, "admin/advertisement/change_text")
+	//sendChangeWithLangMenu(botLang, callbackQuery.From.ID, "change_text")
+	//msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
 }
 
 func analyzeLangOfChangeTextOrUrlLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery, partition string) {
 	userID := callbackQuery.From.ID
-	lang := strings.Replace(callbackQuery.Data, partition+"/", "", 1)
+	lang := strings.Replace(callbackQuery.Data, "advertisement/"+partition+"/", "", 1)
 	var key, value string
 	switch partition {
 	case "change_text":
 		key = "set_new_advertisement_text"
-		value = assets.AdminSettings.AdvertisingText[lang]
+		value = assets.AdminSettings.AdvertisingText[botLang]
 	case "change_url":
 		key = "set_new_url_text"
-		value = assets.AdminSettings.AdvertisingChan[lang].Url
+		value = assets.AdminSettings.AdvertisingChan[botLang].Url
 	}
 
 	switch lang {

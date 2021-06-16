@@ -21,7 +21,7 @@ func analyzeMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.Callbac
 }
 
 func analyzeSelectedMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	callbackQuery.Data = strings.Replace(callbackQuery.Data, "mailing/", "", 1)
+	callbackQuery.Data = strings.Replace(callbackQuery.Data, "advertisement/mailing/", "", 1)
 	switch callbackQuery.Data {
 	case "send":
 		if !selectedLangAreNotEmpty() {

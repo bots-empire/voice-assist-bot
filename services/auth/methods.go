@@ -158,6 +158,7 @@ func (u *User) CheckSubscribe(botLang string, userID int) bool {
 	})
 
 	if err == nil {
+		fmt.Println(member.Status)
 		return checkMemberStatus(member)
 	}
 	return false
@@ -176,7 +177,13 @@ func checkMemberStatus(member tgbotapi.ChatMember) bool {
 	return false
 }
 
-func (u User) GetABonus(botLang string) {
+func (u User) GetABonus(botLang string, callback *tgbotapi.CallbackQuery) {
+	if !u.CheckSubscribe(botLang, u.ID) {
+		lang := GetLang(botLang, u.ID)
+		msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
+		return
+	}
+
 	if u.TakeBonus {
 		text := assets.LangText(u.Language, "bonus_already_have")
 		msgs2.SendSimpleMsg(botLang, int64(u.ID), text)

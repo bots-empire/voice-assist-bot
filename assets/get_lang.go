@@ -8,11 +8,11 @@ import (
 
 var (
 	AvailableAdminLang = []string{"en", "ru"}
-	AvailableLang      = []string{ /*"en", "de", */ "it", "pt", "es"}
+	AvailableLang      = []string{ /*"en", "de", */ "it", "pt", "es", "mx"}
 
 	Language     = make([]map[string]string, 5)
 	AdminLibrary = make([]map[string]string, 2)
-	Task         = make([][]string, 5)
+	Task         = make([][]string, 4)
 )
 
 func ParseLangMap() {
