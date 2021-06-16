@@ -119,7 +119,7 @@ func analyzeAdminSettingsCallbackLevel(botLang string, callbackQuery *tgbotapi.C
 	case "language":
 		changeAdminLanguage(botLang, callbackQuery)
 	case "admin_list":
-		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "add_in_future")
+		SendAdminListMenu(botLang, callbackQuery)
 	case "back":
 		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
 		sendAdminMainMenu(botLang, callbackQuery.From.ID)
@@ -183,23 +183,23 @@ func analyzeChangeParameterCallbackLevel(botLang string, callbackQuery *tgbotapi
 	case "bonus_amount":
 		db.RdbSetUser(botLang, userID, "admin/make_money/bonus")
 		parameter = assets.AdminText(lang, "change_bonus_amount_button")
-		value = assets.AdminSettings.BonusAmount
+		value = assets.AdminSettings.Parameters[botLang].BonusAmount
 	case "min_withdrawal_amount":
 		db.RdbSetUser(botLang, userID, "admin/make_money/withdrawal")
 		parameter = assets.AdminText(lang, "change_min_withdrawal_amount_button")
-		value = assets.AdminSettings.MinWithdrawalAmount
+		value = assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount
 	case "voice_amount":
 		db.RdbSetUser(botLang, userID, "admin/make_money/voice")
 		parameter = assets.AdminText(lang, "change_voice_amount_button")
-		value = assets.AdminSettings.VoiceAmount
+		value = assets.AdminSettings.Parameters[botLang].VoiceAmount
 	case "voice_pd_amount":
 		db.RdbSetUser(botLang, userID, "admin/make_money/voice_pd")
 		parameter = assets.AdminText(lang, "change_voice_pd_amount_button")
-		value = assets.AdminSettings.MaxOfVoicePerDay
+		value = assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay
 	case "referral_amount":
 		db.RdbSetUser(botLang, userID, "admin/make_money/referral")
 		parameter = assets.AdminText(lang, "change_referral_amount_button")
-		value = assets.AdminSettings.ReferralAmount
+		value = assets.AdminSettings.Parameters[botLang].ReferralAmount
 	case "back":
 		level := db.GetLevel(botLang, userID)
 		if strings.Count(level, "/") == 2 {

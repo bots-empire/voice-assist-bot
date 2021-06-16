@@ -7,21 +7,26 @@ import (
 )
 
 type Admin struct {
-	AdminID             map[int]*AdminUser
+	AdminID         map[int]*AdminUser
+	Parameters      map[string]*Params
+	AdvertisingChan map[string]*AdvertChannel
+	BlockedUsers    map[string]int
+	LangSelectedMap map[string]bool
+	AdvertisingText map[string]string
+}
+
+type AdminUser struct {
+	Language           string
+	FirstName          string
+	SpecialPossibility bool
+}
+
+type Params struct {
 	BonusAmount         int
 	MinWithdrawalAmount int
 	VoiceAmount         int
 	MaxOfVoicePerDay    int
 	ReferralAmount      int
-	AdvertisingChan     map[string]*AdvertChannel
-	BlockedUsers        map[string]int
-	LangSelectedMap     map[string]bool
-	AdvertisingText     map[string]string
-}
-
-type AdminUser struct {
-	Language  string
-	FirstName string
 }
 
 type AdvertChannel struct {

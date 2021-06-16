@@ -2,18 +2,52 @@
   "AdminID": {
     "138814168": {
       "Language": "ru",
-      "FirstName": "Arb"
+      "FirstName": "Arb",
+      "SpecialPossibility": false
     },
     "1418862576": {
       "Language": "ru",
-      "FirstName": "Тимофей"
+      "FirstName": "Тимофей",
+      "SpecialPossibility": false
     }
   },
-  "BonusAmount": 50,
-  "MinWithdrawalAmount": 300,
-  "VoiceAmount": 5,
-  "MaxOfVoicePerDay": 20,
-  "ReferralAmount": 15,
+  "Parameters": {
+    "en": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    },
+    "es": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    },
+    "it": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    },
+    "mx": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    },
+    "pt": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    }
+  },
   "AdvertisingChan": {
     "de": {
       "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",

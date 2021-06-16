@@ -58,5 +58,14 @@
   "no_language_selected": "Select at least one language",
   "mailing_successful": "Ad sent successfully",
 
+  "admin_list_text": "<b>List of Administrators</b> \uD83D\uDC68\u200D\uD83D\uDCBB\n\nSelect the section you are interested in:",
+  "add_admin_button": "Add an administrator",
+  "new_admin_key_text": "Link to add an administrator:\n%s\nSend this link to the user you want to assign as an administrator\nAfter clicking on the link, the user will be added to the admins\nThe link is valid for %d seconds",
+  "delete_admin_button": "Remove Administrator",
+  "admin_dont_have_permissions": "You don't have access",
+  "incorrect_admin_id_text": "<b>The Administrator ID was entered incorrectly</b>\n\nCheck the correct input: the ID must be a positive number and match one of the admin IDs.",
+  "delete_admin_body_text": "<b>List of Administrators:</b>\n\n%s\nEnter the ID of the administrator you want to delete ⤵️",
+  "admin_removed_status": "Administrator removed successfully ✅",
+
   "statistic_text": "<b>Bot statistics</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Total users: %d\n\n\uD83D\uDC64 Users in this bot: %d\n❌ Inactive users: %d\n\uD83D\uDCF2 Subscribers to the channel: %d\n✅ Active users: %d"
 }

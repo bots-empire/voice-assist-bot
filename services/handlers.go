@@ -252,7 +252,7 @@ func SendReferralLink(botLang string, message *tgbotapi.Message) {
 	user := auth.GetUser(botLang, message.From.ID)
 
 	text := msgs2.GetFormatText(user.Language, "referral_text", cfg.GetBotConfig(botLang).Link,
-		user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
+		user.ID, assets.AdminSettings.Parameters[botLang].ReferralAmount, user.ReferralCount)
 
 	msgs2.NewParseMessage(botLang, message.Chat.ID, text)
 }
@@ -263,7 +263,7 @@ func MoreMoney(botLang string, message *tgbotapi.Message) {
 	user := auth.GetUser(botLang, message.From.ID)
 
 	text := msgs2.GetFormatText(user.Language, "more_money_text",
-		assets.AdminSettings.BonusAmount, assets.AdminSettings.BonusAmount)
+		assets.AdminSettings.Parameters[botLang].BonusAmount, assets.AdminSettings.Parameters[botLang].BonusAmount)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyMarkup = msgs2.NewIlMarkUp(

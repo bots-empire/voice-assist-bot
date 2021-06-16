@@ -59,15 +59,15 @@ func changeMakeMoneySettingsLevel(botLang string, message *tgbotapi.Message, lev
 
 	switch level {
 	case "bonus":
-		assets.AdminSettings.BonusAmount = newAmount
+		assets.AdminSettings.Parameters[botLang].BonusAmount = newAmount
 	case "withdrawal":
-		assets.AdminSettings.MinWithdrawalAmount = newAmount
+		assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount = newAmount
 	case "voice":
-		assets.AdminSettings.VoiceAmount = newAmount
+		assets.AdminSettings.Parameters[botLang].VoiceAmount = newAmount
 	case "voice_pd":
-		assets.AdminSettings.MaxOfVoicePerDay = newAmount
+		assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay = newAmount
 	case "referral":
-		assets.AdminSettings.ReferralAmount = newAmount
+		assets.AdminSettings.Parameters[botLang].ReferralAmount = newAmount
 	}
 	assets.SaveAdminSettings()
 	setAdminBackButton(botLang, userID, "operation_completed")

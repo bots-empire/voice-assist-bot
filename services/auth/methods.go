@@ -17,7 +17,7 @@ func (u *User) MakeMoney(botLang string) bool {
 		u.resetVoiceDayCounter(botLang)
 	}
 
-	if u.CompletedToday >= assets.AdminSettings.MaxOfVoicePerDay {
+	if u.CompletedToday >= assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay {
 		u.reachedMaxAmountPerDay(botLang)
 		return false
 	}
@@ -43,8 +43,8 @@ func (u *User) resetVoiceDayCounter(botLang string) {
 
 func (u *User) sendMoneyStatistic(botLang string) {
 	text := assets.LangText(u.Language, "make_money_statistic")
-	text = fmt.Sprintf(text, u.CompletedToday, assets.AdminSettings.MaxOfVoicePerDay,
-		assets.AdminSettings.VoiceAmount, u.Balance, u.CompletedToday*assets.AdminSettings.VoiceAmount)
+	text = fmt.Sprintf(text, u.CompletedToday, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay,
+		assets.AdminSettings.Parameters[botLang].VoiceAmount, u.Balance, u.CompletedToday*assets.AdminSettings.Parameters[botLang].VoiceAmount)
 	msg := tgbotapi.NewMessage(int64(u.ID), text)
 	msg.ParseMode = "HTML"
 
@@ -67,14 +67,14 @@ func (u *User) sendInvitationToRecord(botLang string) {
 
 func (u *User) reachedMaxAmountPerDay(botLang string) {
 	text := assets.LangText(u.Language, "reached_max_amount_per_day")
-	text = fmt.Sprintf(text, assets.AdminSettings.MaxOfVoicePerDay, assets.AdminSettings.MaxOfVoicePerDay)
+	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay)
 	msg := tgbotapi.NewMessage(int64(u.ID), text)
 
 	msgs2.SendMsgToUser(botLang, msg)
 }
 
 func (u *User) AcceptVoiceMessage(botLang string) bool {
-	u.Balance += assets.AdminSettings.VoiceAmount
+	u.Balance += assets.AdminSettings.Parameters[botLang].VoiceAmount
 	u.Completed++
 	u.CompletedToday++
 	u.LastVoice = time.Now().Unix()
@@ -98,7 +98,7 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) {
 		return
 	}
 
-	if amountInt < assets.AdminSettings.MinWithdrawalAmount {
+	if amountInt < assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount {
 		u.minAmountNotReached(botLang)
 		return
 	}
@@ -108,7 +108,7 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) {
 
 func (u *User) minAmountNotReached(botLang string) {
 	text := assets.LangText(u.Language, "minimum_amount_not_reached")
-	text = fmt.Sprintf(text, assets.AdminSettings.MinWithdrawalAmount)
+	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount)
 
 	msgs2.NewParseMessage(botLang, int64(u.ID), text)
 }
@@ -234,7 +234,7 @@ func (u User) GetABonus(botLang string, callback *tgbotapi.CallbackQuery) {
 		return
 	}
 
-	u.Balance += assets.AdminSettings.BonusAmount
+	u.Balance += assets.AdminSettings.Parameters[botLang].BonusAmount
 	dataBase := assets.GetDB(botLang)
 	_, err := dataBase.Query("UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;", u.Balance, true, u.ID)
 	if err != nil {
