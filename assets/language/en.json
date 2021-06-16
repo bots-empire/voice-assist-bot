@@ -51,5 +51,7 @@
   "withdrawal_not_subs_text": "Subscribe to the sponsored channel and view the first 15 posts to withdrawal your money!",
   "im_subscribe_button": "I have done the conditions ✅",
   "invitation_to_subscribe": "We checked your subscription",
-  "user_dont_subscribe": "you are not subscribed to the channel"
+  "user_dont_subscribe": "you are not subscribed to the channel",
+
+  "invalid_link_err": "Error, link is invalid"
 }

@@ -53,5 +53,7 @@
   "withdrawal_not_subs_text": "Suscríbete al canal patrocinado y ver los primeros 15 mensajes para retirar su dinero!",
   "im_subscribe_button": "✅ Confirmar retiro de dinero",
   "invitation_to_subscribe": "We checked your subscription",
-  "user_dont_subscribe": "no estás suscrito al canal"
+  "user_dont_subscribe": "no estás suscrito al canal",
+
+  "invalid_link_err": "Error, link is invalid"
 }

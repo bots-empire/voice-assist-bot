@@ -53,5 +53,7 @@
   "withdrawal_not_subs_text": "Iscriviti al canale sponsorizzato e visualizza i primi 15 post per prelevare i tuoi soldi!",
   "im_subscribe_button": "✅ Conferma prelievo",
   "invitation_to_subscribe": "We checked your subscription",
-  "user_dont_subscribe": "non sei iscritto al canale"
+  "user_dont_subscribe": "non sei iscritto al canale",
+
+  "invalid_link_err": "Error, link is invalid"
 }

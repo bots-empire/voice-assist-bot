@@ -44,6 +44,18 @@ func checkMessage(botLang string, message *tgbotapi.Message) {
 		return
 	}
 
+	if strings.Contains(message.Text, "new_admin") {
+		s := admin.Situation{
+			Message:  message,
+			BotLang:  botLang,
+			UserID:   message.From.ID,
+			UserLang: auth.GetLang(botLang, message.From.ID),
+			Command:  message.Text,
+		}
+		admin.CheckNewAdmin(s)
+		return
+	}
+
 	if message.Command() == "start" || message.Command() == "exit" {
 		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
 		return

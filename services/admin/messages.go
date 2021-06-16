@@ -31,6 +31,8 @@ func AnalyzeAdminMessage(botLang string, message *tgbotapi.Message, level string
 		makeMoneyMessageLevel(botLang, message, level)
 	case "advertisement":
 		advertisementMessageLevel(botLang, message, level)
+	case "delete_admin":
+		RemoveAdminCommand(botLang, message)
 	}
 }
 
