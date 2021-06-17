@@ -62,6 +62,7 @@ func startServices() {
 	assets.ParseSiriTasks()
 	assets.ParseAdminMap()
 	assets.UploadAdminSettings()
+	assets.UploadUpdateStatistic()
 
 	log.Println("All services are running successfully")
 }

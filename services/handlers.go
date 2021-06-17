@@ -9,11 +9,13 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/admin"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
+
 	for update := range updates {
 		checkUpdate(botLang, &update)
 	}
@@ -24,7 +26,7 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 		return
 	}
 
-	fmt.Println(botLang)
+	PrintNewUpdate(botLang, update)
 	if update.Message != nil {
 		checkMessage(botLang, update.Message)
 		return
@@ -32,6 +34,35 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 
 	if update.CallbackQuery != nil {
 		checkCallbackQuery(botLang, update.CallbackQuery)
+		return
+	}
+}
+
+func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
+	if (time.Now().Unix()-14400)/86400 > int64(assets.UpdateStatistic.Day) {
+		text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
+		msgs2.NewParseMessage(botLang, 1418862576, text)
+		assets.UpdateStatistic.Counter = 0
+		assets.UpdateStatistic.Day = int(time.Now().Unix()-10800) / 86400
+	}
+	assets.UpdateStatistic.Counter++
+	assets.SaveUpdateStatistic()
+
+	fmt.Print("update number: " + strconv.Itoa(assets.UpdateStatistic.Counter) + "	// voice-bot-update:	")
+	if update.Message != nil {
+		if update.Message.Text != "" {
+			fmt.Println(botLang, update.Message.Text)
+			return
+		}
+
+		if update.Message.Voice != nil {
+			fmt.Println(botLang, "voiceMsg")
+			return
+		}
+	}
+
+	if update.CallbackQuery != nil {
+		fmt.Println(botLang, update.CallbackQuery.Data)
 		return
 	}
 }

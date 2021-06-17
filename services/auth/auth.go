@@ -93,7 +93,12 @@ func GetUser(botLang string, id int) User {
 }
 
 func ReadUsers(rows *sql.Rows) []User {
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(rows)
 
 	var users []User
 
@@ -135,7 +140,12 @@ func GetLang(botLang string, id int) string {
 }
 
 func GetLangFromRow(rows *sql.Rows) string {
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(rows)
 
 	var users []User
 

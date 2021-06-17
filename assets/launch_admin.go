@@ -61,3 +61,36 @@ func SaveAdminSettings() {
 		panic(err)
 	}
 }
+
+type UpdateInfo struct {
+	Counter int
+	Day     int
+}
+
+var UpdateStatistic *UpdateInfo
+
+func UploadUpdateStatistic() {
+	var info *UpdateInfo
+	data, err := os.ReadFile("assets/statistic.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = json.Unmarshal(data, &info)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	UpdateStatistic = info
+}
+
+func SaveUpdateStatistic() {
+	data, err := json.MarshalIndent(UpdateStatistic, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	if err = os.WriteFile("assets/statistic.json", data, 0600); err != nil {
+		panic(err)
+	}
+}
