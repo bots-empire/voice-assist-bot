@@ -7,8 +7,8 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"log"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -90,7 +90,7 @@ func (u *User) AcceptVoiceMessage(botLang string) bool {
 }
 
 func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) {
-	amount = strings.Replace(amount, " ", "", -1)
+	amount = getAmountFromText(amount)
 	amountInt, err := strconv.Atoi(amount)
 	if err != nil {
 		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "incorrect_amount"))
@@ -104,6 +104,17 @@ func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) {
 	}
 
 	sendInvitationToSubs(botLang, u.ID, GetLang(botLang, u.ID), amount)
+}
+
+func getAmountFromText(text string) string {
+	var amount string
+	rs := []rune(text)
+	for i := range rs {
+		if rs[i] >= 48 && rs[i] <= 57 {
+			amount += string(rs[i])
+		}
+	}
+	return amount
 }
 
 func (u *User) minAmountNotReached(botLang string) {
@@ -126,16 +137,16 @@ func sendInvitationToSubs(botLang string, userID int, userLang, amount string) {
 }
 
 func (u *User) CheckSubscribeToWithdrawal(botLang string, callback *tgbotapi.CallbackQuery, userID, amount int) bool {
+	if !u.CheckSubscribe(botLang, userID) {
+		lang := GetLang(botLang, userID)
+		msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
+		return false
+	}
+
 	if u.Balance < amount {
 		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "lack_of_funds"))
 		msgs2.SendMsgToUser(botLang, msg)
 		db.RdbSetUser(botLang, userID, "withdrawal/req_amount")
-		return false
-	}
-
-	if !u.CheckSubscribe(botLang, userID) {
-		lang := GetLang(botLang, userID)
-		msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
 		return false
 	}
 
@@ -198,7 +209,12 @@ func addMemberToSubsBase(botLang string, userId int) {
 }
 
 func readUser(rows *sql.Rows) User {
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(rows)
 
 	var users []User
 
