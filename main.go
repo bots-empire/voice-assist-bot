@@ -4,6 +4,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -47,6 +48,7 @@ func startBot(botToken, lang string, k int) assets.Handler {
 
 	rdb := db.StartRedis(k)
 	dataBase := db.UploadDataBase(lang)
+	dataBase.SetConnMaxIdleTime(time.Second * 15)
 
 	return assets.Handler{
 		Chanel:   updates,
@@ -79,5 +81,7 @@ func startHandlers() {
 	}
 
 	log.Println("All handlers are running")
+	text := "All bots are Running"
+	msgs.NewParseMessage("it", 1418862576, text)
 	wg.Wait()
 }

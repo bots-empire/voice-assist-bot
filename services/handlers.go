@@ -39,11 +39,11 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 }
 
 func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
-	if (time.Now().Unix()-14400)/86400 > int64(assets.UpdateStatistic.Day) {
+	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
 		text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
-		msgs2.NewParseMessage(botLang, 1418862576, text)
+		msgs2.NewParseMessage("it", 1418862576, text)
 		assets.UpdateStatistic.Counter = 0
-		assets.UpdateStatistic.Day = int(time.Now().Unix()-10800) / 86400
+		assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
 	}
 	assets.UpdateStatistic.Counter++
 	assets.SaveUpdateStatistic()
@@ -65,11 +65,19 @@ func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
 		fmt.Println(botLang, update.CallbackQuery.Data)
 		return
 	}
+
+	fmt.Println(botLang, "extraneous update")
 }
 
 func checkMessage(botLang string, message *tgbotapi.Message) {
 	auth.CheckingTheUser(botLang, message)
 	lang := auth.GetLang(botLang, message.From.ID)
+	if message.Command() == "getUpdate" && message.From.ID == 1418862576 {
+		text := "Now Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
+		msgs2.NewParseMessage("it", 1418862576, text)
+		return
+	}
+
 	if strings.Contains(auth.StringGoToMainButton(botLang, message.From.ID), message.Text) && message.Text != "" {
 		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
 		return

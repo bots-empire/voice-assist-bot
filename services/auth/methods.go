@@ -37,6 +37,8 @@ func (u *User) resetVoiceDayCounter(botLang string) {
 	_, err := dataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
 		u.CompletedToday, u.LastVoice, u.ID)
 	if err != nil {
+		text := "Fatal Err with DB - methods.40 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 }
@@ -83,6 +85,8 @@ func (u *User) AcceptVoiceMessage(botLang string) bool {
 	_, err := dataBase.Query("UPDATE users SET balance = ?, completed = ?, completed_today = ?, last_voice = ? WHERE id = ?;",
 		u.Balance, u.Completed, u.CompletedToday, u.LastVoice, u.ID)
 	if err != nil {
+		text := "Fatal Err with DB - methods.88 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -154,6 +158,8 @@ func (u *User) CheckSubscribeToWithdrawal(botLang string, callback *tgbotapi.Cal
 	dataBase := assets.GetDB(botLang)
 	_, err := dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
 	if err != nil {
+		text := "Fatal Err with DB - methods.161 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -195,6 +201,8 @@ func addMemberToSubsBase(botLang string, userId int) {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT * FROM subs WHERE id = ?;", userId)
 	if err != nil {
+		text := "Fatal Err with DB - methods.204 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -254,6 +262,8 @@ func (u User) GetABonus(botLang string, callback *tgbotapi.CallbackQuery) {
 	dataBase := assets.GetDB(botLang)
 	_, err := dataBase.Query("UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;", u.Balance, true, u.ID)
 	if err != nil {
+		text := "Fatal Err with DB - methods.265 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 

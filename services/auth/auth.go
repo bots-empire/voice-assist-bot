@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
 	_ "github.com/go-sql-driver/mysql"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -14,6 +15,8 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
 	if err != nil {
+		text := "Fatal Err with DB - auth.18 //" + err.Error()
+		msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -64,6 +67,8 @@ func (u *User) AddNewUser(botLang string, referralID int) {
 	dataBase := assets.GetDB(botLang)
 	_, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
+		text := "Fatal Err with DB - auth.70 //" + err.Error()
+		msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -84,6 +89,8 @@ func GetUser(botLang string, id int) User {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", id)
 	if err != nil {
+		text := "Fatal Err with DB - auth.92 //" + err.Error()
+		msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -133,6 +140,8 @@ func GetLang(botLang string, id int) string {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT lang FROM users WHERE id = ?;", id)
 	if err != nil {
+		text := "Fatal Err with DB - auth.143 //" + err.Error()
+		msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 

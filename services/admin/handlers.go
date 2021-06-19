@@ -410,7 +410,7 @@ func sendStatistic(botLang string, userID int) {
 	count := countUsers(botLang)
 	allCount := countAllUsers()
 	blocked := countBlockedUsers()
-	subscribers := countSubscribers()
+	subscribers := countSubscribers(botLang)
 	text := adminFormatText(lang, "statistic_text",
 		allCount, count, blocked, subscribers, count-blocked)
 

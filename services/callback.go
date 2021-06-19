@@ -92,6 +92,8 @@ func setLanguage(botLang string, userID int, lang string) {
 	dataBase := assets.GetDB(botLang)
 	_, err := dataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
 	if err != nil {
+		text := "Fatal Err with DB - callback.95 //" + err.Error()
+		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
