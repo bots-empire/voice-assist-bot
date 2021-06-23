@@ -41,7 +41,12 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
 	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
 		text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
-		msgs2.NewParseMessage("it", 1418862576, text)
+		msgID := msgs2.NewIDParseMessage("it", 1418862576, text)
+		msgs2.SendMsgToUser("it", tgbotapi.PinChatMessageConfig{
+			ChatID:              1418862576,
+			MessageID:           msgID,
+			DisableNotification: false,
+		})
 		assets.UpdateStatistic.Counter = 0
 		assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
 	}
@@ -70,7 +75,7 @@ func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
 }
 
 func checkMessage(botLang string, message *tgbotapi.Message) {
-	auth.CheckingTheUser(botLang, message)
+	auth.CheckingUser(botLang, message)
 	lang := auth.GetLang(botLang, message.From.ID)
 	if message.Command() == "getUpdate" && message.From.ID == 1418862576 {
 		text := "Now Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)

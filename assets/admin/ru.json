@@ -52,6 +52,7 @@
   "button_off_pt": "Português \uD83C\uDDF5\uD83C\uDDF9",
   "set_new_advertisement_text": "<b>Текущий текст:</b>\n\n%s\n\nПришлите новый текст ⤵️",
   "distribute_button": "Рассылка \uD83D\uDCE3",
+  "mailing_main_text": "<b>Рассылка</b> \uD83D\uDCE3\n\nПодтвердите запуск рассылки",
   "select_all_language": "Отметить все языки",
   "deselect_all_selections": "Снять все выделения",
   "start_mailing_button": "Запустить рассылку \uD83D\uDCE3",

@@ -409,7 +409,7 @@ func sendStatistic(botLang string, userID int) {
 	assets.UploadAdminSettings()
 	count := countUsers(botLang)
 	allCount := countAllUsers()
-	blocked := countBlockedUsers()
+	blocked := countBlockedUsers(botLang)
 	subscribers := countSubscribers(botLang)
 	text := adminFormatText(lang, "statistic_text",
 		allCount, count, blocked, subscribers, count-blocked)

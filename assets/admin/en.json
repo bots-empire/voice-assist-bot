@@ -52,6 +52,7 @@
   "button_off_pt": "Português \uD83C\uDDF5\uD83C\uDDF9",
   "set_new_advertisement_text": "<b>Current text:</b>\n\n%s\n\nSend a new text ⤵️",
   "distribute_button": "Mailing \uD83D\uDCE3",
+  "mailing_main_text": "<b>Mailing</b> \uD83D\uDCE3\n\nConfirm the launch of the mailing list",
   "select_all_language": "Mark all",
   "deselect_all_selections": "Deselect all",
   "start_mailing_button": "Launch mailing \uD83D\uDCE3",

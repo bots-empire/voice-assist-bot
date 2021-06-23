@@ -15,20 +15,20 @@ func StartMailing(botLang string) {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT id, lang FROM users;")
 	if err != nil {
-		text := "Fatal Err with DB - mailing.18 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
+		//text := "Fatal Err with DB - mailing.18 //" + err.Error()
+		//msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
-	MailToUser(botLang, rows)
+	MailToUsers(botLang, rows)
 }
 
-func MailToUser(botLang string, rows *sql.Rows) {
+func MailToUsers(botLang string, rows *sql.Rows) {
 	defer rows.Close()
 	fillMessageMap()
 
-	blockedUsers := copyBlockedMap()
-	clearSelectedLang(blockedUsers)
+	//blockedUsers := copyBlockedMap()
+	//clearSelectedLang(blockedUsers)
 
 	for rows.Next() {
 		var (
@@ -48,11 +48,11 @@ func MailToUser(botLang string, rows *sql.Rows) {
 		}
 
 		if !msgs.SendMessageToChat(botLang, msg) {
-			blockedUsers[botLang] += 1
+			assets.AdminSettings.BlockedUsers[botLang] += 1
 		}
 	}
 
-	assets.AdminSettings.BlockedUsers = blockedUsers
+	//assets.AdminSettings.BlockedUsers = blockedUsers
 	assets.SaveAdminSettings()
 }
 

@@ -27,6 +27,23 @@ func NewParseMessage(botLang string, chatID int64, text string) {
 	SendMsgToUser(botLang, msg)
 }
 
+func NewIDParseMessage(botLang string, chatID int64, text string) int {
+	msg := tgbotapi.MessageConfig{
+		BaseChat: tgbotapi.BaseChat{
+			ChatID: chatID,
+		},
+		Text:      text,
+		ParseMode: "HTML",
+	}
+
+	bot := assets.GetBot(botLang)
+	message, err := bot.Send(msg)
+	if err != nil {
+		log.Println(err)
+	}
+	return message.MessageID
+}
+
 func NewParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, text string) {
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{

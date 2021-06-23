@@ -16,16 +16,12 @@ func countUsers(botLang string) int {
 		panic(err.Error())
 	}
 
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(rows)
 	return readRows(rows)
 }
 
 func readRows(rows *sql.Rows) int {
+	defer rows.Close()
+
 	var count int
 
 	for rows.Next() {
@@ -49,12 +45,13 @@ func countAllUsers() int {
 	return sum
 }
 
-func countBlockedUsers() int {
-	var count int
-	for _, value := range assets.AdminSettings.BlockedUsers {
-		count += value
-	}
-	return count
+func countBlockedUsers(botLang string) int {
+	//var count int
+	//for _, value := range assets.AdminSettings.BlockedUsers {
+	//	count += value
+	//}
+	//return count
+	return assets.AdminSettings.BlockedUsers[botLang]
 }
 
 func countSubscribers(botLang string) int {

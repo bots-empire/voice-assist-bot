@@ -9,6 +9,7 @@ import (
 )
 
 func analyzeMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
+	callbackQuery.Data = strings.Replace(callbackQuery.Data, "advertisement/", "", 1)
 	if strings.Contains(callbackQuery.Data, "/") {
 		analyzeSelectedMailingCallbackLevel(botLang, callbackQuery)
 		return
@@ -21,14 +22,14 @@ func analyzeMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.Callbac
 }
 
 func analyzeSelectedMailingCallbackLevel(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	callbackQuery.Data = strings.Replace(callbackQuery.Data, "advertisement/mailing/", "", 1)
+	callbackQuery.Data = strings.Replace(callbackQuery.Data, "mailing/", "", 1)
 	switch callbackQuery.Data {
 	case "send":
-		if !selectedLangAreNotEmpty() {
-			msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "no_language_selected")
-			return
-		}
-		db.StartMailing(botLang)
+		//if !selectedLangAreNotEmpty() {
+		//	msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "no_language_selected")
+		//	return
+		//}
+		go db.StartMailing(botLang)
 		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "mailing_successful")
 		resendAdvertisementMenuLevel(botLang, callbackQuery.From.ID)
 	case "back":
@@ -48,7 +49,7 @@ func analyzeSelectedMailingCallbackLevel(botLang string, callbackQuery *tgbotapi
 func sendMailingMenu(botLang string, userID int) {
 	lang := assets.AdminLang(userID)
 
-	text := assets.AdminText(lang, "change_text_of_advertisement_text")
+	text := assets.AdminText(lang, "mailing_main_text")
 	markUp := createMailingMarkUp(lang)
 
 	if db.RdbGetAdminMsgID(botLang, userID) == 0 {
@@ -60,20 +61,26 @@ func sendMailingMenu(botLang string, userID int) {
 }
 
 func createMailingMarkUp(lang string) tgbotapi.InlineKeyboardMarkup {
-	markUp := parseMainLanguageButton("mailing")
+	//markUp := parseMainLanguageButton("mailing")
+	//
+	//text := "select_all_language"
+	//data := "admin/advertisement/mailing/select_all"
+	//if selectedAllLanguage() {
+	//	text = "deselect_all_selections"
+	//	data = strings.Replace(data, "select_all", "deselect_all", 1)
+	//}
+	//
+	//markUp.Rows = append(markUp.Rows,
+	//	msgs2.NewIlRow(msgs2.NewIlAdminButton(text, data)),
+	//	msgs2.NewIlRow(msgs2.NewIlAdminButton("start_mailing_button", "admin/advertisement/mailing/send")),
+	//	msgs2.NewIlRow(msgs2.NewIlAdminButton("back_to_advertisement_setting", "admin/advertisement/mailing/back")),
+	//)
 
-	text := "select_all_language"
-	data := "admin/advertisement/mailing/select_all"
-	if selectedAllLanguage() {
-		text = "deselect_all_selections"
-		data = strings.Replace(data, "select_all", "deselect_all", 1)
-	}
-
-	markUp.Rows = append(markUp.Rows,
-		msgs2.NewIlRow(msgs2.NewIlAdminButton(text, data)),
+	markUp := msgs2.NewIlMarkUp(
 		msgs2.NewIlRow(msgs2.NewIlAdminButton("start_mailing_button", "admin/advertisement/mailing/send")),
 		msgs2.NewIlRow(msgs2.NewIlAdminButton("back_to_advertisement_setting", "admin/advertisement/mailing/back")),
 	)
+
 	return markUp.Build(lang)
 }
 
