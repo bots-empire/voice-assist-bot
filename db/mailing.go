@@ -30,6 +30,8 @@ func MailToUsers(botLang string, rows *sql.Rows) {
 	//blockedUsers := copyBlockedMap()
 	//clearSelectedLang(blockedUsers)
 
+	countBlockedUsers := 0
+
 	for rows.Next() {
 		var (
 			id   int
@@ -48,10 +50,10 @@ func MailToUsers(botLang string, rows *sql.Rows) {
 		}
 
 		if !msgs.SendMessageToChat(botLang, msg) {
-			assets.AdminSettings.BlockedUsers[botLang] += 1
+			countBlockedUsers++
 		}
 	}
-
+	assets.AdminSettings.BlockedUsers[botLang] = countBlockedUsers
 	//assets.AdminSettings.BlockedUsers = blockedUsers
 	assets.SaveAdminSettings()
 }

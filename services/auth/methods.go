@@ -208,12 +208,11 @@ func addMemberToSubsBase(botLang string, userId int) {
 		msgs2.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
-	rows.Close()
-
 	user := readUser(rows)
 	if user.ID != 0 {
 		return
 	}
+	rows.Close()
 	rows, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
 	if err != nil {
 		text := "Fatal Err with DB - methods.219 //" + err.Error()

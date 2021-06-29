@@ -55,7 +55,7 @@ func countBlockedUsers(botLang string) int {
 }
 
 func countSubscribers(botLang string) int {
-	rows, err := assets.Bots[botLang].DataBase.Query("SELECT COUNT(*) FROM subs;")
+	rows, err := assets.Bots[botLang].DataBase.Query("SELECT COUNT(DISTINCT id) FROM subs;")
 	if err != nil {
 		log.Println(err.Error())
 	}
