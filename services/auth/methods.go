@@ -7,7 +7,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/db"
 	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 	"strconv"
 	"time"
 )
@@ -212,7 +211,6 @@ func addMemberToSubsBase(botLang string, userId int) {
 	if user.ID != 0 {
 		return
 	}
-	rows.Close()
 	rows, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
 	if err != nil {
 		text := "Fatal Err with DB - methods.219 //" + err.Error()
@@ -223,12 +221,7 @@ func addMemberToSubsBase(botLang string, userId int) {
 }
 
 func readUser(rows *sql.Rows) User {
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(rows)
+	defer rows.Close()
 
 	var users []User
 
