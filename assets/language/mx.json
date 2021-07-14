@@ -11,7 +11,7 @@
   "back_to_main_menu": "Has regresado al menú principal",
   "make_money_statistic": "<b>Cumplido:</b> %d de %d\n<b>Ingresos por los envíos:</b> %d $.\n\n\uD83D\uDCB0 <b>Estado de tu cuenta:</b> %d $.\n\n<b>Dinero ganado hoy:</b> %d $.",
   "invitation_to_record_voice": "🗣 <b>Graba un mensaje de voz con una frase:</b>\n«%s»",
-  "reached_max_amount_per_day": "✅ Ya has enviado %d/%d mensajes de voz!\nRegresa  después de las 24 horas para continuar a ganar...",
+  "reached_max_amount_per_day": "✅ Has completado %d de las %d tareas posibles\nNuevas tareas aparecerán en 24 horas\nHasta que no hay tareas que usted puede ganar en este canal $ extra ⬇️",
   "profile_text": "👤 Mi perfil:\n\n<b>Nombre:</b> %s\n<b>Username:</b> %s\n<b>Estado de cuenta:</b> %d $.\n<b>Mensajes de voz enviados:</b> %d\n<b>Invitados:</b> %d",
   "statistic_to_user": "\uD83D\uDCCA Bot de Estadísticas\n\n👤 <b>Bot de Usuarios:</b> %d\n💰 <b>Ganado por los usuarios:</b> %d\n🧠 <b>Mensajes de voz enviados:</b> %d",
   "withdrawal_money": "💰 <b>Estado de cuenta:</b> %d $.\n\nSi quieres retirar fondos, ¡elige dónde acreditarlos!",
