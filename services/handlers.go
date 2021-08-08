@@ -69,12 +69,11 @@ func sendTodayUpdateMsg() {
 	text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
 	msgID := msgs2.NewIDParseMessage("it", 1418862576, text)
 	msgs2.SendMsgToUser("it", tgbotapi.PinChatMessageConfig{
-		ChatID:              1418862576,
-		MessageID:           msgID,
-		DisableNotification: false,
+		ChatID:    1418862576,
+		MessageID: msgID,
 	})
 	assets.UpdateStatistic.Counter = 0
-	assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
+	assets.UpdateStatistic.Day = int(time.Now().Unix()) / 86400
 }
 
 func checkMessage(botLang string, message *tgbotapi.Message) {
