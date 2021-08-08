@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 )
 
 type Admin struct {
@@ -63,8 +64,17 @@ func SaveAdminSettings() {
 }
 
 type UpdateInfo struct {
+	mu      *sync.Mutex
 	Counter int
 	Day     int
+}
+
+func (i *UpdateInfo) IncreaseCounter() {
+	i.mu.Lock()
+	defer i.mu.Unlock()
+
+	UpdateStatistic.Counter++
+	SaveUpdateStatistic()
 }
 
 var UpdateStatistic *UpdateInfo

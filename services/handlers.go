@@ -15,7 +15,6 @@ import (
 )
 
 func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
-
 	for update := range updates {
 		checkUpdate(botLang, &update)
 	}
@@ -39,19 +38,11 @@ func checkUpdate(botLang string, update *tgbotapi.Update) {
 }
 
 func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
-	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
-		text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
-		msgID := msgs2.NewIDParseMessage("it", 1418862576, text)
-		msgs2.SendMsgToUser("it", tgbotapi.PinChatMessageConfig{
-			ChatID:              1418862576,
-			MessageID:           msgID,
-			DisableNotification: false,
-		})
-		assets.UpdateStatistic.Counter = 0
-		assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
+	if (time.Now().Unix())/86400 > int64(assets.UpdateStatistic.Day) {
+		sendTodayUpdateMsg()
 	}
-	assets.UpdateStatistic.Counter++
-	assets.SaveUpdateStatistic()
+
+	assets.UpdateStatistic.IncreaseCounter()
 
 	fmt.Print("update number: " + strconv.Itoa(assets.UpdateStatistic.Counter) + "	// voice-bot-update:	")
 	if update.Message != nil {
@@ -72,6 +63,18 @@ func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
 	}
 
 	fmt.Println(botLang, "extraneous update")
+}
+
+func sendTodayUpdateMsg() {
+	text := "Today Update's counter: " + strconv.Itoa(assets.UpdateStatistic.Counter)
+	msgID := msgs2.NewIDParseMessage("it", 1418862576, text)
+	msgs2.SendMsgToUser("it", tgbotapi.PinChatMessageConfig{
+		ChatID:              1418862576,
+		MessageID:           msgID,
+		DisableNotification: false,
+	})
+	assets.UpdateStatistic.Counter = 0
+	assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
 }
 
 func checkMessage(botLang string, message *tgbotapi.Message) {
