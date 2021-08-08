@@ -91,6 +91,7 @@ func UploadUpdateStatistic() {
 		fmt.Println(err)
 	}
 
+	info.mu = new(sync.Mutex)
 	UpdateStatistic = info
 }
 
