@@ -3,7 +3,10 @@ package assets
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -63,6 +66,12 @@ func SaveAdminSettings() {
 	}
 }
 
+// ----------------------------------------------------
+//
+// Update Statistic
+//
+// ----------------------------------------------------
+
 type UpdateInfo struct {
 	mu      *sync.Mutex
 	Counter int
@@ -80,28 +89,29 @@ func (i *UpdateInfo) IncreaseCounter() {
 var UpdateStatistic *UpdateInfo
 
 func UploadUpdateStatistic() {
-	var info *UpdateInfo
-	data, err := os.ReadFile("assets/statistic.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = json.Unmarshal(data, &info)
-	if err != nil {
-		fmt.Println(err)
-	}
-
+	info := &UpdateInfo{}
 	info.mu = new(sync.Mutex)
+	strStatistic, err := Bots["it"].Rdb.Get("update_statistic").Result()
+	if err != nil {
+		UpdateStatistic = info
+		return
+	}
+
+	data := strings.Split(strStatistic, "?")
+	if len(data) != 2 {
+		UpdateStatistic = info
+		return
+	}
+	log.Println(data)
+	info.Counter, _ = strconv.Atoi(data[0])
+	info.Day, _ = strconv.Atoi(data[1])
 	UpdateStatistic = info
 }
 
 func SaveUpdateStatistic() {
-	data, err := json.MarshalIndent(UpdateStatistic, "", "  ")
+	strStatistic := strconv.Itoa(UpdateStatistic.Counter) + "?" + strconv.Itoa(UpdateStatistic.Day)
+	_, err := Bots["it"].Rdb.Set("update_statistic", strStatistic, 0).Result()
 	if err != nil {
-		panic(err)
-	}
-
-	if err = os.WriteFile("assets/statistic.json", data, 0600); err != nil {
-		panic(err)
+		log.Println(err)
 	}
 }

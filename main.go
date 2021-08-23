@@ -4,6 +4,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
+	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -17,6 +18,7 @@ func main() {
 
 	startServices()
 	startAllBot()
+	assets.UploadUpdateStatistic()
 
 	startHandlers()
 }
@@ -63,7 +65,6 @@ func startServices() {
 	assets.ParseSiriTasks()
 	assets.ParseAdminMap()
 	assets.UploadAdminSettings()
-	assets.UploadUpdateStatistic()
 
 	log.Println("All services are running successfully")
 }
@@ -106,5 +107,6 @@ func startHandlers() {
 	}
 
 	log.Println("All handlers are running")
+	_ = msgs2.NewParseMessage("it", 1418862576, "All bots are restart")
 	wg.Wait()
 }

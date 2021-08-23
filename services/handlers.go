@@ -17,7 +17,7 @@ import (
 )
 
 func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
-	file, err := os.Create("assets/logs/logs_" + botLang + strconv.FormatInt(time.Now().Unix(), 10) + ".txt")
+	file, err := os.Create("assets/logs/" + strconv.FormatInt(time.Now().Unix(), 10) + "_" + botLang + ".txt")
 	if err != nil {
 		log.Println("err create file; " + err.Error())
 		return
@@ -387,7 +387,6 @@ func MoreMoney(botLang string, message *tgbotapi.Message) error {
 
 func getDate(text string) string {
 	currentTime := time.Now()
-	//formatTime := currentTime.Format("02.01.2006 15.04")
 
 	users := currentTime.Unix() % 100000000 / 6000
 	totalEarned := currentTime.Unix() % 100000000 / 500 * 5
