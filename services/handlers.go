@@ -108,7 +108,7 @@ func checkMessage(botLang string, message *tgbotapi.Message, logFile *os.File) {
 	if strings.Contains(auth.StringGoToMainButton(botLang, message.From.ID), message.Text) && message.Text != "" {
 		if err := SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu")); err != nil {
 			_, errWrite := logFile.WriteString(fmt.Sprintf(
-				"[ERROR]; %s; err=%s\n", time.Now().Format("15:04:05 Jan _2 15:04:05.000000"), err.Error()))
+				"[ERROR]; %s; err=%s\n", time.Now().Format("Jan _2 15:04:05.000000"), err.Error()))
 			if errWrite != nil {
 				log.Println(errWrite)
 			}
@@ -133,7 +133,7 @@ func checkMessage(botLang string, message *tgbotapi.Message, logFile *os.File) {
 	if message.Command() == "start" || message.Command() == "exit" {
 		if err := SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu")); err != nil {
 			_, errWrite := logFile.WriteString(fmt.Sprintf(
-				"[ERROR]; %s; err=%s\n", time.Now().Format("15:04:05 Jan _2 15:04:05.000000"), err.Error()))
+				"[ERROR]; %s; err=%s\n", time.Now().Format("Jan _2 15:04:05.000000"), err.Error()))
 			if errWrite != nil {
 				log.Println(errWrite)
 			}
@@ -167,7 +167,7 @@ func checkMessage(botLang string, message *tgbotapi.Message, logFile *os.File) {
 
 	if err != nil {
 		_, errWrite := logFile.WriteString(fmt.Sprintf(
-			"[ERROR]; %s; err = %s\n", time.Now().Format("15:04:05 Jan _2 15:04:05.000000"), err.Error()))
+			"[ERROR]; %s; err = %s\n", time.Now().Format("Jan _2 15:04:05.000000"), err.Error()))
 		if errWrite != nil {
 			log.Println(errWrite)
 		}
@@ -228,11 +228,13 @@ func reqWithdrawalAmount(botLang string, message *tgbotapi.Message) error {
 }
 
 func makeMoneyLevel(botLang string, message *tgbotapi.Message) error {
+	user := auth.GetUser(botLang, message.From.ID)
 	if message.Voice == nil {
-		return fmt.Errorf("msg not voice")
+		msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(user.Language, "voice_not_recognized"))
+		_ = msgs2.SendMsgToUser(botLang, msg)
+		return nil
 	}
 
-	user := auth.GetUser(botLang, message.From.ID)
 	if !user.AcceptVoiceMessage(botLang) {
 		return SendMenu(botLang, message.From.ID, assets.LangText(user.Language, "back_to_main_menu"))
 	}
@@ -254,7 +256,7 @@ func checkCallbackQuery(botLang string, callbackQuery *tgbotapi.CallbackQuery, l
 
 	if err != nil {
 		_, errWrite := logFile.WriteString(fmt.Sprintf(
-			"[ERROR]; %s; err = %s\n", time.Now().Format("15:04:05 Jan _2 15:04:05.000000"), err.Error()))
+			"[ERROR]; %s; err = %s\n", time.Now().Format("Jan _2 15:04:05.000000"), err.Error()))
 		if errWrite != nil {
 			log.Println(errWrite)
 		}

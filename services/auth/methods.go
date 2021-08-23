@@ -233,9 +233,9 @@ func addMemberToSubsBase(botLang string, userId int) error {
 	rows, err := dataBase.Query("SELECT * FROM subs WHERE id = ?;", userId)
 	if err != nil {
 		text := "Fatal Err with DB - methods.207 //" + err.Error()
-		//model = msgs2.NewParseMessage("it", 1418862576, text)
 		log.Println(text)
-		panic(err.Error())
+		_ = msgs2.NewParseMessage("it", 1418862576, text)
+		return err
 	}
 	user := readUser(rows)
 	if user.ID != 0 {
@@ -244,7 +244,7 @@ func addMemberToSubsBase(botLang string, userId int) error {
 	rows, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
 	if err != nil {
 		text := "Fatal Err with DB - methods.219 //" + err.Error()
-		//msgs2.NewParseMessage("it", 1418862576, text)
+		_ = msgs2.NewParseMessage("it", 1418862576, text)
 		log.Println(text)
 		return err
 	}
