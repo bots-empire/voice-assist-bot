@@ -53,7 +53,7 @@ func sendMailingMenu(botLang string, userID int) {
 	markUp := createMailingMarkUp(lang)
 
 	if db.RdbGetAdminMsgID(botLang, userID) == 0 {
-		msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), &markUp, text)
+		msgID, _ := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), &markUp, text)
 		db.RdbSetAdminMsgID(botLang, userID, msgID)
 		return
 	}

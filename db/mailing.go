@@ -15,7 +15,7 @@ func StartMailing(botLang string) {
 	dataBase := assets.GetDB(botLang)
 	rows, err := dataBase.Query("SELECT id, lang FROM users;")
 	if err != nil {
-		//text := "Fatal Err with DB - mailing.18 //" + err.Error()
+		//text := "Fatal Err with DB - mailing.18 //" + model.Error()
 		//msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
@@ -84,17 +84,6 @@ func containsInAdmin(userID int) bool {
 	}
 	return false
 }
-
-//func createAStringOfLang() string {
-//	var str string
-//
-//	for _, lang := range assets.AvailableLang {
-//		if assets.AdminSettings.LangSelectedMap[lang] {
-//			str += " lang = '" + lang + "' OR"
-//		}
-//	}
-//	return strings.TrimRight(str, " OR")
-//}
 
 func fillMessageMap() {
 	for _, lang := range assets.AvailableLang {

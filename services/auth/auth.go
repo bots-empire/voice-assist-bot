@@ -29,7 +29,10 @@ func CheckingUser(botLang string, message *tgbotapi.Message) {
 		user.AddNewUser(botLang, referralID)
 	case 1:
 	default:
-		panic("There were two identical users")
+		text := "There were two identical users where id = " + strconv.Itoa(message.From.ID) + " in " + botLang + " bot"
+		//msgs.NewParseMessage("it", 1418862576, text)
+		log.Println(text)
+		return
 	}
 }
 
@@ -68,8 +71,9 @@ func (u *User) AddNewUser(botLang string, referralID int) {
 	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
 		text := "Fatal Err with DB - auth.70 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
+		//msgs.NewParseMessage("it", 1418862576, text)
+		log.Println(text)
+		return
 	}
 	rows.Close()
 
@@ -165,8 +169,8 @@ func GetLangFromRow(rows *sql.Rows) string {
 		})
 	}
 
-	if len(users) != 1 {
-		log.Println("The number if users fond is not equal to one")
+	if len(users) > 1 {
+		log.Println("The number of found users more than one")
 	}
 
 	return users[0].Language

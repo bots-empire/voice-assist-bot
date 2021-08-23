@@ -75,12 +75,36 @@ func startHandlers() {
 		wg.Add(1)
 		go func(botLang string, handler assets.Handler, wg *sync.WaitGroup) {
 			defer wg.Done()
+
+			//testChanel := make(chan tgbotapi.Update)
+			//go func() {
+			//	time.Sleep(5 * time.Second)
+			//
+			//	dur := 5 * time.Millisecond
+			//	for {
+			//		testUpdate := tgbotapi.Update{
+			//			Message: &tgbotapi.Message{
+			//				From: &tgbotapi.User{
+			//					ID:           1418862576,
+			//					FirstName:    "Stepan",
+			//					LastName:     "Samsonov",
+			//					UserName:     "ridpiner",
+			//					LanguageCode: "ru",
+			//				},
+			//				Chat: &tgbotapi.Chat{
+			//					ID: 1418862576,
+			//				},
+			//				Text: "/start",
+			//			},
+			//		}
+			//		testChanel <- testUpdate
+			//		time.Sleep(dur)
+			//	}
+			//}()
 			services.ActionsWithUpdates(botLang, handler.Chanel)
 		}(botLang, handler, wg)
 	}
 
 	log.Println("All handlers are running")
-	//text := "All bots are Running"
-	//msgs.NewParseMessage("it", 1418862576, text)
 	wg.Wait()
 }

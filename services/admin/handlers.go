@@ -33,10 +33,10 @@ func containsInAdmin(userID int) bool {
 	return false
 }
 
-func notAdmin(botLang string, userID int) {
+func notAdmin(botLang string, userID int) error {
 	lang := auth.GetLang(botLang, userID)
 	text := assets.LangText(lang, "not_admin")
-	msgs2.SendSimpleMsg(botLang, int64(userID), text)
+	return msgs2.SendSimpleMsg(botLang, int64(userID), text)
 }
 
 func updateFirstNameInfo(message *tgbotapi.Message) {
@@ -45,7 +45,7 @@ func updateFirstNameInfo(message *tgbotapi.Message) {
 	assets.SaveAdminSettings()
 }
 
-func setAdminBackButton(botLang string, userID int, key string) {
+func setAdminBackButton(botLang string, userID int, key string) error {
 	lang := assets.AdminLang(userID)
 	text := assets.AdminText(lang, key)
 
@@ -53,10 +53,10 @@ func setAdminBackButton(botLang string, userID int, key string) {
 		msgs2.NewRow(msgs2.NewAdminButton("exit")),
 	).Build(lang)
 
-	msgs2.NewParseMarkUpMessage(botLang, int64(userID), markUp, text)
+	return msgs2.NewParseMarkUpMessage(botLang, int64(userID), markUp, text)
 }
 
-func sendAdminMainMenu(botLang string, userID int) {
+func sendAdminMainMenu(botLang string, userID int) error {
 	db.RdbSetUser(botLang, userID, "admin")
 	lang := assets.AdminLang(userID)
 	text := assets.AdminText(lang, "admin_main_menu_text")
@@ -69,11 +69,14 @@ func sendAdminMainMenu(botLang string, userID int) {
 	).Build(lang)
 
 	if db.RdbGetAdminMsgID(botLang, userID) != 0 {
-		msgs2.NewEditMarkUpMessage(botLang, userID, db.RdbGetAdminMsgID(botLang, userID), &markUp, text)
-		return
+		return msgs2.NewEditMarkUpMessage(botLang, userID, db.RdbGetAdminMsgID(botLang, userID), &markUp, text)
 	}
-	msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), markUp, text)
+	msgID, err := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), markUp, text)
+	if err != nil {
+		return err
+	}
 	db.RdbSetAdminMsgID(botLang, userID, msgID)
+	return nil
 }
 
 func AnalyseAdminCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
@@ -88,7 +91,7 @@ func AnalyseAdminCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery)
 		settingAdvertisementCallbackLevel(botLang, callbackQuery)
 	case "statistic":
 		sendStatistic(botLang, callbackQuery.From.ID)
-		msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
+		_ = msgs2.SendAdminAnswerCallback(botLang, callbackQuery, "make_a_choice")
 	}
 }
 
@@ -364,7 +367,7 @@ func sendChangeWithLangMenu(botLang string, userID int, partition string) {
 	replyMarkUp := markUp.Build(lang)
 
 	if db.RdbGetAdminMsgID(botLang, userID) == 0 {
-		msgID := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), &replyMarkUp, text)
+		msgID, _ := msgs2.NewIDParseMarkUpMessage(botLang, int64(userID), &replyMarkUp, text)
 		db.RdbSetAdminMsgID(botLang, userID, msgID)
 		return
 	}
