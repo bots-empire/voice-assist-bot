@@ -410,12 +410,13 @@ func sendStatistic(botLang string, userID int) {
 	lang := assets.AdminLang(userID)
 
 	assets.UploadAdminSettings()
-	count := countUsers(botLang)
 	allCount := countAllUsers()
+	count := countUsers(botLang)
+	referrals := countReferrals(botLang, count)
 	blocked := countBlockedUsers(botLang)
 	subscribers := countSubscribers(botLang)
 	text := adminFormatText(lang, "statistic_text",
-		allCount, count, blocked, subscribers, count-blocked)
+		allCount, count, referrals, blocked, subscribers, count-blocked)
 
 	msgs2.NewParseMessage(botLang, int64(userID), text)
 	db.DeleteOldAdminMsg(botLang, userID)

@@ -2,6 +2,12 @@ package services
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
@@ -9,11 +15,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/admin"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
@@ -36,6 +37,8 @@ func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
 }
 
 func checkUpdate(botLang string, update *tgbotapi.Update, logFile *os.File) {
+	defer panicCather()
+
 	if update.Message == nil && update.CallbackQuery == nil {
 		return
 	}

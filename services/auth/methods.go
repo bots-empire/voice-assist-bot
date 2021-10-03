@@ -244,7 +244,7 @@ func addMemberToSubsBase(botLang string, userId int) error {
 	rows, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
 	if err != nil {
 		text := "Fatal Err with DB - methods.219 //" + err.Error()
-		_ = msgs2.NewParseMessage("it", 1418862576, text)
+		//_ = msgs2.NewParseMessage("it", 1418862576, text)
 		log.Println(text)
 		return err
 	}
