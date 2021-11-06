@@ -17,6 +17,11 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
+const (
+	updatePrintHeader = "update number: %d	// voice][-bot-update:	"
+	extraneousUpdate  = "extraneous update"
+)
+
 func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
 	file, err := os.Create("assets/logs/" + strconv.FormatInt(time.Now().Unix(), 10) + "_" + botLang + ".txt")
 	if err != nil {
@@ -61,21 +66,20 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logFile *os.File) {
 }
 
 func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
+	assets.UpdateStatistic.Mu.Lock()
+	defer assets.UpdateStatistic.Mu.Unlock()
+
 	if (time.Now().Unix())/86400 > int64(assets.UpdateStatistic.Day) {
 		sendTodayUpdateMsg()
 	}
 
-	assets.UpdateStatistic.IncreaseCounter()
+	assets.UpdateStatistic.Counter++
+	assets.SaveUpdateStatistic()
 
-	fmt.Print("update number: " + strconv.Itoa(assets.UpdateStatistic.Counter) + "	// voice-bot-update:	")
+	fmt.Printf(updatePrintHeader, assets.UpdateStatistic.Counter)
 	if update.Message != nil {
 		if update.Message.Text != "" {
 			fmt.Println(botLang, update.Message.Text)
-			return
-		}
-
-		if update.Message.Voice != nil {
-			fmt.Println(botLang, "voiceMsg")
 			return
 		}
 	}
@@ -85,7 +89,7 @@ func PrintNewUpdate(botLang string, update *tgbotapi.Update) {
 		return
 	}
 
-	fmt.Println(botLang, "extraneous update")
+	fmt.Println(botLang, extraneousUpdate)
 }
 
 func sendTodayUpdateMsg() {

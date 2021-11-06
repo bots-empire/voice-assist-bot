@@ -50,11 +50,9 @@
   "all_back_main_button": "⬅️ Menu principale;⬅️ Indietro;❌ Cancellazione",
   "not_admin": "Mi dispiace, ma tu non sei l'amministratore",
   "advertisement_button_text": "✅ FARE SOLDI ✅",
-
   "withdrawal_not_subs_text": "Iscriviti al canale sponsorizzato e visualizza i primi 15 post per prelevare i tuoi soldi!",
   "im_subscribe_button": "✅ Conferma prelievo",
   "invitation_to_subscribe": "We checked your subscription",
   "user_dont_subscribe": "non sei iscritto al canale",
-
   "invalid_link_err": "Error, link is invalid"
 }

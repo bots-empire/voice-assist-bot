@@ -73,25 +73,22 @@ func SaveAdminSettings() {
 // ----------------------------------------------------
 
 type UpdateInfo struct {
-	mu      *sync.Mutex
+	Mu      *sync.Mutex
 	Counter int
 	Day     int
-}
-
-func (i *UpdateInfo) IncreaseCounter() {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	UpdateStatistic.Counter++
-	SaveUpdateStatistic()
 }
 
 var UpdateStatistic *UpdateInfo
 
 func UploadUpdateStatistic() {
 	info := &UpdateInfo{}
-	info.mu = new(sync.Mutex)
-	strStatistic, err := Bots["it"].Rdb.Get("update_statistic").Result()
+	info.Mu = new(sync.Mutex)
+	result := Bots["it"].Rdb.Get("update_statistic")
+	if result == nil {
+		UpdateStatistic = info
+		return
+	}
+	strStatistic, err := result.Result()
 	if err != nil {
 		UpdateStatistic = info
 		return
@@ -102,7 +99,6 @@ func UploadUpdateStatistic() {
 		UpdateStatistic = info
 		return
 	}
-	log.Println(data)
 	info.Counter, _ = strconv.Atoi(data[0])
 	info.Day, _ = strconv.Atoi(data[1])
 	UpdateStatistic = info

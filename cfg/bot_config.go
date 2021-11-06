@@ -9,6 +9,8 @@ type BotConfig struct {
 	Token         string
 	Link          string
 	LanguageInBot string
+
+	StartLanguages []string
 }
 
 var Tokens = make(map[string]BotConfig)
