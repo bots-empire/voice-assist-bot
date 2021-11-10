@@ -8,7 +8,7 @@ import (
 
 var (
 	AvailableAdminLang = []string{"en", "ru"}
-	AvailableLang      = []string{"it", "pt", "es", "mx", "ch", "fr"}
+	AvailableLang      = []string{"it", "pt", "es", "mx", "ch", "fr", "ar"}
 
 	Language     = make([]map[string]string, len(AvailableLang))
 	AdminLibrary = make([]map[string]string, 2)
