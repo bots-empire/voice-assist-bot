@@ -15,7 +15,13 @@ type Handler struct {
 	Bot      *tgbotapi.BotAPI
 	Rdb      *redis.Client
 	DataBase *sql.DB
+
+	//LangSelection []string
 }
+
+//func NeedStartLangSelection(botLang string) bool {
+//	return Bots[botLang].LangSelection != nil
+//}
 
 func GetBot(botLang string) *tgbotapi.BotAPI {
 	return Bots[botLang].Bot

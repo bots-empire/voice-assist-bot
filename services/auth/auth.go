@@ -16,7 +16,7 @@ func CheckingUser(botLang string, message *tgbotapi.Message) {
 	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
 	if err != nil {
 		text := "Fatal Err with DB - auth.18 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
+		_ = msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
 
@@ -32,7 +32,6 @@ func CheckingUser(botLang string, message *tgbotapi.Message) {
 		text := "There were two identical users where id = " + strconv.Itoa(message.From.ID) + " in " + botLang + " bot"
 		//msgs.NewParseMessage("it", 1418862576, text)
 		log.Println(text)
-		return
 	}
 }
 

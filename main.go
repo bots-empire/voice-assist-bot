@@ -26,17 +26,17 @@ func main() {
 func startAllBot() {
 	k := 0
 	for lang, bot := range cfg.Tokens {
-		assets.Bots[lang] = startBot(bot.Token, lang, k)
+		assets.Bots[lang] = startBot(bot, lang, k)
 		k++
 	}
 
 	log.Println("All bots is running")
 }
 
-func startBot(botToken, lang string, k int) assets.Handler {
-	bot, err := tgbotapi.NewBotAPI(botToken)
+func startBot(botCfg cfg.BotConfig, lang string, k int) assets.Handler {
+	bot, err := tgbotapi.NewBotAPI(botCfg.Token)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Failed start %s bot: %s\n", lang, err.Error())
 		return assets.Handler{}
 	}
 
@@ -56,6 +56,8 @@ func startBot(botToken, lang string, k int) assets.Handler {
 		Bot:      bot,
 		Rdb:      rdb,
 		DataBase: dataBase,
+
+		LangSelection: botCfg.LanguageInBot,
 	}
 }
 
@@ -76,32 +78,6 @@ func startHandlers() {
 		wg.Add(1)
 		go func(botLang string, handler assets.Handler, wg *sync.WaitGroup) {
 			defer wg.Done()
-
-			//testChanel := make(chan tgbotapi.Update)
-			//go func() {
-			//	time.Sleep(5 * time.Second)
-			//
-			//	dur := 5 * time.Millisecond
-			//	for {
-			//		testUpdate := tgbotapi.Update{
-			//			Message: &tgbotapi.Message{
-			//				From: &tgbotapi.User{
-			//					ID:           1418862576,
-			//					FirstName:    "Stepan",
-			//					LastName:     "Samsonov",
-			//					UserName:     "ridpiner",
-			//					LanguageCode: "ru",
-			//				},
-			//				Chat: &tgbotapi.Chat{
-			//					ID: 1418862576,
-			//				},
-			//				Text: "/start",
-			//			},
-			//		}
-			//		testChanel <- testUpdate
-			//		time.Sleep(dur)
-			//	}
-			//}()
 			services.ActionsWithUpdates(botLang, handler.Chanel)
 		}(botLang, handler, wg)
 	}

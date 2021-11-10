@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	updatePrintHeader = "update number: %d	// voice][-bot-update:	"
+	updatePrintHeader = "update number: %d	// voice-bot-update:	"
 	extraneousUpdate  = "extraneous update"
 )
 

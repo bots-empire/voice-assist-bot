@@ -82,7 +82,7 @@ var UpdateStatistic *UpdateInfo
 
 func UploadUpdateStatistic() {
 	info := &UpdateInfo{}
-	info.Mu = new(sync.Mutex)
+	info.Mu = &sync.Mutex{}
 	result := Bots["it"].Rdb.Get("update_statistic")
 	if result == nil {
 		UpdateStatistic = info
