@@ -1,0 +1,111 @@
+package administrator
+
+import (
+	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/db"
+	model2 "github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/pkg/errors"
+	"strings"
+)
+
+const (
+	typeFriend = "friend"
+	//typeGroup  = "group"
+
+	startBonusAmount      = "start_bonus_amount"
+	bonusAmount           = "bonus_amount"
+	minWithdrawalAmount   = "min_withdrawal_amount"
+	voiceAmount           = "voice_amount"
+	voicePDAmount         = "voice_pd_amount"
+	referralAmount        = "referral_amount"
+	secondWithdrawalLimit = "second_withdrawal_limit"
+	referralFriendName    = "referral_friend"
+	//referralGroupName  = "referral_group"
+	changeMoreMoneyButtonStatus = "more_money_button_switch"
+	changeFAQText               = "change_faq_text"
+)
+
+type MakeMoneySettingCommand struct {
+}
+
+func NewMakeMoneySettingCommand() *MakeMoneySettingCommand {
+	return &MakeMoneySettingCommand{}
+}
+
+func (c *MakeMoneySettingCommand) Serve(s model2.Situation) error {
+
+	markUp, text := sendMakeMoneyMenu(s.BotLang, s.User.ID)
+	err := msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), markUp, text)
+	if err != nil {
+		return errors.Wrap(err, "failed to edit markup")
+	}
+	err = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
+	if err != nil {
+		return errors.Wrap(err, "failed to send admin answer callback")
+	}
+
+	return nil
+}
+
+func sendMakeMoneyMenu(botLang string, userID int64) (*tgbotapi.InlineKeyboardMarkup, string) {
+	lang := assets.AdminLang(int64(userID))
+	text := assets.AdminText(lang, "make_money_setting_text")
+
+	markUp := msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_bonus_amount_button", "admin/make_money?bonus_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_min_withdrawal_amount_button", "admin/make_money?min_withdrawal_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_voice_amount_button", "admin/make_money?voice_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_voice_pd_amount_button", "admin/make_money?voice_pd_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_referral_amount_button", "admin/make_money?referral_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
+	).Build(lang)
+
+	db.RdbSetUser(botLang, int64(userID), "admin/make_money")
+	return &markUp, text
+}
+
+type ChangeParameterCommand struct {
+}
+
+func NewChangeParameterCommand() *ChangeParameterCommand {
+	return &ChangeParameterCommand{}
+}
+
+func (c *ChangeParameterCommand) Serve(s model2.Situation) error {
+	changeParameter := strings.Split(s.CallbackQuery.Data, "?")[1]
+
+	lang := assets.AdminLang(int64(s.User.ID))
+	var parameter, text string
+	var value int
+
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "admin/make_money?"+changeParameter)
+
+	switch changeParameter {
+	case bonusAmount:
+		parameter = assets.AdminText(lang, "change_bonus_amount_button")
+		value = assets.AdminSettings.Parameters[s.BotLang].BonusAmount
+	case minWithdrawalAmount:
+		parameter = assets.AdminText(lang, "change_min_withdrawal_amount_button")
+		value = assets.AdminSettings.Parameters[s.BotLang].MinWithdrawalAmount
+	case voiceAmount:
+		parameter = assets.AdminText(lang, "change_voice_amount_button")
+		value = assets.AdminSettings.Parameters[s.BotLang].VoiceAmount
+	case voicePDAmount:
+		parameter = assets.AdminText(lang, "change_voice_pd_amount_button")
+		value = assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay
+	case referralAmount:
+		parameter = assets.AdminText(lang, "admin/make_money?referral_amount")
+		value = assets.AdminSettings.Parameters[s.BotLang].ReferralAmount
+	}
+
+	text = adminFormatText(lang, "set_new_amount_text", parameter, value)
+	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "type_the_text")
+	markUp := msgs.NewMarkUp(
+		//msgs.NewRow(msgs.NewAdminButton("back_to_make_money_setting")),
+		msgs.NewRow(msgs.NewAdminButton("exit")),
+	).Build(lang)
+
+	return msgs.NewParseMarkUpMessage(s.BotLang, int64(s.User.ID), markUp, text)
+}

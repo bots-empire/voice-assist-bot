@@ -2,40 +2,92 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
-	_ "github.com/go-sql-driver/mysql"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/pkg/errors"
 	"log"
 	"strconv"
 	"strings"
 )
 
-func CheckingUser(botLang string, message *tgbotapi.Message) {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", message.From.ID)
+const (
+	typeFriend = "friend"
+	//typeGroup  = "group"
+
+	newUserQuery             = "INSERT INTO users VALUES(?, ?, 0, 0, FALSE, ?, ?, ?, FALSE);"
+	UpdateAfterReferralQuery = "UPDATE users SET balance = ?, referral_%s = ? WHERE id = ?;"
+	getUsersUserQuery        = "SELECT * FROM users WHERE id = ?;"
+)
+
+type ParentOfRef struct {
+	ID        int
+	TypeOfRef string
+}
+
+func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, error) {
+	dataBase := model.GetDB(botLang)
+	rows, err := dataBase.Query(getUsersUserQuery, message.From.ID)
 	if err != nil {
-		text := "Fatal Err with DB - auth.18 //" + err.Error()
-		_ = msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
+		return nil, errors.Wrap(err, "get user")
 	}
 
-	users := ReadUsers(rows)
+	users, err := ReadUsers(rows)
+	if err != nil {
+		return nil, errors.Wrap(err, "read user")
+	}
 
 	switch len(users) {
 	case 0:
-		user := createSimpleUser(message, botLang)
+		user := createSimpleUser(botLang, message)
 		referralID := pullReferralID(message)
-		user.AddNewUser(botLang, referralID)
+		if err := addNewUser(message, user, botLang, referralID); err != nil {
+			return nil, errors.Wrap(err, "add new user")
+		}
+		return user, nil
 	case 1:
+		return users[0], nil
 	default:
-		text := "There were two identical users where id = " + strconv.Itoa(message.From.ID) + " in " + botLang + " bot"
-		//msgs.NewParseMessage("it", 1418862576, text)
-		log.Println(text)
+		return nil, model.ErrFoundTwoUsers
 	}
 }
 
-func pullReferralID(message *tgbotapi.Message) int {
+func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referralID int64) error {
+	fmt.Println(u.Language)
+	dataBase := model.GetDB(botLang)
+	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
+	if err != nil {
+		text := "Fatal Err with DB - auth.70 //" + err.Error()
+		//msgs.NewParseMessage("it", 1418862576, text)
+		log.Println(text)
+		return errors.Wrap(err, "query failed")
+	}
+	rows.Close()
+
+	if referralID == u.ID || referralID == 0 {
+		return nil
+	}
+
+	baseUser, err := GetUser(botLang, referralID)
+	if err != nil {
+		errors.Wrap(err, "get user")
+	}
+	baseUser.Balance += assets.AdminSettings.Parameters[botLang].ReferralAmount
+	rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
+		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
+	if err != nil {
+		text := "Fatal Err with DB - auth.85 //" + err.Error()
+		msgs.NewParseMessage("it", 1418862576, text)
+		panic(err.Error())
+	}
+	rows.Close()
+
+	return nil
+}
+
+func pullReferralID(message *tgbotapi.Message) int64 {
 	str := strings.Split(message.Text, " ")
 	if len(str) < 2 {
 		return 0
@@ -48,82 +100,51 @@ func pullReferralID(message *tgbotapi.Message) int {
 	}
 
 	if id > 0 {
-		return id
+		return int64(id)
 	}
 	return 0
 }
 
-func createSimpleUser(message *tgbotapi.Message, botLang string) User {
-	//lang := message.From.LanguageCode
-	//if !strings.Contains("en,de,it,pt,es", lang) || lang == "" {
-	//	lang = "en"
-	//}
-
-	return User{
+func createSimpleUser(botLang string, message *tgbotapi.Message) *model.User {
+	return &model.User{
 		ID:       message.From.ID,
-		Language: botLang,
+		Language: model.Bots[botLang].LanguageInBot,
 	}
 }
 
-func (u *User) AddNewUser(botLang string, referralID int) {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
+func GetUser(botLang string, id int64) (*model.User, error) {
+	dataBase := model.GetDB(botLang)
+	rows, err := dataBase.Query(getUsersUserQuery, id)
 	if err != nil {
-		text := "Fatal Err with DB - auth.70 //" + err.Error()
-		//msgs.NewParseMessage("it", 1418862576, text)
-		log.Println(text)
-		return
-	}
-	rows.Close()
-
-	if referralID == u.ID || referralID == 0 {
-		return
+		return nil, err
 	}
 
-	baseUser := GetUser(botLang, referralID)
-	baseUser.Balance += assets.AdminSettings.Parameters[botLang].ReferralAmount
-	rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
-		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
-	if err != nil {
-		text := "Fatal Err with DB - auth.85 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
+	users, err := ReadUsers(rows)
+	if err != nil || len(users) == 0 {
+		return nil, model.ErrUserNotFound
 	}
-	rows.Close()
+	return users[0], nil
 }
 
-func GetUser(botLang string, id int) User {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("SELECT * FROM users WHERE id = ?;", id)
-	if err != nil {
-		text := "Fatal Err with DB - auth.96 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
-	}
-
-	users := ReadUsers(rows)
-
-	return users[0]
-}
-
-func ReadUsers(rows *sql.Rows) []User {
+func ReadUsers(rows *sql.Rows) ([]*model.User, error) {
 	defer rows.Close()
 
-	var users []User
+	var users []*model.User
 
 	for rows.Next() {
 		var (
-			id, balance, completed, completedToday, referralCount int
-			lastVoice                                             int64
-			takeBonus                                             bool
-			lang                                                  string
+			id                                                int64
+			balance, completed, completedToday, referralCount int
+			lastVoice                                         int64
+			takeBonus                                         bool
+			lang                                              string
 		)
 
 		if err := rows.Scan(&id, &balance, &completed, &completedToday, &lastVoice, &referralCount, &takeBonus, &lang); err != nil {
 			panic("Failed to scan row: " + err.Error())
 		}
 
-		users = append(users, User{
+		users = append(users, &model.User{
 			ID:             id,
 			Balance:        balance,
 			Completed:      completed,
@@ -135,47 +156,5 @@ func ReadUsers(rows *sql.Rows) []User {
 		})
 	}
 
-	return users
-}
-
-func GetLang(botLang string, id int) string {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("SELECT lang FROM users WHERE id = ?;", id)
-	if err != nil {
-		text := "Fatal Err with DB - auth.142 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
-	}
-
-	return GetLangFromRow(rows)
-}
-
-func GetLangFromRow(rows *sql.Rows) string {
-	defer rows.Close()
-	var users []User
-
-	for rows.Next() {
-		var (
-			lang string
-		)
-
-		if err := rows.Scan(&lang); err != nil {
-			panic("Failed to scan row: " + err.Error())
-		}
-
-		users = append(users, User{
-			Language: lang,
-		})
-	}
-
-	if len(users) > 1 {
-		log.Println("The number of found users more than one")
-	}
-
-	return users[0].Language
-}
-
-func StringGoToMainButton(botLang string, id int) string {
-	lang := GetLang(botLang, id)
-	return assets.LangText(lang, "all_back_main_button")
+	return users, nil
 }

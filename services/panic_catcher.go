@@ -1,20 +1,41 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/Stepan1328/voice-assist-bot/services/administrator"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"runtime/debug"
+
+	"github.com/Stepan1328/voice-assist-bot/log"
 )
 
-func panicCather() {
+var (
+	panicLogger = log.NewDefaultLogger().Prefix("panic cather")
+)
+
+func panicCather(botLang string, update *tgbotapi.Update) {
 	msg := recover()
 	if msg == nil {
 		return
 	}
 
-	panicText := fmt.Sprintf("panic in backend: message = %s\n%s", msg, string(debug.Stack()))
+	panicText := fmt.Sprintf("%s\npanic in backend: message = %s\n%s",
+		botLang,
+		msg,
+		string(debug.Stack()),
+	)
+	panicLogger.Warn(panicText)
 
-	alertMsg := tgbotapi.NewMessage(1418862576, panicText)
-	_ = msgs.SendMsgToUser("it", alertMsg)
+	alertMsg := tgbotapi.NewMessage(notificationChatID, panicText)
+	_ = msgs2.SendMsgToUser(administrator.DefaultNotificationBot, alertMsg)
+
+	data, err := json.MarshalIndent(update, "", "  ")
+	if err != nil {
+		return
+	}
+
+	updateDataMsg := tgbotapi.NewMessage(notificationChatID, string(data))
+	_ = msgs2.SendMsgToUser(administrator.DefaultNotificationBot, updateDataMsg)
 }

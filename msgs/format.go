@@ -2,14 +2,13 @@ package msgs
 
 import (
 	"fmt"
-
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func SendMessageToChat(botLang string, msg tgbotapi.MessageConfig) bool {
-	bot := assets.GetBot(botLang)
-	if _, err := bot.Send(msg); err != nil {
+	if _, err := model.Bots[botLang].Bot.Send(msg); err != nil {
 		return false
 	}
 	return true
@@ -36,10 +35,9 @@ func NewIDParseMessage(botLang string, chatID int64, text string) (int, error) {
 		ParseMode: "HTML",
 	}
 
-	bot := assets.GetBot(botLang)
-	message, err := bot.Send(msg)
+	message, err := model.Bots[botLang].Bot.Send(msg)
 	if err != nil {
-		return 0, err
+		return 0, nil
 	}
 	return message.MessageID, nil
 }
@@ -63,27 +61,28 @@ func NewIDParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, t
 			ChatID:      chatID,
 			ReplyMarkup: markUp,
 		},
-		Text:      text,
-		ParseMode: "HTML",
+		Text:                  text,
+		ParseMode:             "HTML",
+		DisableWebPagePreview: true,
 	}
 
-	bot := assets.GetBot(botLang)
-	message, err := bot.Send(msg)
+	message, err := model.Bots[botLang].Bot.Send(msg)
 	if err != nil {
 		return 0, err
 	}
 	return message.MessageID, nil
 }
 
-func NewEditMarkUpMessage(botLang string, userID, msgID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) error {
+func NewEditMarkUpMessage(botLang string, userID int64, msgID int, markUp *tgbotapi.InlineKeyboardMarkup, text string) error {
 	msg := tgbotapi.EditMessageTextConfig{
 		BaseEdit: tgbotapi.BaseEdit{
 			ChatID:      int64(userID),
 			MessageID:   msgID,
 			ReplyMarkup: markUp,
 		},
-		Text:      text,
-		ParseMode: "HTML",
+		Text:                  text,
+		ParseMode:             "HTML",
+		DisableWebPagePreview: true,
 	}
 
 	return SendMsgToUser(botLang, msg)
@@ -95,7 +94,8 @@ func SendAnswerCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery, l
 		Text:            assets.LangText(lang, text),
 	}
 
-	return SendAnswerCallbackToUser(botLang, answerCallback)
+	_ = SendMsgToUser(botLang, answerCallback)
+	return nil
 }
 
 func SendAdminAnswerCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery, text string) error {
@@ -105,7 +105,8 @@ func SendAdminAnswerCallback(botLang string, callbackQuery *tgbotapi.CallbackQue
 		Text:            assets.AdminText(lang, text),
 	}
 
-	return SendAnswerCallbackToUser(botLang, answerCallback)
+	_ = SendMsgToUser(botLang, answerCallback)
+	return nil
 }
 
 func GetFormatText(lang, text string, values ...interface{}) string {
@@ -120,18 +121,7 @@ func SendSimpleMsg(botLang string, chatID int64, text string) error {
 }
 
 func SendMsgToUser(botLang string, msg tgbotapi.Chattable) error {
-	bot := assets.GetBot(botLang)
-
-	if _, err := bot.Send(msg); err != nil {
-		return err
-	}
-	return nil
-}
-
-func SendAnswerCallbackToUser(botLang string, callback tgbotapi.CallbackConfig) error {
-	bot := assets.GetBot(botLang)
-
-	if _, err := bot.AnswerCallbackQuery(callback); err != nil {
+	if _, err := model.Bots[botLang].Bot.Send(msg); err != nil {
 		return err
 	}
 	return nil
