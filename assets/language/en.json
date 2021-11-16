@@ -15,7 +15,6 @@
   "reached_max_amount_per_day": "✅ You have completed %d out of %d possible tasks!\nNew tasks will be available in 24 hours\nWhile there are no tasks, you can earn extra money using this channel",
   "profile_text": "\uD83D\uDC64 My Profile:\n\n<b>Name:</b> %s\n<b>User Name: </b> %s\nBalance: </b> %d $\n<b>Sent voice messages: </b> %d\n<b>Invited: </b> %d",
   "statistic_to_user": "📊 Bot statistics\n\n👤 <b>Bot users: </b> %d\n💰 <b>Earned by users: </b> %d\n🧠 <b>sent voice messages: </b> %d",
-  "withdrawal_money": "💰 <b>Balance:</b> %d $.\n\nIf you desire to withdraw funds, choose where you want to put them !",
   "advertising_button": "📲 Go to the channel",
   "get_bonus_button": "💰 Get bonus",
   "withdraw_money_button": "💰 Withdraw money",

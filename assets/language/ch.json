@@ -15,7 +15,6 @@
   "reached_max_amount_per_day": "✅ Has completado %d de las %d tareas posibles\nNuevas tareas aparecerán en 24 horas\nHasta que no hay tareas que usted puede ganar en este canal EUR. extra ⬇️",
   "profile_text": "👤 Mi perfil:\n\n<b>Nombre:</b> %s\n<b>Username:</b> %s\n<b>Estado de cuenta:</b> %d EUR.\n<b>Mensajes de voz enviados:</b> %d\n<b>Invitados:</b> %d",
   "statistic_to_user": "\uD83D\uDCCA Bot de Estadísticas\n\n👤 <b>Bot de Usuarios:</b> %d\n💰 <b>Ganado por los usuarios:</b> %d\n🧠 <b>Mensajes de voz enviados:</b> %d",
-  "withdrawal_money": "💰 <b>Estado de cuenta:</b> %d EUR.\n\nSi quieres retirar fondos, ¡elige dónde acreditarlos!",
   "advertising_button": "\uD83D\uDCF2 Suscribirse al canal",
   "get_bonus_button": "✅ Obtener bono",
   "withdraw_money_button": "💰 Retirar dinero",
