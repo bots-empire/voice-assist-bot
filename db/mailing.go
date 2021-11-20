@@ -3,25 +3,30 @@ package db
 import (
 	"database/sql"
 	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"strings"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
+
+const (
+	getLangIDQuery = "SELECT id, lang FROM users;"
 )
 
 var (
 	message = make(map[string]tgbotapi.MessageConfig, 5)
 )
 
-func StartMailing() {
-	rows, err := DataBase.Query("SELECT id, lang FROM users WHERE" + createAStringOfLang() + ";")
+func StartMailing(botLang string) {
+	dataBase := model.Bots[botLang].DataBase
+	rows, err := dataBase.Query(getLangIDQuery)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	MailToUser(rows)
+	MailToUser(botLang, rows)
 }
 
-func MailToUser(rows *sql.Rows) {
+func MailToUser(botLang string, rows *sql.Rows) {
 	defer rows.Close()
 	fillMessageMap()
 
@@ -30,7 +35,7 @@ func MailToUser(rows *sql.Rows) {
 
 	for rows.Next() {
 		var (
-			id   int
+			id   int64
 			lang string
 		)
 
@@ -39,29 +44,14 @@ func MailToUser(rows *sql.Rows) {
 		}
 
 		msg := message[lang]
-		msg.ChatID = int64(id)
+		msg.ChatID = id
+
 		if containsInAdmin(id) {
 			continue
 		}
 
-		send := false
-		for _, selectedLang := range assets.AvailableLang {
-			if assets.AdminSettings.LangSelectedMap[selectedLang] && !send {
-				if msgs.SendMessageToChat(selectedLang, msg) {
-					send = true
-				}
-
-				if !send {
-					blockedUsers[selectedLang] += 1
-				}
-			}
-		}
-
-		for _, selectedLang := range assets.AvailableLang {
-			if !send {
-				blockedUsers[selectedLang] += 1
-				break
-			}
+		if !msgs.SendMessageToChat(botLang, msg) {
+			blockedUsers[botLang] += 1
 		}
 	}
 
@@ -87,7 +77,7 @@ func clearSelectedLang(blockedUsers map[string]int) {
 	}
 }
 
-func containsInAdmin(userID int) bool {
+func containsInAdmin(userID int64) bool {
 	for key := range assets.AdminSettings.AdminID {
 		if key == userID {
 			return true
@@ -96,23 +86,23 @@ func containsInAdmin(userID int) bool {
 	return false
 }
 
-func createAStringOfLang() string {
-	var str string
-
-	for _, lang := range assets.AvailableLang {
-		if assets.AdminSettings.LangSelectedMap[lang] {
-			str += " lang = '" + lang + "' OR"
-		}
-	}
-	return strings.TrimRight(str, " OR")
-}
+//func createAStringOfLang() string {
+//	var str string
+//
+//	for _, lang := range assets.AvailableLang {
+//		if assets.AdminSettings.LangSelectedMap[lang] {
+//			str += " lang = '" + lang + "' OR"
+//		}
+//	}
+//	return strings.TrimRight(str, " OR")
+//}
 
 func fillMessageMap() {
 	for _, lang := range assets.AvailableLang {
 		text := assets.AdminSettings.AdvertisingText[lang]
 
 		markUp := msgs.NewIlMarkUp(
-			msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingURL[lang])),
+			msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingChan[lang].Url)),
 		).Build(lang)
 
 		message[lang] = tgbotapi.MessageConfig{

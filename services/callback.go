@@ -1,123 +1,122 @@
 package services
 
 import (
-	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/db"
-	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
-	"github.com/Stepan1328/voice-assist-bot/services/auth"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 	"strconv"
 	"strings"
+
+	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/db"
+	"github.com/Stepan1328/voice-assist-bot/log"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/Stepan1328/voice-assist-bot/services/administrator"
+	"github.com/Stepan1328/voice-assist-bot/services/auth"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func GetBonus(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	user := auth.GetUser(callbackQuery.From.ID)
-
-	user.GetABonus(botLang)
+type CallBackHandlers struct {
+	Handlers map[string]model.Handler
 }
 
-func Withdrawal(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	level := db.GetLevel(botLang, callbackQuery.From.ID)
-	if level != "main" && level != "empty" {
-		lang := auth.GetLang(callbackQuery.From.ID)
-		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
+func (h *CallBackHandlers) GetHandler(command string) model.Handler {
+	return h.Handlers[command]
+}
+
+func (h *CallBackHandlers) Init() {
+	//Money command
+	h.OnCommand("/send_bonus_to_user", NewGetBonusCommand())
+	h.OnCommand("/withdrawal_money", NewRecheckSubscribeCommand())
+	h.OnCommand("/promotion_case", NewPromotionCaseCommand())
+}
+
+func (h *CallBackHandlers) OnCommand(command string, handler model.Handler) {
+	h.Handlers[command] = handler
+}
+
+func checkCallbackQuery(s model.Situation, logger log.Logger) {
+	if strings.Contains(s.Params.Level, "admin") {
+		if err := administrator.CheckAdminCallback(s); err != nil {
+			logger.Warn("error with serve admin callback command: %s", err.Error())
+		}
 		return
 	}
 
-	db.RdbSetUser(botLang, callbackQuery.From.ID, "withdrawal")
+	Handler := model.Bots[s.BotLang].CallbackHandler.
+		GetHandler(s.Command)
 
-	sendPaymentMethod(botLang, callbackQuery)
-}
-
-func sendPaymentMethod(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	user := auth.GetUser(callbackQuery.From.ID)
-
-	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, assets.LangText(user.Language, "select_payment"))
-
-	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("paypal_method"),
-			msgs2.NewDataButton("credit_card_method")),
-		msgs2.NewRow(msgs2.NewDataButton("main_back")),
-	).Build(user.Language)
-
-	msgs2.SendMsgToUser(botLang, msg)
-}
-
-func ChangeLanguage(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	if db.GetLevel(botLang, callbackQuery.From.ID) != "main" {
-		lang := auth.GetLang(callbackQuery.From.ID)
-		msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "unfinished_action")
+	if Handler != nil {
+		if err := Handler.Serve(s); err != nil {
+			logger.Warn("error with serve user callback command: %s", err.Error())
+			smthWentWrong(s.BotLang, s.CallbackQuery.Message.Chat.ID, s.User.Language)
+		}
 		return
 	}
 
-	data := strings.Split(callbackQuery.Data, "/")
-	if len(data) == 2 {
-		setLanguage(botLang, callbackQuery.From.ID, data[1])
-		msgs2.SendAnswerCallback(botLang, callbackQuery, data[1], "language_successful_set")
-		deleteTemporaryMessages(botLang, callbackQuery.From.ID)
-		return
-	}
-
-	sendLanguages(botLang, callbackQuery)
+	logger.Warn("get callback data='%s', but they didn't react in any way", s.CallbackQuery.Data)
 }
 
-func setLanguage(botLang string, userID int, lang string) {
-	db.RdbSetUser(botLang, userID, "main")
+type GetBonusCommand struct {
+}
 
-	if lang == "back" {
-		SendMenu(botLang, userID, assets.LangText(auth.GetLang(userID), "back_to_main_menu"))
-		return
+func NewGetBonusCommand() *GetBonusCommand {
+	return &GetBonusCommand{}
+}
+
+func (c *GetBonusCommand) Serve(s model.Situation) error {
+	return auth.GetABonus(s)
+}
+
+type RecheckSubscribeCommand struct {
+}
+
+func NewRecheckSubscribeCommand() *RecheckSubscribeCommand {
+	return &RecheckSubscribeCommand{}
+}
+
+func (c *RecheckSubscribeCommand) Serve(s model.Situation) error {
+	amount := strings.Split(s.CallbackQuery.Data, "?")[1]
+	s.Message = &tgbotapi.Message{
+		Text: amount,
 	}
-	_, err := db.DataBase.Query("UPDATE users SET lang = ? WHERE id = ?;", lang, userID)
+	if err := msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "invitation_to_subscribe"); err != nil {
+		return err
+	}
+	amountInt, _ := strconv.Atoi(amount)
+
+	if auth.CheckSubscribeToWithdrawal(s, amountInt) {
+		db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+
+		return NewStartCommand().Serve(s)
+	}
+	return nil
+}
+
+type PromotionCaseCommand struct {
+}
+
+func NewPromotionCaseCommand() *PromotionCaseCommand {
+	return &PromotionCaseCommand{}
+}
+
+func (c *PromotionCaseCommand) Serve(s model.Situation) error {
+	cost, err := strconv.Atoi(strings.Split(s.CallbackQuery.Data, "?")[1])
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
-	SendMenu(botLang, userID, assets.LangText(lang, "back_to_main_menu"))
-}
-
-func sendLanguages(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	userID := callbackQuery.From.ID
-	lang := auth.GetLang(userID)
-	msg := tgbotapi.NewMessage(int64(userID), assets.LangText(lang, "select_language"))
-
-	msg.ReplyMarkup = msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlDataButton("lang_de", "change_lang/de")),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("lang_en", "change_lang/en")),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("lang_es", "change_lang/es")),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("lang_it", "change_lang/it")),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("lang_pt", "change_lang/pt")),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("back_to_main_menu_button", "change_lang/back")),
-	).Build(lang)
-
-	bot := assets.GetBot(botLang)
-	data, err := bot.Send(msg)
-	if err != nil {
-		log.Println(err)
+	if s.User.Balance < cost {
+		return msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "not_enough_money")
 	}
 
-	msgs2.SendAnswerCallback(botLang, callbackQuery, lang, "make_a_choice")
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), s.CallbackQuery.Data)
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "invitation_to_send_link_text"))
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	).Build(s.User.Language)
 
-	db.RdbSetTemporary(botLang, userID, data.MessageID)
-}
-
-func deleteTemporaryMessages(botLang string, userID int) {
-	result := db.RdbGetTemporary(botLang, userID)
-
-	if result == "" {
-		return
+	if err := msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "invitation_to_send_link"); err != nil {
+		return err
 	}
 
-	msgID, err := strconv.Atoi(result)
-	if err != nil {
-		log.Println(err)
-	}
-
-	msg := tgbotapi.NewDeleteMessage(int64(userID), msgID)
-
-	bot := assets.GetBot(botLang)
-	if _, err = bot.Send(msg); err != nil && err.Error() != "message to delete not found" {
-		log.Println(err)
-	}
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }

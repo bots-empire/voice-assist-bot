@@ -1,5 +1,6 @@
 {
   "admin_log_in": "You have successfully logged in to the admin panel!",
+  "welcome_to_admin": "Congratulations, the admin panel is now available to you\nWrite /admin to log in to the admin panel",
   "exit": "\uD83D\uDEB6\u200D♂ Log out of admin",
   "admin_log_out": "You are logged out of the admin panel",
   "make_a_choice": "Make a choice",
@@ -33,10 +34,12 @@
   "advertisement_setting_text": "<b>Ad Settings</b> \uD83D\uDCB5\n\nSelect the section you are interested in:",
   "change_url_button": "Change the link ↗️",
   "set_new_url_text": "<b>Current Link:</b> %s\n\nSend a new link ⤵️",
+  "chat_id_not_update": "The data is not updated, please try again",
   "incorrect_url_change_input": "<b>Invalid link</b>\n\nCheck that the data is correct and try again ⤵️",
   "back_to_advertisement_setting": "← Back to ⚙️ Advertising",
   "change_text_button": "Edit Text \uD83D\uDCE8",
   "change_text_of_advertisement_text": "<b>Ad Text Settings</b> \uD83D\uDCB5\n\nSelect the language in which you want to change the mailing list text:",
+  "change_url_of_advertisement_text": "<b>Link Settings</b> ↗️\n\nSelect the language in which you want to change the ad link:",
   "button_on_de": "✅ Deutsch \uD83C\uDDE9\uD83C\uDDEA",
   "button_off_de": "Deutsch \uD83C\uDDE9\uD83C\uDDEA",
   "button_on_en": "✅ English \uD83C\uDDEC\uD83C\uDDE7",
@@ -49,6 +52,7 @@
   "button_off_pt": "Português \uD83C\uDDF5\uD83C\uDDF9",
   "set_new_advertisement_text": "<b>Current text:</b>\n\n%s\n\nSend a new text ⤵️",
   "distribute_button": "Mailing \uD83D\uDCE3",
+  "mailing_main_text": "<b>Mailing</b> \uD83D\uDCE3\n\nConfirm the launch of the mailing list",
   "select_all_language": "Mark all",
   "deselect_all_selections": "Deselect all",
   "start_mailing_button": "Launch mailing \uD83D\uDCE3",
@@ -56,5 +60,14 @@
   "no_language_selected": "Select at least one language",
   "mailing_successful": "Ad sent successfully",
 
-  "statistic_text": "<b>Bot statistics</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Total users: %d\n\n❌ Inactive users: %d\n✅ Active users: %d"
+  "admin_list_text": "<b>List of Administrators</b> \uD83D\uDC68\u200D\uD83D\uDCBB\n\nSelect the section you are interested in:",
+  "add_admin_button": "Add an administrator",
+  "new_admin_key_text": "Link to add an administrator:\n%s\nSend this link to the user you want to assign as an administrator\nAfter clicking on the link, the user will be added to the admins\nThe link is valid for %d seconds",
+  "delete_admin_button": "Remove Administrator",
+  "admin_dont_have_permissions": "You don't have access",
+  "incorrect_admin_id_text": "<b>The Administrator ID was entered incorrectly</b>\n\nCheck the correct input: the ID must be a positive number and match one of the admin IDs.",
+  "delete_admin_body_text": "<b>List of Administrators:</b>\n\n%s\nEnter the ID of the administrator you want to delete ⤵️",
+  "admin_removed_status": "Administrator removed successfully ✅",
+
+  "statistic_text": "<b>Bot statistics</b> \uD83D\uDCCA\n\n\uD83D\uDC65 Total users: %d\n\n\uD83D\uDC64 Users in this bot: %d\n❌ Inactive users: %d\n\uD83D\uDCF2 Subscribers to the channel: %d\n✅ Active users: %d"
 }

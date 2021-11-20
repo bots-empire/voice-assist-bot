@@ -2,293 +2,526 @@ package services
 
 import (
 	"fmt"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/cfg"
 	"github.com/Stepan1328/voice-assist-bot/db"
-	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
-	"github.com/Stepan1328/voice-assist-bot/services/admin"
+	"github.com/Stepan1328/voice-assist-bot/log"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"strings"
 	"time"
 )
 
-func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel) {
+const (
+	updateCounterHeader = "Today Update's counter: %d"
+	updatePrintHeader   = "update number: %d    // ref-bot-update:  %s %s"
+	extraneousUpdate    = "extraneous update"
+	notificationChatID  = 872383555
+	godUserID           = 872383555
+
+	defaultTimeInServiceMod = time.Hour * 2
+)
+
+type MessagesHandlers struct {
+	Handlers map[string]model.Handler
+}
+
+func (h *MessagesHandlers) GetHandler(command string) model.Handler {
+	return h.Handlers[command]
+}
+
+func (h *MessagesHandlers) Init() {
+	//Start command
+	h.OnCommand("/start", NewStartCommand())
+	h.OnCommand("/admin", administrator.NewAdminCommand())
+	h.OnCommand("/getUpdate", administrator.NewGetUpdateCommand())
+
+	//Main command
+	h.OnCommand("/main_profile", NewSendProfileCommand())
+	h.OnCommand("/main_money_for_a_friend", NewMoneyForAFriendCommand())
+	h.OnCommand("/main_more_money", NewMoreMoneyCommand())
+	h.OnCommand("/main_make_money", NewMakeMoneyCommand())
+	h.OnCommand("/new_make_money", NewMakeMoneyMsgCommand())
+	h.OnCommand("/main_statistic", NewMakeStatisticCommand())
+
+	//Spend money command
+	h.OnCommand("/main_withdrawal_of_money", NewSpendMoneyWithdrawalCommand())
+	h.OnCommand("/paypal_method", NewPaypalReqCommand())
+	h.OnCommand("/credit_card_method", NewCreditCardReqCommand())
+	h.OnCommand("/withdrawal_method", NewWithdrawalMethodCommand())
+	h.OnCommand("/withdrawal_req_amount", NewReqWithdrawalAmountCommand())
+	h.OnCommand("/withdrawal_exit", NewWithdrawalAmountCommand())
+
+	//Log out command
+	h.OnCommand("/admin_log_out", NewAdminLogOutCommand())
+
+	//Tech command
+	//	h.OnCommand("/MaintenanceModeOn", NewMaintenanceModeOnCommand())
+	//h.OnCommand("/MaintenanceModeOff", NewMaintenanceModeOffCommand())
+}
+
+func (h *MessagesHandlers) OnCommand(command string, handler model.Handler) {
+	h.Handlers[command] = handler
+}
+
+func ActionsWithUpdates(botLang string, updates tgbotapi.UpdatesChannel, logger log.Logger) {
 	for update := range updates {
-		checkUpdate(botLang, &update)
+		localUpdate := update
+
+		go checkUpdate(botLang, &localUpdate, logger)
 	}
 }
 
-func checkUpdate(botLang string, update *tgbotapi.Update) {
+func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
+	defer panicCather(botLang, update)
+
 	if update.Message == nil && update.CallbackQuery == nil {
 		return
 	}
 
 	if update.Message != nil {
-		checkMessage(botLang, update.Message)
+		if update.Message.PinnedMessage != nil {
+			return
+		}
+	}
+
+	PrintNewUpdate(botLang, update, logger)
+	if update.Message != nil {
+		user, err := auth.CheckingTheUser(botLang, update.Message)
+		if err != nil {
+			emptyLevel(botLang, update.Message, botLang)
+			logger.Warn("err with check user: %s", err.Error())
+			return
+		}
+		situation := createSituationFromMsg(botLang, update.Message, user)
+
+		checkMessage(situation, logger)
 		return
 	}
 
 	if update.CallbackQuery != nil {
-		checkCallbackQuery(botLang, update.CallbackQuery)
+		situation, err := createSituationFromCallback(botLang, update.CallbackQuery)
+		if err != nil {
+			smthWentWrong(botLang, update.CallbackQuery.Message.Chat.ID, botLang)
+			logger.Warn("err with create situation from callback: %s", err.Error())
+			return
+		}
+
+		checkCallbackQuery(situation, logger)
 		return
 	}
 }
 
-func checkMessage(botLang string, message *tgbotapi.Message) {
-	auth.CheckingTheUser(message)
-	lang := auth.GetLang(message.From.ID)
-	if strings.Contains(auth.StringGoToMainButton(message.From.ID), message.Text) && message.Text != "" {
-		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
+func PrintNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
+	assets.UpdateStatistic.Mu.Lock()
+	defer assets.UpdateStatistic.Mu.Unlock()
+
+	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
+		text := fmt.Sprintf(updateCounterHeader, assets.UpdateStatistic.Counter)
+		msgID, _ := msgs.NewIDParseMessage(administrator.DefaultNotificationBot, 1418862576, text)
+		_ = msgs.SendMsgToUser(administrator.DefaultNotificationBot, tgbotapi.PinChatMessageConfig{
+			ChatID:    notificationChatID,
+			MessageID: msgID,
+		})
+		assets.UpdateStatistic.Counter = 0
+		assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
+	}
+
+	assets.UpdateStatistic.Counter++
+	assets.SaveUpdateStatistic()
+
+	if update.Message != nil {
+		if update.Message.Text != "" {
+			logger.Info(updatePrintHeader, assets.UpdateStatistic.Counter, botLang, update.Message.Text)
+			return
+		}
+	}
+
+	if update.CallbackQuery != nil {
+		logger.Info(updatePrintHeader, assets.UpdateStatistic.Counter, botLang, update.CallbackQuery.Data)
 		return
 	}
 
-	if message.Command() == "start" || message.Command() == "exit" {
-		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
-		return
-	}
+	logger.Info(updatePrintHeader, assets.UpdateStatistic.Counter, botLang, extraneousUpdate)
+}
 
-	if message.Command() == "admin" {
-		admin.SetAdminLevel(botLang, message)
-		return
-	}
-
-	level := db.GetLevel(botLang, message.From.ID)
-	data := strings.Split(level, "/")
-	switch data[0] {
-	case "main", "empty":
-		checkTextOfMessage(botLang, message)
-	case "withdrawal":
-		withdrawalLevel(botLang, message, level)
-	case "make_money":
-		makeMoneyLevel(botLang, message)
-	case "admin":
-		admin.AnalyzeAdminMessage(botLang, message, level)
-	default:
-		emptyLevel(botLang, message, lang)
+func createSituationFromMsg(botLang string, message *tgbotapi.Message, user *model.User) model.Situation {
+	return model.Situation{
+		Message: message,
+		BotLang: botLang,
+		User:    user,
+		Params: &model.Parameters{
+			Level: db.GetLevel(botLang, message.From.ID),
+		},
 	}
 }
 
-func withdrawalLevel(botLang string, message *tgbotapi.Message, level string) {
-	data := strings.Split(level, "/")
-	if len(data) == 1 {
-		checkSelectedPaymentMethod(botLang, message)
-		return
+func createSituationFromCallback(botLang string, callbackQuery *tgbotapi.CallbackQuery) (model.Situation, error) {
+	user, err := auth.GetUser(botLang, callbackQuery.From.ID)
+	if err != nil {
+		return model.Situation{}, err
 	}
-	level = strings.Replace(level, "withdrawal/", "", 1)
-	switch level {
-	case "paypal":
-		reqWithdrawalAmount(botLang, message)
-	case "credit_card":
-		reqWithdrawalAmount(botLang, message)
-	case "req_amount":
-		user := auth.GetUser(message.From.ID)
-		if user.WithdrawMoneyFromBalance(botLang, message.Text) {
-			SendMenu(botLang, message.From.ID, assets.LangText(user.Language, "main_select_menu"))
+
+	return model.Situation{
+		CallbackQuery: callbackQuery,
+		BotLang:       botLang,
+		User:          user,
+		Command:       strings.Split(callbackQuery.Data, "?")[0],
+		Params: &model.Parameters{
+			Level: db.GetLevel(botLang, callbackQuery.From.ID),
+		},
+	}, nil
+}
+
+func checkMessage(situation model.Situation, logger log.Logger) {
+	if model.Bots[situation.BotLang].MaintenanceMode {
+		if situation.User.ID != godUserID {
+			msg := tgbotapi.NewMessage(situation.User.ID, "The bot is under maintenance, please try again later")
+			_ = msgs.SendMsgToUser(situation.BotLang, msg)
+			return
+		}
+	}
+	if situation.Command == "" {
+		situation.Command, situation.Err = assets.GetCommandFromText(
+			situation.Message, situation.User.Language, situation.User.ID)
+	}
+
+	if situation.Err == nil {
+		Handler := model.Bots[situation.BotLang].MessageHandler.
+			GetHandler(situation.Command)
+
+		if Handler != nil {
+			err := Handler.Serve(situation)
+			if err != nil {
+				logger.Warn("error with serve user msg command: %s", err.Error())
+				smthWentWrong(situation.BotLang, situation.Message.Chat.ID, situation.User.Language)
+			}
+			return
+		}
+	}
+
+	situation.Command = strings.Split(situation.Params.Level, "?")[0]
+
+	Handler := model.Bots[situation.BotLang].MessageHandler.
+		GetHandler(situation.Command)
+
+	if Handler != nil {
+		err := Handler.Serve(situation)
+		if err != nil {
+			logger.Warn("error with serve user level command: %s", err.Error())
+			smthWentWrong(situation.BotLang, situation.Message.Chat.ID, situation.User.Language)
 		}
 		return
 	}
 
-	db.RdbSetUser(botLang, message.From.ID, "withdrawal/req_amount")
-}
-
-func checkSelectedPaymentMethod(botLang string, message *tgbotapi.Message) {
-	lang := auth.GetLang(message.From.ID)
-	switch message.Text {
-	case assets.LangText(lang, "paypal_method"):
-		paypalReq(botLang, message)
-	case assets.LangText(lang, "credit_card_method"):
-		creditCardReq(botLang, message)
-	case assets.LangText(lang, "main_back"):
-		SendMenu(botLang, message.From.ID, assets.LangText(lang, "main_select_menu"))
-	}
-}
-
-func paypalReq(botLang string, message *tgbotapi.Message) {
-	db.RdbSetUser(botLang, message.From.ID, "withdrawal/paypal")
-
-	lang := auth.GetLang(message.From.ID)
-	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "paypal_email"))
-	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
-	).Build(lang)
-
-	msgs2.SendMsgToUser(botLang, msg)
-}
-
-func creditCardReq(botLang string, message *tgbotapi.Message) {
-	db.RdbSetUser(botLang, message.From.ID, "withdrawal/credit_card")
-
-	lang := auth.GetLang(message.From.ID)
-	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "credit_card_number"))
-	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("withdraw_cancel")),
-	).Build(lang)
-
-	msgs2.SendMsgToUser(botLang, msg)
-}
-
-func reqWithdrawalAmount(botLang string, message *tgbotapi.Message) {
-	lang := auth.GetLang(message.From.ID)
-	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "req_withdrawal_amount"))
-
-	msgs2.SendMsgToUser(botLang, msg)
-}
-
-func makeMoneyLevel(botLang string, message *tgbotapi.Message) {
-	if message.Voice == nil {
+	if err := administrator.CheckAdminMessage(situation); err == nil {
 		return
 	}
 
-	user := auth.GetUser(message.From.ID)
-	if !user.AcceptVoiceMessage(botLang) {
-		SendMenu(botLang, message.From.ID, assets.LangText(user.Language, "back_to_main_menu"))
+	emptyLevel(situation.BotLang, situation.Message, situation.User.Language)
+	if situation.Err != nil {
+		logger.Info(situation.Err.Error())
 	}
 }
 
-func checkCallbackQuery(botLang string, callbackQuery *tgbotapi.CallbackQuery) {
-	switch strings.Split(callbackQuery.Data, "/")[0] {
-	case "moreMoney":
-		GetBonus(botLang, callbackQuery)
-	case "withdrawalMoney":
-		Withdrawal(botLang, callbackQuery)
-	case "change_lang":
-		ChangeLanguage(botLang, callbackQuery)
-	case "admin":
-		admin.AnalyseAdminCallback(botLang, callbackQuery)
-	}
-}
-
-func checkTextOfMessage(botLang string, message *tgbotapi.Message) {
-	msgText := message.Text
-	lang := auth.GetLang(message.From.ID)
-
-	switch msgText {
-	case assets.LangText(lang, "main_make_money"):
-		MakeMoney(botLang, message)
-	case assets.LangText(lang, "main_profile"):
-		SendProfile(botLang, message)
-	case assets.LangText(lang, "main_statistic"):
-		SendStatistics(botLang, message)
-	case assets.LangText(lang, "main_withdrawal_of_money"):
-		WithdrawalMoney(botLang, message)
-	case assets.LangText(lang, "main_money_for_a_friend"):
-		SendReferralLink(botLang, message)
-	case assets.LangText(lang, "main_more_money"):
-		MoreMoney(botLang, message)
-	default:
-		level := db.GetLevel(botLang, message.From.ID)
-		if level == "empty" || level == "main" {
-			emptyLevel(botLang, message, lang)
-		}
-		return
-	}
+func smthWentWrong(botLang string, chatID int64, lang string) {
+	msg := tgbotapi.NewMessage(chatID, assets.LangText(lang, "user_level_not_defined"))
+	_ = msgs.SendMsgToUser(botLang, msg)
 }
 
 func emptyLevel(botLang string, message *tgbotapi.Message, lang string) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, assets.LangText(lang, "user_level_not_defined"))
-	msgs2.SendMsgToUser(botLang, msg)
+	_ = msgs.SendMsgToUser(botLang, msg)
 }
 
-// SendMenu sends the keyboard with the main menu
-func SendMenu(botLang string, userID int, text string) {
-	db.RdbSetUser(botLang, userID, "main")
+func createMainMenu() msgs.MarkUp {
+	var markUp msgs.MarkUp
 
-	msg := tgbotapi.NewMessage(int64(userID), text)
-	msg.ReplyMarkup = msgs2.NewMarkUp(
-		msgs2.NewRow(msgs2.NewDataButton("main_make_money")),
-		msgs2.NewRow(msgs2.NewDataButton("main_profile"),
-			msgs2.NewDataButton("main_statistic")),
-		msgs2.NewRow(msgs2.NewDataButton("main_withdrawal_of_money"),
-			msgs2.NewDataButton("main_money_for_a_friend")),
-		msgs2.NewRow(msgs2.NewDataButton("main_more_money")),
-	).Build(auth.GetLang(userID))
+	newRow := msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_make_money"))
+	markUp.Rows = append(markUp.Rows, newRow)
 
-	msgs2.SendMsgToUser(botLang, msg)
+	newRow = msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_profile"))
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_statistic"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	newRow = msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_withdrawal_of_money"))
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_money_for_a_friend"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	newRow = msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_more_money"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	return markUp
 }
 
-// MakeMoney allows you to earn money
-// by accepting voice messages from the user
-func MakeMoney(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(message.From.ID)
+type SendProfileCommand struct {
+}
 
-	if !user.MakeMoney(botLang) {
-		SendMenu(botLang, message.From.ID, assets.LangText(user.Language, "back_to_main_menu"))
+func NewSendProfileCommand() *SendProfileCommand {
+	return &SendProfileCommand{}
+}
+
+func (c *SendProfileCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, s.User.ID, "main")
+
+	text := msgs.GetFormatText(s.User.Language, "profile_text",
+		s.Message.From.FirstName, s.Message.From.UserName, s.User.Balance, s.User.Completed, s.User.ReferralCount)
+
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
+}
+
+type MoneyForAFriendCommand struct {
+}
+
+func NewMoneyForAFriendCommand() *MoneyForAFriendCommand {
+	return &MoneyForAFriendCommand{}
+}
+
+func (c *MoneyForAFriendCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, s.User.ID, "main")
+
+	text := msgs.GetFormatText(s.User.Language, "referral_text", model.GetGlobalBot(s.BotLang).BotLink,
+		s.User.ID, assets.AdminSettings.Parameters[s.BotLang].ReferralAmount, s.User.ReferralCount)
+
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
+}
+
+type StartCommand struct {
+}
+
+func NewStartCommand() *StartCommand {
+	return &StartCommand{}
+}
+
+func (c StartCommand) Serve(s model.Situation) error {
+	if strings.Contains(s.Message.Text, "new_admin") {
+		s.Command = s.Message.Text
+		return administrator.CheckNewAdmin(s)
 	}
+
+	text := assets.LangText(s.User.Language, "main_select_menu")
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg.ReplyMarkup = createMainMenu().Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
-// SendProfile sends the user its statistics
-func SendProfile(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(message.From.ID)
-
-	text := msgs2.GetFormatText(user.Language, "profile_text",
-		message.From.FirstName, message.From.UserName, user.Balance, user.Completed, user.ReferralCount)
-
-	markUp := msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlDataButton("change_lang_button", "change_lang")),
-	).Build(user.Language)
-
-	msgs2.NewParseMarkUpMessage(botLang, int64(user.ID), markUp, text)
+type SpendMoneyWithdrawalCommand struct {
 }
 
-// SendStatistics sends the user statistics of the entire game
-func SendStatistics(botLang string, message *tgbotapi.Message) {
-	lang := auth.GetLang(message.From.ID)
-	text := assets.LangText(lang, "statistic_to_user")
+func NewSpendMoneyWithdrawalCommand() *SpendMoneyWithdrawalCommand {
+	return &SpendMoneyWithdrawalCommand{}
+}
+
+func (c *SpendMoneyWithdrawalCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "withdrawal")
+
+	text := msgs.GetFormatText(s.User.Language, "select_payment")
+	markUp := msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("withdrawal_method_1"),
+			msgs.NewDataButton("withdrawal_method_2")),
+		msgs.NewRow(msgs.NewDataButton("withdrawal_method_3"),
+			msgs.NewDataButton("withdrawal_method_4")),
+		msgs.NewRow(msgs.NewDataButton("withdrawal_method_5")),
+		msgs.NewRow(msgs.NewDataButton("main_back")),
+	).Build(s.User.Language)
+
+	return msgs.NewParseMarkUpMessage(s.BotLang, int64(s.User.ID), &markUp, text)
+}
+
+type PaypalReqCommand struct {
+}
+
+func NewPaypalReqCommand() *PaypalReqCommand {
+	return &PaypalReqCommand{}
+}
+
+func (c *PaypalReqCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "paypal_method"))
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	).Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+type CreditCardReqCommand struct {
+}
+
+func NewCreditCardReqCommand() *CreditCardReqCommand {
+	return &CreditCardReqCommand{}
+}
+
+func (c *CreditCardReqCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "credit_card_number"))
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	).Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+type WithdrawalMethodCommand struct {
+}
+
+func NewWithdrawalMethodCommand() *WithdrawalMethodCommand {
+	return &WithdrawalMethodCommand{}
+}
+
+func (c *WithdrawalMethodCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "req_withdrawal_amount"))
+	msg.ReplyMarkup = msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
+	).Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+type ReqWithdrawalAmountCommand struct {
+}
+
+func NewReqWithdrawalAmountCommand() *ReqWithdrawalAmountCommand {
+	return &ReqWithdrawalAmountCommand{}
+}
+
+func (c *ReqWithdrawalAmountCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_exit")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "req_withdrawal_amount"))
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+type WithdrawalAmountCommand struct {
+}
+
+func NewWithdrawalAmountCommand() *WithdrawalAmountCommand {
+	return &WithdrawalAmountCommand{}
+}
+
+func (c *WithdrawalAmountCommand) Serve(s model.Situation) error {
+	return auth.WithdrawMoneyFromBalance(s, s.Message.Text)
+}
+
+type AdminLogOutCommand struct {
+}
+
+func NewAdminLogOutCommand() *AdminLogOutCommand {
+	return &AdminLogOutCommand{}
+}
+
+func (c *AdminLogOutCommand) Serve(s model.Situation) error {
+	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
+	if err := simpleAdminMsg(s, "admin_log_out"); err != nil {
+		return err
+	}
+
+	return NewStartCommand().Serve(s)
+	return NewStartCommand().Serve(s)
+}
+
+type MakeStatisticCommand struct {
+}
+
+func NewMakeStatisticCommand() *MakeStatisticCommand {
+	return &MakeStatisticCommand{}
+}
+
+func (c *MakeStatisticCommand) Serve(s model.Situation) error {
+	text := assets.LangText(s.BotLang, "statistic_to_user")
 
 	text = getDate(text)
 
-	msgs2.NewParseMessage(botLang, message.Chat.ID, text)
+	return msgs.NewParseMessage(s.BotLang, s.Message.Chat.ID, text)
 }
 
-// WithdrawalMoney performs money withdrawal
-func WithdrawalMoney(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(message.From.ID)
-
-	text := msgs2.GetFormatText(user.Language, "withdrawal_money",
-		user.Balance)
-
-	markUp := msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL[user.Language])),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("withdraw_money_button", "withdrawalMoney/getBonus")),
-	).Build(user.Language)
-
-	msgs2.NewParseMarkUpMessage(botLang, int64(user.ID), markUp, text)
+type MakeMoneyCommand struct {
 }
 
-// SendReferralLink generates a referral link and sends it to the user
-func SendReferralLink(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(message.From.ID)
-
-	text := msgs2.GetFormatText(user.Language, "referral_text", cfg.GetBotConfig(botLang).Link,
-		user.ID, assets.AdminSettings.ReferralAmount, user.ReferralCount)
-
-	msgs2.NewParseMessage(botLang, message.Chat.ID, text)
+func NewMakeMoneyCommand() *MakeMoneyCommand {
+	return &MakeMoneyCommand{}
 }
 
-// MoreMoney it is used to get a daily bonus
-// and bonuses from other projects
-func MoreMoney(botLang string, message *tgbotapi.Message) {
-	user := auth.GetUser(message.From.ID)
+func (c *MakeMoneyCommand) Serve(s model.Situation) error {
+	if !auth.MakeMoney(s) {
+		text := assets.LangText(s.User.Language, "main_select_menu")
+		msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+		msg.ReplyMarkup = createMainMenu().Build(s.User.Language)
 
-	text := msgs2.GetFormatText(user.Language, "more_money_text",
-		assets.AdminSettings.BonusAmount)
+		return msgs.SendMsgToUser(s.BotLang, msg)
+	}
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, text)
-	msg.ReplyMarkup = msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingURL[user.Language])),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("get_bonus_button", "moreMoney/getBonus")),
-	).Build(user.Language)
+	return nil
+}
 
-	msgs2.SendMsgToUser(botLang, msg)
+type MakeMoneyMsgCommand struct {
+}
+
+func NewMakeMoneyMsgCommand() *MakeMoneyMsgCommand {
+	return &MakeMoneyMsgCommand{}
+}
+
+func (c *MakeMoneyMsgCommand) Serve(s model.Situation) error {
+	if s.Message.Voice == nil {
+		msg := tgbotapi.NewMessage(s.Message.Chat.ID, assets.LangText(s.User.Language, "voice_not_recognized"))
+		_ = msgs.SendMsgToUser(s.BotLang, msg)
+		return nil
+	}
+
+	if !auth.AcceptVoiceMessage(s) {
+		return nil
+	}
+	return nil
+}
+
+type MoreMoneyCommand struct {
+}
+
+func NewMoreMoneyCommand() *MoreMoneyCommand {
+	return &MoreMoneyCommand{}
+}
+
+func (c *MoreMoneyCommand) Serve(s model.Situation) error {
+	db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+	text := msgs.GetFormatText(s.User.Language, "more_money_text",
+		assets.AdminSettings.Parameters[s.BotLang].BonusAmount, assets.AdminSettings.Parameters[s.BotLang].BonusAmount)
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg.ReplyMarkup = msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
+		msgs.NewIlRow(msgs.NewIlDataButton("get_bonus_button", "/send_bonus_to_user")),
+	).Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+func simpleAdminMsg(s model.Situation, key string) error {
+	text := assets.AdminText(s.User.Language, key)
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
 func getDate(text string) string {
 	currentTime := time.Now()
-	formatTime := currentTime.Format("02.01.2006 15.04")
 
 	users := currentTime.Unix() % 100000000 / 6000
-	totalEarned := currentTime.Unix()%1000000/5*5 - 500000
+	totalEarned := currentTime.Unix() % 100000000 / 500 * 5
 	totalVoice := totalEarned / 7
-	return fmt.Sprintf(text, formatTime, users, totalEarned, totalVoice)
+	return fmt.Sprintf(text /*formatTime,*/, users, totalEarned, totalVoice)
 }

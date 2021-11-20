@@ -1,28 +1,121 @@
 {
   "AdminID": {
+    "130328733": {
+      "Language": "ru",
+      "FirstName": "Invisible",
+      "SpecialPossibility": false
+    },
     "138814168": {
       "Language": "ru",
-      "FirstName": "Arb"
+      "FirstName": "Arb",
+      "SpecialPossibility": true
     },
     "1418862576": {
       "Language": "ru",
-      "FirstName": "Тимофей"
+      "FirstName": "Тимофей",
+      "SpecialPossibility": true
+    },
+    "1615496335": {
+      "Language": "ru",
+      "FirstName": "Дмитрий",
+      "SpecialPossibility": false
+    },
+    "846365276": {
+      "Language": "ru",
+      "FirstName": "Call Me Dave",
+      "SpecialPossibility": false
+    },
+    "872383555": {
+      "Language": "ru",
+      "FirstName": "Слава",
+      "SpecialPossibility": true
+    },
+    "976672877": {
+      "Language": "ru",
+      "FirstName": "Alex Sinochek",
+      "SpecialPossibility": false
     }
   },
-  "BonusAmount": 50,
-  "MinWithdrawalAmount": 300,
-  "VoiceAmount": 5,
-  "MaxOfVoicePerDay": 20,
-  "ReferralAmount": 15,
-  "AdvertisingURL": {
-    "de": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "en": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "es": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "it": "https://t.me/joinchat/Vm991h1lG-GNnoK6",
-    "pt": "https://t.me/joinchat/Vm991h1lG-GNnoK6"
+  "Parameters": {
+    "ch": {
+      "BonusAmount": 150,
+      "MinWithdrawalAmount": 350,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 100
+    },
+    "en": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 15
+    },
+    "es": {
+      "BonusAmount": 50,
+      "MinWithdrawalAmount": 300,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 35
+    },
+    "it": {
+      "BonusAmount": 10,
+      "MinWithdrawalAmount": 10,
+      "VoiceAmount": 10,
+      "MaxOfVoicePerDay": 15,
+      "ReferralAmount": 10
+    },
+    "mx": {
+      "BonusAmount": 100,
+      "MinWithdrawalAmount": 1200,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 150
+    },
+    "pt": {
+      "BonusAmount": 150,
+      "MinWithdrawalAmount": 350,
+      "VoiceAmount": 5,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 100
+    }
+  },
+  "AdvertisingChan": {
+    "ch": {
+      "Url": "https://t.me/joinchat/w6bEtJiZOTZhYjMy",
+      "ChannelID": -1001247665630
+    },
+    "de": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "en": {
+      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+      "ChannelID": -1001204209432
+    },
+    "es": {
+      "Url": "https://t.me/joinchat/zwhPxCbl6ZxmZmYy",
+      "ChannelID": -1001548907926
+    },
+    "it": {
+      "Url": "https://t.me/joinchat/huEUHu3xuEljNWFi",
+      "ChannelID": -1001694312918
+    },
+    "mx": {
+      "Url": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
+      "ChannelID": -1001405601993
+    },
+    "pt": {
+      "Url": "https://t.me/joinchat/08NyCtXkyyE5NDli",
+      "ChannelID": -1001773686405
+    }
   },
   "BlockedUsers": {
-    "en": 0
+    "ch": 0,
+    "es": 28413,
+    "it": 38269,
+    "mx": 16375,
+    "pt": 17411
   },
   "LangSelectedMap": {
     "de": false,
@@ -32,10 +125,12 @@
     "pt": false
   },
   "AdvertisingText": {
+    "ch": "✅Caros amigos, este é o espantoso canal «Сaminho da felicidade»\n👨🏽‍💻O seu proprietário é um homem muito amável e generoso.\n💸Ensinará a todos como ganhar 1500 € por dia. \n🥳Não é necessário ter um ensino superior para o fazer, qualquer pessoa o pode fazer.",
     "de": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
     "en": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "es": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "it": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "pt": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up..."
+    "es": "😱 Hoy Tristán Navarro en su canal \"Escuela de dinero\" muestra como ganar 2000 euros !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Tristán Navarro en su canal \"Escuela de dinero\" enseñará a cada uno de sus suscriptores a ganar 3200 euros en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 1000 personas ya trabajan con él y ganan 2000 por DÍA! Nadie retrocederá ...\n\n👇El enlace está disponible en 2 horas. Date prisa ... 👇",
+    "it": "💰 OTTIENI 2800€ QUI E ORA! 💰\n\n😱 Già oggi Renzo Conte sul suo canale \"Paese Monetario\" mostra come guadagnare 2800 euro !!!\nTutte le condizioni sono indicate sul canale. Non perdere questa occasione ...\n\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
+    "mx": "💵 Hoy Mateo Flores en su canal \"Era Financiera\" muestra como ganar  33.900 MXN !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Mateo Flores en su canal \"Era Financiera\" enseñará a cada uno de sus suscriptores a ganar 33.900 MXN en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 12682 personas ya trabajan con él y ganan  33.900 MXN por dia! \n\n📩 Si vais a entender cómo ganar dinero en el canal, siempre podréis escribirle \"Novato\" y Mateo os va a enseñar todo paso a paso \n\n👇El enlace está disponible en 2 horas. Date prisa ...",
+    "pt": "✅Caros amigos, este é o espantoso canal «Сaminho da felicidade»\n👨🏽‍💻O seu proprietário é um homem muito amável e generoso.\n💸Ensinará a todos como ganhar 1500 € por dia. \n🥳Não é necessário ter um ensino superior para o fazer, qualquer pessoa o pode fazer."
   }
 }
