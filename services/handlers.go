@@ -35,6 +35,7 @@ func (h *MessagesHandlers) GetHandler(command string) model.Handler {
 
 func (h *MessagesHandlers) Init() {
 	//Start command
+	h.OnCommand("/select_language", NewSelectLangCommand())
 	h.OnCommand("/start", NewStartCommand())
 	h.OnCommand("/admin", administrator.NewAdminCommand())
 	h.OnCommand("/getUpdate", administrator.NewGetUpdateCommand())
@@ -91,6 +92,11 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 	PrintNewUpdate(botLang, update, logger)
 	if update.Message != nil {
 		user, err := auth.CheckingTheUser(botLang, update.Message)
+		if err == model.ErrNotSelectedLanguage {
+			situation := createSituationFromMsg(botLang, update.Message, user)
+			situation.Err = err
+			checkMessage(situation, logger)
+		}
 		if err != nil {
 			emptyLevel(botLang, update.Message, botLang)
 			logger.Warn("err with check user: %s", err.Error())
@@ -177,6 +183,10 @@ func createSituationFromCallback(botLang string, callbackQuery *tgbotapi.Callbac
 }
 
 func checkMessage(situation model.Situation, logger log.Logger) {
+	if situation.Err == model.ErrNotSelectedLanguage {
+		situation.Command = "/select_language"
+	}
+
 	if model.Bots[situation.BotLang].MaintenanceMode {
 		if situation.User.ID != godUserID {
 			msg := tgbotapi.NewMessage(situation.User.ID, "The bot is under maintenance, please try again later")
@@ -291,6 +301,51 @@ func (c *MoneyForAFriendCommand) Serve(s model.Situation) error {
 		s.User.ID, assets.AdminSettings.Parameters[s.BotLang].ReferralAmount, s.User.ReferralCount)
 
 	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
+}
+
+type SelectLangCommand struct {
+}
+
+func NewSelectLangCommand() SelectLangCommand {
+	return SelectLangCommand{}
+}
+
+func (c SelectLangCommand) Serve(s model.Situation) error {
+	text := assets.LangText("select", "select_lang_menu")
+	db.RdbSetUser(s.BotLang, s.User.ID, "main")
+
+	msg := tgbotapi.NewMessage(s.User.ID, text)
+	//	msg.ReplyMarkup = SendSelectLangMenu().Build(s.User.Language)
+
+	msg.ReplyMarkup = msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_de", "/language?de")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_en", "/language?en")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_es", "/language?es")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_it", "/language?it")),
+		msgs.NewIlRow(msgs.NewIlDataButton("lang_pt", "/language?pt")),
+	).Build("select")
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+func SendSelectLangMenu() msgs.MarkUp {
+	var markUp msgs.MarkUp
+
+	newRow := msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_de"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	newRow = msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_en"))
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_es"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	newRow = msgs.NewRow()
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_it"))
+	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_pt"))
+	markUp.Rows = append(markUp.Rows, newRow)
+
+	return markUp
 }
 
 type StartCommand struct {

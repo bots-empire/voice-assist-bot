@@ -110,13 +110,7 @@
       "ChannelID": -1001773686405
     }
   },
-  "BlockedUsers": {
-    "ch": 0,
-    "es": 28413,
-    "it": 38269,
-    "mx": 16375,
-    "pt": 17411
-  },
+  "BlockedUsers": {},
   "LangSelectedMap": {
     "de": false,
     "en": false,

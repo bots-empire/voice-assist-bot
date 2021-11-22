@@ -1,0 +1,13 @@
+{
+  "select_lang_menu": "Seleccione por favor uma língua\nPlease select a language\nSeleccione un idioma \uD83D\uDC47",
+  "lang_de": "Deutsch 🇩🇪",
+  "lang_en": "English 🇬🇧",
+  "lang_es": "Español 🇪🇸",
+  "lang_it": "Italiano 🇮🇹",
+  "lang_pt": "Português 🇵🇹",
+  "lang_selected_de": "",
+  "lang_selected_en": "",
+  "lang_selected_es": "",
+  "lang_selected_it": "",
+  "lang_selected_pt": ""
+}

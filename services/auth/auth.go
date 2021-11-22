@@ -42,9 +42,13 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, er
 	switch len(users) {
 	case 0:
 		user := createSimpleUser(botLang, message)
-		referralID := pullReferralID(message)
-		if err := addNewUser(message, user, botLang, referralID); err != nil {
-			return nil, errors.Wrap(err, "add new user")
+		if user.Language != "not_defined" {
+			referralID := pullReferralID(message)
+			if err := addNewUser(message, user, botLang, referralID); err != nil {
+				return nil, errors.Wrap(err, "add new user")
+			}
+		} else {
+			return user, model.ErrNotSelectedLanguage
 		}
 		return user, nil
 	case 1:
@@ -108,7 +112,7 @@ func pullReferralID(message *tgbotapi.Message) int64 {
 func createSimpleUser(botLang string, message *tgbotapi.Message) *model.User {
 	return &model.User{
 		ID:       message.From.ID,
-		Language: model.Bots[botLang].LanguageInBot,
+		Language: botLang,
 	}
 }
 
