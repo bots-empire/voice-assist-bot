@@ -24,7 +24,7 @@ func (h *CallBackHandlers) GetHandler(command string) model.Handler {
 
 func (h *CallBackHandlers) Init() {
 	//Money command
-	h.OnCommand("/language", NewLanguageCommand())
+	h.OnCommand("/set_language", NewLanguageCommand())
 	h.OnCommand("/send_bonus_to_user", NewGetBonusCommand())
 	h.OnCommand("/withdrawal_money", NewRecheckSubscribeCommand())
 	h.OnCommand("/promotion_case", NewPromotionCaseCommand())
@@ -59,45 +59,14 @@ func checkCallbackQuery(s model.Situation, logger log.Logger) {
 type LanguageCommand struct {
 }
 
-func NewLanguageCommand() LanguageCommand {
-	return LanguageCommand{}
+func NewLanguageCommand() *LanguageCommand {
+	return &LanguageCommand{}
 }
 
-func (c LanguageCommand) Serve(s model.Situation) error {
+func (c *LanguageCommand) Serve(s model.Situation) error {
 	lang := strings.Split(s.CallbackQuery.Data, "?")[1]
 
-	switch lang {
-	case "de":
-		s.BotLang = "de"
-		if _, err := auth.CheckingTheUser(s.BotLang, s.Message); err != nil {
-			return err
-		}
-	case "en":
-		s.BotLang = "en"
-		if _, err := auth.CheckingTheUser(s.BotLang, s.Message); err != nil {
-			return err
-		}
-	case "es":
-		s.BotLang = "es"
-		if _, err := auth.CheckingTheUser(s.BotLang, s.Message); err != nil {
-			return err
-		}
-	case "it":
-		s.BotLang = "it"
-		if _, err := auth.CheckingTheUser(s.BotLang, s.Message); err != nil {
-			return err
-		}
-	case "pt":
-		s.BotLang = "pt"
-		if _, err := auth.CheckingTheUser(s.BotLang, s.Message); err != nil {
-			return err
-		}
-	}
-
-	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.BotLang, "lang_selected_"+lang))
-	if err := msgs.SendMsgToUser(s.BotLang, msg); err != nil {
-		return err
-	}
+	s.User.Language = lang
 
 	return NewStartCommand().Serve(s)
 }

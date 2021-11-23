@@ -91,24 +91,30 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 
 	PrintNewUpdate(botLang, update, logger)
 	if update.Message != nil {
+		var command string
 		user, err := auth.CheckingTheUser(botLang, update.Message)
 		if err == model.ErrNotSelectedLanguage {
-			situation := createSituationFromMsg(botLang, update.Message, user)
-			situation.Err = err
-			checkMessage(situation, logger)
-		}
-		if err != nil {
+			command = "/select_language"
+		} else if err != nil {
 			emptyLevel(botLang, update.Message, botLang)
 			logger.Warn("err with check user: %s", err.Error())
 			return
 		}
 		situation := createSituationFromMsg(botLang, update.Message, user)
+		situation.Command = command
 
 		checkMessage(situation, logger)
 		return
 	}
 
 	if update.CallbackQuery != nil {
+		if strings.Contains(update.CallbackQuery.Data, "/set_language") {
+			err := auth.SetStartLanguage(botLang, update.CallbackQuery)
+			if err != nil {
+				smthWentWrong(botLang, update.CallbackQuery.Message.Chat.ID, botLang)
+				logger.Warn("err with set start language: %s", err.Error())
+			}
+		}
 		situation, err := createSituationFromCallback(botLang, update.CallbackQuery)
 		if err != nil {
 			smthWentWrong(botLang, update.CallbackQuery.Message.Chat.ID, botLang)
@@ -183,9 +189,6 @@ func createSituationFromCallback(botLang string, callbackQuery *tgbotapi.Callbac
 }
 
 func checkMessage(situation model.Situation, logger log.Logger) {
-	if situation.Err == model.ErrNotSelectedLanguage {
-		situation.Command = "/select_language"
-	}
 
 	if model.Bots[situation.BotLang].MaintenanceMode {
 		if situation.User.ID != godUserID {
@@ -279,10 +282,16 @@ func NewSendProfileCommand() *SendProfileCommand {
 }
 
 func (c *SendProfileCommand) Serve(s model.Situation) error {
+
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
 	text := msgs.GetFormatText(s.User.Language, "profile_text",
 		s.Message.From.FirstName, s.Message.From.UserName, s.User.Balance, s.User.Completed, s.User.ReferralCount)
+
+	if len(model.GetGlobalBot(s.BotLang).LanguageInBot) > 1 {
+		ReplyMarkup := createLangMenu(model.GetGlobalBot(s.BotLang).LanguageInBot)
+		return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &ReplyMarkup, text)
+	}
 
 	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
 }
@@ -311,41 +320,28 @@ func NewSelectLangCommand() SelectLangCommand {
 }
 
 func (c SelectLangCommand) Serve(s model.Situation) error {
-	text := assets.LangText("select", "select_lang_menu")
+	var text string
+	for _, lang := range model.GetGlobalBot(s.BotLang).LanguageInBot {
+		text += assets.LangText(lang, "select_lang_menu") + "\n"
+	}
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
 	msg := tgbotapi.NewMessage(s.User.ID, text)
-	//	msg.ReplyMarkup = SendSelectLangMenu().Build(s.User.Language)
-
-	msg.ReplyMarkup = msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlDataButton("lang_de", "/language?de")),
-		msgs.NewIlRow(msgs.NewIlDataButton("lang_en", "/language?en")),
-		msgs.NewIlRow(msgs.NewIlDataButton("lang_es", "/language?es")),
-		msgs.NewIlRow(msgs.NewIlDataButton("lang_it", "/language?it")),
-		msgs.NewIlRow(msgs.NewIlDataButton("lang_pt", "/language?pt")),
-	).Build("select")
+	msg.ReplyMarkup = createLangMenu(model.GetGlobalBot(s.BotLang).LanguageInBot)
 
 	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
-func SendSelectLangMenu() msgs.MarkUp {
-	var markUp msgs.MarkUp
+func createLangMenu(languages []string) tgbotapi.InlineKeyboardMarkup {
+	var markup tgbotapi.InlineKeyboardMarkup
 
-	newRow := msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_de"))
-	markUp.Rows = append(markUp.Rows, newRow)
+	for _, lang := range languages {
+		markup.InlineKeyboard = append(markup.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData(assets.LangText(lang, "lang_button"), "/set_language?"+lang),
+		})
+	}
 
-	newRow = msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_en"))
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_es"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	newRow = msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_it"))
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("lang_pt"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	return markUp
+	return markup
 }
 
 type StartCommand struct {
@@ -356,15 +352,17 @@ func NewStartCommand() *StartCommand {
 }
 
 func (c StartCommand) Serve(s model.Situation) error {
-	if strings.Contains(s.Message.Text, "new_admin") {
-		s.Command = s.Message.Text
-		return administrator.CheckNewAdmin(s)
+	if s.Message != nil {
+		if strings.Contains(s.Message.Text, "new_admin") {
+			s.Command = s.Message.Text
+			return administrator.CheckNewAdmin(s)
+		}
 	}
 
 	text := assets.LangText(s.User.Language, "main_select_menu")
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = createMainMenu().Build(s.User.Language)
 
 	return msgs.SendMsgToUser(s.BotLang, msg)
@@ -390,7 +388,7 @@ func (c *SpendMoneyWithdrawalCommand) Serve(s model.Situation) error {
 		msgs.NewRow(msgs.NewDataButton("main_back")),
 	).Build(s.User.Language)
 
-	return msgs.NewParseMarkUpMessage(s.BotLang, int64(s.User.ID), &markUp, text)
+	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &markUp, text)
 }
 
 type PaypalReqCommand struct {
@@ -401,9 +399,9 @@ func NewPaypalReqCommand() *PaypalReqCommand {
 }
 
 func (c *PaypalReqCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+	db.RdbSetUser(s.BotLang, s.User.ID, "/withdrawal_req_amount")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "paypal_method"))
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "paypal_method"))
 	msg.ReplyMarkup = msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(s.User.Language)
@@ -455,9 +453,9 @@ func NewReqWithdrawalAmountCommand() *ReqWithdrawalAmountCommand {
 }
 
 func (c *ReqWithdrawalAmountCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_exit")
+	db.RdbSetUser(s.BotLang, s.User.ID, "/withdrawal_exit")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "req_withdrawal_amount"))
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "req_withdrawal_amount"))
 
 	return msgs.SendMsgToUser(s.BotLang, msg)
 }
@@ -515,7 +513,7 @@ func NewMakeMoneyCommand() *MakeMoneyCommand {
 func (c *MakeMoneyCommand) Serve(s model.Situation) error {
 	if !auth.MakeMoney(s) {
 		text := assets.LangText(s.User.Language, "main_select_menu")
-		msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+		msg := tgbotapi.NewMessage(s.User.ID, text)
 		msg.ReplyMarkup = createMainMenu().Build(s.User.Language)
 
 		return msgs.SendMsgToUser(s.BotLang, msg)
@@ -552,11 +550,11 @@ func NewMoreMoneyCommand() *MoreMoneyCommand {
 }
 
 func (c *MoreMoneyCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 	text := msgs.GetFormatText(s.User.Language, "more_money_text",
 		assets.AdminSettings.Parameters[s.BotLang].BonusAmount, assets.AdminSettings.Parameters[s.BotLang].BonusAmount)
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
 		msgs.NewIlRow(msgs.NewIlDataButton("get_bonus_button", "/send_bonus_to_user")),
@@ -567,7 +565,7 @@ func (c *MoreMoneyCommand) Serve(s model.Situation) error {
 
 func simpleAdminMsg(s model.Situation, key string) error {
 	text := assets.AdminText(s.User.Language, key)
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 
 	return msgs.SendMsgToUser(s.BotLang, msg)
 }

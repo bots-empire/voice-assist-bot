@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
@@ -42,24 +41,38 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, er
 	switch len(users) {
 	case 0:
 		user := createSimpleUser(botLang, message)
-		if user.Language != "not_defined" {
-			referralID := pullReferralID(message)
-			if err := addNewUser(message, user, botLang, referralID); err != nil {
-				return nil, errors.Wrap(err, "add new user")
-			}
-		} else {
+		if len(model.GetGlobalBot(botLang).LanguageInBot) > 1 {
+			user.Language = "not_defined"
+		}
+		referralID := pullReferralID(message)
+		if err := addNewUser(message, user, botLang, referralID); err != nil {
+			return nil, errors.Wrap(err, "add new user")
+		}
+		if user.Language == "not_defined" {
 			return user, model.ErrNotSelectedLanguage
 		}
 		return user, nil
 	case 1:
+		if users[0].Language == "not_defined" {
+			return users[0], model.ErrNotSelectedLanguage
+		}
 		return users[0], nil
 	default:
 		return nil, model.ErrFoundTwoUsers
 	}
 }
 
+func SetStartLanguage(botLang string, callback *tgbotapi.CallbackQuery) error {
+	data := strings.Split(callback.Data, "?")[1]
+	dataBase := model.GetDB(botLang)
+	_, err := dataBase.Exec("UPDATE users SET lang = ? WHERE id = ?", data, callback.From.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referralID int64) error {
-	fmt.Println(u.Language)
 	dataBase := model.GetDB(botLang)
 	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
@@ -76,7 +89,7 @@ func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referr
 
 	baseUser, err := GetUser(botLang, referralID)
 	if err != nil {
-		errors.Wrap(err, "get user")
+		return errors.Wrap(err, "get user")
 	}
 	baseUser.Balance += assets.AdminSettings.Parameters[botLang].ReferralAmount
 	rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",

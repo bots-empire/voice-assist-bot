@@ -38,11 +38,7 @@
   "unfinished_action": "Completare l'azione corrente",
   "user_level_not_defined": "Purtroppo vi siete persi, si prega di e-mail /start e tutto andrà bene",
   "change_lang_button": "Cambia lingua \uD83C\uDDEE\uD83C\uDDF9",
-  "lang_de": "Deutsch 🇩🇪",
-  "lang_en": "English 🇬🇧",
-  "lang_es": "Español 🇪🇸",
-  "lang_it": "Italiano 🇮🇹",
-  "lang_pt": "Português 🇵🇹",
+  "lang_button": "Italiano 🇮🇹",
   "select_language": "Seleziona una lingua:",
   "make_a_choice": "Fai una scelta",
   "language_successful_set": "Lingua installata correttamente",
@@ -53,5 +49,6 @@
   "im_subscribe_button": "✅ Conferma prelievo",
   "invitation_to_subscribe": "We checked your subscription",
   "user_dont_subscribe": "non sei iscritto al canale",
-  "invalid_link_err": "Error, link is invalid"
+  "invalid_link_err": "Error, link is invalid",
+  "select_lang_menu" : "Seleccione por favor uma língua"
 }

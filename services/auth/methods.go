@@ -28,7 +28,7 @@ func WithdrawMoneyFromBalance(s model.Situation, amount string) error {
 	amount = strings.Replace(amount, " ", "", -1)
 	amountInt, err := strconv.Atoi(amount)
 	if err != nil {
-		msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "incorrect_amount"))
+		msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "incorrect_amount"))
 		return msgs.SendMsgToUser(s.BotLang, msg)
 	}
 
@@ -37,7 +37,7 @@ func WithdrawMoneyFromBalance(s model.Situation, amount string) error {
 	}
 
 	if s.User.Balance < amountInt {
-		msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "lack_of_funds"))
+		msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "lack_of_funds"))
 		return msgs.SendMsgToUser(s.BotLang, msg)
 	}
 

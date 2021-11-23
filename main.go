@@ -11,7 +11,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services"
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
-	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -77,8 +76,6 @@ func startHandlers(log log.Logger) {
 			defer wg.Done()
 			services.ActionsWithUpdates(botLang, handler.Chanel, log)
 		}(botLang, handler, wg)
-
-		go auth.HandleExpectedMsgs(botLang)
 	}
 
 	log.Ok("All handlers are running")

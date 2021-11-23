@@ -59,7 +59,26 @@ func UploadAdminSettings() {
 		fmt.Println(err)
 	}
 
+	for lang, globalBot := range model.Bots {
+		nilSettings(settings, lang)
+		for _, lang = range globalBot.LanguageInBot {
+			nilSettings(settings, lang)
+		}
+	}
+
 	AdminSettings = settings
+	SaveAdminSettings()
+}
+
+func nilSettings(settings *Admin, lang string) {
+	if settings.Parameters[lang] == nil {
+		settings.Parameters[lang] = &Params{}
+	}
+	if settings.AdvertisingChan[lang] == nil {
+		settings.AdvertisingChan[lang] = &AdvertChannel{
+			Url: "https://google.com",
+		}
+	}
 }
 
 func SaveAdminSettings() {

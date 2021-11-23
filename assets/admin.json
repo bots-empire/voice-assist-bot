@@ -37,6 +37,13 @@
     }
   },
   "Parameters": {
+    "ar": {
+      "BonusAmount": 0,
+      "MinWithdrawalAmount": 0,
+      "VoiceAmount": 0,
+      "MaxOfVoicePerDay": 0,
+      "ReferralAmount": 0
+    },
     "ch": {
       "BonusAmount": 150,
       "MinWithdrawalAmount": 350,
@@ -58,6 +65,20 @@
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 35
     },
+    "fr": {
+      "BonusAmount": 0,
+      "MinWithdrawalAmount": 0,
+      "VoiceAmount": 0,
+      "MaxOfVoicePerDay": 0,
+      "ReferralAmount": 0
+    },
+    "fr_en": {
+      "BonusAmount": 0,
+      "MinWithdrawalAmount": 0,
+      "VoiceAmount": 0,
+      "MaxOfVoicePerDay": 0,
+      "ReferralAmount": 0
+    },
     "it": {
       "BonusAmount": 10,
       "MinWithdrawalAmount": 10,
@@ -78,9 +99,20 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 100
+    },
+    "th": {
+      "BonusAmount": 0,
+      "MinWithdrawalAmount": 0,
+      "VoiceAmount": 0,
+      "MaxOfVoicePerDay": 0,
+      "ReferralAmount": 0
     }
   },
   "AdvertisingChan": {
+    "ar": {
+      "Url": "https://google.com",
+      "ChannelID": 0
+    },
     "ch": {
       "Url": "https://t.me/joinchat/w6bEtJiZOTZhYjMy",
       "ChannelID": -1001247665630
@@ -97,6 +129,14 @@
       "Url": "https://t.me/joinchat/zwhPxCbl6ZxmZmYy",
       "ChannelID": -1001548907926
     },
+    "fr": {
+      "Url": "https://google.com",
+      "ChannelID": 0
+    },
+    "fr_en": {
+      "Url": "https://google.com",
+      "ChannelID": 0
+    },
     "it": {
       "Url": "https://t.me/joinchat/huEUHu3xuEljNWFi",
       "ChannelID": -1001694312918
@@ -108,6 +148,10 @@
     "pt": {
       "Url": "https://t.me/joinchat/08NyCtXkyyE5NDli",
       "ChannelID": -1001773686405
+    },
+    "th": {
+      "Url": "https://google.com",
+      "ChannelID": 0
     }
   },
   "BlockedUsers": {},
