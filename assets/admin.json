@@ -76,7 +76,7 @@
       "BonusAmount": 0,
       "MinWithdrawalAmount": 0,
       "VoiceAmount": 0,
-      "MaxOfVoicePerDay": 0,
+      "MaxOfVoicePerDay": 5,
       "ReferralAmount": 0
     },
     "it": {

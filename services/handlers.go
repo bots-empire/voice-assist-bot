@@ -100,6 +100,7 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 			logger.Warn("err with check user: %s", err.Error())
 			return
 		}
+
 		situation := createSituationFromMsg(botLang, update.Message, user)
 		situation.Command = command
 
@@ -282,7 +283,6 @@ func NewSendProfileCommand() *SendProfileCommand {
 }
 
 func (c *SendProfileCommand) Serve(s model.Situation) error {
-
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
 	text := msgs.GetFormatText(s.User.Language, "profile_text",
@@ -337,7 +337,7 @@ func createLangMenu(languages []string) tgbotapi.InlineKeyboardMarkup {
 
 	for _, lang := range languages {
 		markup.InlineKeyboard = append(markup.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-			tgbotapi.NewInlineKeyboardButtonData(assets.LangText(lang, "lang_button"), "/set_language?"+lang),
+			tgbotapi.NewInlineKeyboardButtonData(assets.LangText(lang, "lang_button"), "/language?"+lang),
 		})
 	}
 

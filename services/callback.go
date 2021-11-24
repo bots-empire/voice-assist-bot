@@ -24,7 +24,7 @@ func (h *CallBackHandlers) GetHandler(command string) model.Handler {
 
 func (h *CallBackHandlers) Init() {
 	//Money command
-	h.OnCommand("/set_language", NewLanguageCommand())
+	h.OnCommand("/language", NewLanguageCommand())
 	h.OnCommand("/send_bonus_to_user", NewGetBonusCommand())
 	h.OnCommand("/withdrawal_money", NewRecheckSubscribeCommand())
 	h.OnCommand("/promotion_case", NewPromotionCaseCommand())
@@ -65,6 +65,11 @@ func NewLanguageCommand() *LanguageCommand {
 
 func (c *LanguageCommand) Serve(s model.Situation) error {
 	lang := strings.Split(s.CallbackQuery.Data, "?")[1]
+
+	level := db.GetLevel(s.BotLang, s.User.ID)
+	if strings.Contains(level, "admin") {
+		return nil
+	}
 
 	s.User.Language = lang
 

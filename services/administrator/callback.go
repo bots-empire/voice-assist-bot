@@ -55,7 +55,7 @@ func (h *AdminCallbackHandlers) OnCommand(command string, handler model.Handler)
 }
 
 func CheckAdminCallback(s model.Situation) error {
-	if !containsInAdmin(s.User.ID) {
+	if !ContainsInAdmin(s.User.ID) {
 		return notAdmin(s.BotLang, s.User)
 	}
 
@@ -76,7 +76,7 @@ func NewAdminCommand() *AdminLoginCommand {
 }
 
 func (c *AdminLoginCommand) Serve(s model.Situation) error {
-	if !containsInAdmin(s.User.ID) {
+	if !ContainsInAdmin(s.User.ID) {
 		return notAdmin(s.BotLang, s.User)
 	}
 
@@ -90,7 +90,7 @@ func (c *AdminLoginCommand) Serve(s model.Situation) error {
 	return NewAdminMenuCommand().Serve(s)
 }
 
-func containsInAdmin(userID int64) bool {
+func ContainsInAdmin(userID int64) bool {
 	for key := range assets.AdminSettings.AdminID {
 		if key == userID {
 			return true

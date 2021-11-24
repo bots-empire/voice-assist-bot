@@ -13,7 +13,7 @@
   "invitation_to_record_voice": "\uD83D\uDDE3 <b>Record a voice message with the phrase:</b>\n«%s»",
   "voice_not_recognized": "The message is not confirmed",
   "reached_max_amount_per_day": "✅ You have completed %d out of %d possible tasks!\nNew tasks will be available in 24 hours\nWhile there are no tasks, you can earn extra money using this channel",
-  "profile_text": "\uD83D\uDC64 My Profile:\n\n<b>Name:</b> %s\n<b>User Name: </b> %s\nBalance: </b> %d $\n<b>Sent voice messages: </b> %d\n<b>Invited: </b> %d",
+  "profile_text": "\uD83D\uDC64 My Profile:\n\n<b>Name:</b> %s\n<b>User Name:</b> %s\n<b>Balance:</b> %d EUR.\n<b>Sent voice messages:</b> %d\n<b>Invited:</b> %d",
   "statistic_to_user": "📊 Bot statistics\n\n👤 <b>Bot users: </b> %d\n💰 <b>Earned by users: </b> %d\n🧠 <b>sent voice messages: </b> %d",
   "advertising_button": "📲 Go to the channel",
   "get_bonus_button": "💰 Get bonus",

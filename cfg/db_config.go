@@ -7,8 +7,8 @@ type DBConfig struct {
 }
 
 var DBCfg = DBConfig{
-	User:     "botuser",
-	Password: ":botuser",
+	User:     "root",
+	Password: ":!BlackR1",
 	Names: map[string]string{
 		"it":    "italy",
 		"pt":    "portugaly",

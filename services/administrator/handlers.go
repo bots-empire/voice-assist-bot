@@ -151,7 +151,7 @@ func getUrlAndChatID(message *tgbotapi.Message) *assets.AdvertChannel {
 }
 
 func CheckAdminMessage(s model.Situation) error {
-	if !containsInAdmin(s.User.ID) {
+	if !ContainsInAdmin(s.User.ID) {
 		return notAdmin(s.BotLang, s.User)
 	}
 
