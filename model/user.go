@@ -1,7 +1,7 @@
-package auth
+package model
 
 type User struct {
-	ID             int    `json:"id"`
+	ID             int64  `json:"id"`
 	Balance        int    `json:"balance"`
 	Completed      int    `json:"completed"`
 	CompletedToday int    `json:"completed_today"`

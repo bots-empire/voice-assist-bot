@@ -1,22 +1,27 @@
-package admin
+package administrator
 
 import (
 	"database/sql"
 	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/Stepan1328/voice-assist-bot/model"
+
 	"log"
 	"strconv"
+	"time"
+)
+
+const (
+	getUsersCountQuery    = "SELECT COUNT(*) FROM users;"
+	getDistinctUsersQuery = "SELECT COUNT(DISTINCT id) FROM subs;"
+	getLastDayUsersQuery  = "SELECT COUNT(*) FROM users WHERE register_time > ?;"
 )
 
 func countUsers(botLang string) int {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("SELECT COUNT(*) FROM users;")
+	dataBase := model.GetDB(botLang)
+	rows, err := dataBase.Query(getUsersCountQuery)
 	if err != nil {
-		text := "Fatal Err with DB - count_users.14 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
+		log.Println(err.Error())
 	}
-
 	return readRows(rows)
 }
 
@@ -36,8 +41,8 @@ func readRows(rows *sql.Rows) int {
 
 func countAllUsers() int {
 	var sum int
-	for _, handler := range assets.Bots {
-		rows, err := handler.DataBase.Query("SELECT COUNT(*) FROM users;")
+	for _, handler := range model.Bots {
+		rows, err := handler.DataBase.Query(getUsersCountQuery)
 		if err != nil {
 			log.Println(err.Error())
 		}
@@ -48,7 +53,7 @@ func countAllUsers() int {
 
 func countReferrals(botLang string, amountUsers int) string {
 	var refText string
-	rows, err := assets.Bots[botLang].DataBase.Query("SELECT SUM(referral_count) FROM users;")
+	rows, err := model.Bots[botLang].DataBase.Query("SELECT SUM(referral_count) FROM users;")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -68,7 +73,16 @@ func countBlockedUsers(botLang string) int {
 }
 
 func countSubscribers(botLang string) int {
-	rows, err := assets.Bots[botLang].DataBase.Query("SELECT COUNT(DISTINCT id) FROM subs;")
+	rows, err := model.Bots[botLang].DataBase.Query(getDistinctUsersQuery)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return readRows(rows)
+}
+
+func countUserFromLastDay(botLang string) int {
+	rows, err := model.Bots[botLang].DataBase.Query(getLastDayUsersQuery, time.Now().Unix()-86400)
 	if err != nil {
 		log.Println(err.Error())
 	}

@@ -1,77 +1,61 @@
 package db
 
 import (
-	"github.com/Stepan1328/voice-assist-bot/assets"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strconv"
 )
 
-func RdbSetUser(botLang string, ID int, level string) {
+const (
+	emptyLevelName = "empty"
+	nilRedisErr    = "redis: nil"
+)
+
+func RdbSetUser(botLang string, ID int64, level string) {
 	userID := userIDToRdb(ID)
-	_, err := assets.Bots[botLang].Rdb.Set(userID, level, 0).Result()
+	_, err := model.Bots[botLang].Rdb.Set(userID, level, 0).Result()
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func userIDToRdb(userID int) string {
-	return "user:" + strconv.Itoa(userID)
+func userIDToRdb(userID int64) string {
+	return "user:" + strconv.Itoa(int(userID))
 }
 
-func GetLevel(botLang string, id int) string {
+func GetLevel(botLang string, id int64) string {
 	userID := userIDToRdb(id)
-	have, err := assets.Bots[botLang].Rdb.Exists(userID).Result()
+	have, err := model.Bots[botLang].Rdb.Exists(userID).Result()
 	if err != nil {
 		log.Println(err)
 	}
 	if have == 0 {
-		return "empty"
+		return emptyLevelName
 	}
 
-	value, err := assets.Bots[botLang].Rdb.Get(userID).Result()
+	value, err := model.Bots[botLang].Rdb.Get(userID).Result()
 	if err != nil {
 		log.Println(err)
 	}
 	return value
 }
 
-func RdbSetTemporary(botLang string, userID, msgID int) {
-	temporaryID := temporaryIDToRdb(userID)
-	_, err := assets.Bots[botLang].Rdb.Set(temporaryID, strconv.Itoa(msgID), 0).Result()
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func temporaryIDToRdb(userID int) string {
-	return "message:" + strconv.Itoa(userID)
-}
-
-func RdbGetTemporary(botLang string, userID int) string {
-	temporaryID := temporaryIDToRdb(userID)
-	result, err := assets.Bots[botLang].Rdb.Get(temporaryID).Result()
-	if err != nil {
-		log.Println(err)
-	}
-	return result
-}
-
-func RdbSetAdminMsgID(botLang string, userID, msgID int) {
+func RdbSetAdminMsgID(botLang string, userID int64, msgID int) {
 	adminMsgID := adminMsgIDToRdb(userID)
-	_, err := assets.Bots[botLang].Rdb.Set(adminMsgID, strconv.Itoa(msgID), 0).Result()
+	_, err := model.Bots[botLang].Rdb.Set(adminMsgID, strconv.Itoa(msgID), 0).Result()
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func adminMsgIDToRdb(userID int) string {
-	return "admin_msg_id:" + strconv.Itoa(userID)
+func adminMsgIDToRdb(userID int64) string {
+	return "admin_msg_id:" + strconv.Itoa(int(userID))
 }
 
-func RdbGetAdminMsgID(botLang string, userID int) int {
+func RdbGetAdminMsgID(botLang string, userID int64) int {
 	adminMsgID := adminMsgIDToRdb(userID)
-	result, err := assets.Bots[botLang].Rdb.Get(adminMsgID).Result()
+	result, err := model.Bots[botLang].Rdb.Get(adminMsgID).Result()
 	if err != nil {
 		log.Println(err)
 	}
@@ -79,18 +63,17 @@ func RdbGetAdminMsgID(botLang string, userID int) int {
 	return msgID
 }
 
-func DeleteOldAdminMsg(botLang string, userID int) {
+func DeleteOldAdminMsg(botLang string, userID int64) {
 	adminMsgID := adminMsgIDToRdb(userID)
-	result, err := assets.Bots[botLang].Rdb.Get(adminMsgID).Result()
+	result, err := model.Bots[botLang].Rdb.Get(adminMsgID).Result()
 	if err != nil {
 		log.Println(err)
 	}
 
 	if oldMsgID, _ := strconv.Atoi(result); oldMsgID != 0 {
-		msg := tgbotapi.NewDeleteMessage(int64(userID), oldMsgID)
+		msg := tgbotapi.NewDeleteMessage(userID, oldMsgID)
 
-		bot := assets.GetBot(botLang)
-		if _, err = bot.Send(msg); err != nil && err.Error() != "message to delete not found" {
+		if _, err = model.Bots[botLang].Bot.Send(msg); err != nil {
 			log.Println(err)
 		}
 		RdbSetAdminMsgID(botLang, userID, 0)

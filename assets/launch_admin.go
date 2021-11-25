@@ -3,6 +3,7 @@ package assets
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Stepan1328/voice-assist-bot/model"
 	"log"
 	"os"
 	"strconv"
@@ -10,8 +11,14 @@ import (
 	"sync"
 )
 
+const (
+	adminPath           = "assets/admin"
+	beginningOfTaskPath = "assets/task/"
+	jsonFormatName      = ".json"
+)
+
 type Admin struct {
-	AdminID         map[int]*AdminUser
+	AdminID         map[int64]*AdminUser
 	Parameters      map[string]*Params
 	AdvertisingChan map[string]*AdvertChannel
 	BlockedUsers    map[string]int
@@ -42,7 +49,7 @@ var AdminSettings *Admin
 
 func UploadAdminSettings() {
 	var settings *Admin
-	data, err := os.ReadFile("assets/admin.json")
+	data, err := os.ReadFile(adminPath + jsonFormatName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -52,7 +59,26 @@ func UploadAdminSettings() {
 		fmt.Println(err)
 	}
 
+	for lang, globalBot := range model.Bots {
+		nilSettings(settings, lang)
+		for _, lang = range globalBot.LanguageInBot {
+			nilSettings(settings, lang)
+		}
+	}
+
 	AdminSettings = settings
+	SaveAdminSettings()
+}
+
+func nilSettings(settings *Admin, lang string) {
+	if settings.Parameters[lang] == nil {
+		settings.Parameters[lang] = &Params{}
+	}
+	if settings.AdvertisingChan[lang] == nil {
+		settings.AdvertisingChan[lang] = &AdvertChannel{
+			Url: "https://google.com",
+		}
+	}
 }
 
 func SaveAdminSettings() {
@@ -61,7 +87,7 @@ func SaveAdminSettings() {
 		panic(err)
 	}
 
-	if err = os.WriteFile("assets/admin.json", data, 0600); err != nil {
+	if err = os.WriteFile(adminPath+jsonFormatName, data, 0600); err != nil {
 		panic(err)
 	}
 }
@@ -82,13 +108,8 @@ var UpdateStatistic *UpdateInfo
 
 func UploadUpdateStatistic() {
 	info := &UpdateInfo{}
-	info.Mu = &sync.Mutex{}
-	result := Bots["it"].Rdb.Get("update_statistic")
-	if result == nil {
-		UpdateStatistic = info
-		return
-	}
-	strStatistic, err := result.Result()
+	info.Mu = new(sync.Mutex)
+	strStatistic, err := model.Bots["it"].Rdb.Get("update_statistic").Result()
 	if err != nil {
 		UpdateStatistic = info
 		return
@@ -106,7 +127,7 @@ func UploadUpdateStatistic() {
 
 func SaveUpdateStatistic() {
 	strStatistic := strconv.Itoa(UpdateStatistic.Counter) + "?" + strconv.Itoa(UpdateStatistic.Day)
-	_, err := Bots["it"].Rdb.Set("update_statistic", strStatistic, 0).Result()
+	_, err := model.Bots["it"].Rdb.Set("update_statistic", strStatistic, 0).Result()
 	if err != nil {
 		log.Println(err)
 	}

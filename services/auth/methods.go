@@ -5,47 +5,243 @@ import (
 	"fmt"
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
-	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
-	"strconv"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"time"
+
+	"strconv"
+	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (u *User) MakeMoney(botLang string) bool {
+const (
+	updateBalanceQuery = "UPDATE users SET balance = ? WHERE id = ?;"
+
+	updateAfterBonusQuery = "UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;"
+
+	getSubsUserQuery = "SELECT * FROM subs WHERE id = ?;"
+	updateSubsQuery  = "INSERT INTO subs VALUES(?);"
+)
+
+func WithdrawMoneyFromBalance(s model.Situation, amount string) error {
+	amount = strings.Replace(amount, " ", "", -1)
+	amountInt, err := strconv.Atoi(amount)
+	if err != nil {
+		msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "incorrect_amount"))
+		return msgs.SendMsgToUser(s.BotLang, msg)
+	}
+
+	if amountInt < assets.AdminSettings.Parameters[s.BotLang].MinWithdrawalAmount {
+		return minAmountNotReached(s.User, s.BotLang)
+	}
+
+	if s.User.Balance < amountInt {
+		msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "lack_of_funds"))
+		return msgs.SendMsgToUser(s.BotLang, msg)
+	}
+
+	return sendInvitationToSubs(s, amount)
+}
+
+func minAmountNotReached(u *model.User, botLang string) error {
+	text := assets.LangText(u.Language, "minimum_amount_not_reached")
+	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount)
+
+	return msgs.NewParseMessage(botLang, int64(u.ID), text)
+}
+
+func sendInvitationToSubs(s model.Situation, amount string) error {
+	text := msgs.GetFormatText(s.User.Language, "withdrawal_not_subs_text")
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg.ReplyMarkup = msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
+		msgs.NewIlRow(msgs.NewIlDataButton("im_subscribe_button", "/withdrawal_money?"+amount)),
+	).Build(s.User.Language)
+
+	return msgs.SendMsgToUser(s.BotLang, msg)
+}
+
+func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
+	if s.User.Balance < amount {
+		return false
+	}
+
+	if !CheckSubscribe(s) {
+		_ = sendInvitationToSubs(s, strconv.Itoa(amount))
+		return false
+	}
+
+	s.User.Balance -= amount
+	dataBase := model.GetDB(s.BotLang)
+	rows, err := dataBase.Query(updateBalanceQuery, s.User.Balance, s.User.ID)
+	if err != nil {
+		return false
+	}
+	rows.Close()
+
+	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "successfully_withdrawn"))
+	_ = msgs.SendMsgToUser(s.BotLang, msg)
+	return true
+}
+
+func GetABonus(s model.Situation) error {
+	if !CheckSubscribe(s) {
+		text := assets.LangText(s.User.Language, "user_dont_subscribe")
+		return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+	}
+
+	if s.User.TakeBonus {
+		text := assets.LangText(s.User.Language, "bonus_already_have")
+		return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+	}
+
+	s.User.Balance += assets.AdminSettings.Parameters[s.BotLang].BonusAmount
+	dataBase := model.GetDB(s.BotLang)
+	rows, err := dataBase.Query(updateAfterBonusQuery, s.User.Balance, true, s.User.ID)
+	if err != nil {
+		return err
+	}
+	rows.Close()
+
+	text := assets.LangText(s.User.Language, "bonus_have_received")
+	return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+}
+
+func CheckSubscribe(s model.Situation) bool {
+	fmt.Println(assets.AdminSettings.AdvertisingChan[s.BotLang].ChannelID)
+	member, err := model.Bots[s.BotLang].Bot.GetChatMember(tgbotapi.GetChatMemberConfig{
+		ChatConfigWithUser: tgbotapi.ChatConfigWithUser{
+			ChatID: assets.AdminSettings.AdvertisingChan[s.BotLang].ChannelID,
+			UserID: s.User.ID,
+		}})
+
+	if err == nil {
+		if err := addMemberToSubsBase(s); err != nil {
+			return false
+		}
+		return checkMemberStatus(member)
+	}
+	return false
+}
+
+func checkMemberStatus(member tgbotapi.ChatMember) bool {
+	if member.IsAdministrator() {
+		return true
+	}
+	if member.IsCreator() {
+		return true
+	}
+	if member.Status == "member" {
+		return true
+	}
+	return false
+}
+
+func addMemberToSubsBase(s model.Situation) error {
+	dataBase := model.GetDB(s.BotLang)
+	rows, err := dataBase.Query(getSubsUserQuery, s.User.ID)
+	if err != nil {
+		return err
+	}
+
+	user, err := readUser(rows)
+	if err != nil {
+		return err
+	}
+
+	if user.ID != 0 {
+		return nil
+	}
+	rows, err = dataBase.Query(updateSubsQuery, s.User.ID)
+	if err != nil {
+		return err
+	}
+	rows.Close()
+	return nil
+}
+
+func readUser(rows *sql.Rows) (*model.User, error) {
+	defer rows.Close()
+
+	var users []*model.User
+
+	for rows.Next() {
+		var id int64
+
+		if err := rows.Scan(&id); err != nil {
+			return nil, model.ErrScanSqlRow
+		}
+
+		users = append(users, &model.User{
+			ID: id,
+		})
+	}
+	if len(users) == 0 {
+		users = append(users, &model.User{
+			ID: 0,
+		})
+	}
+	return users[0], nil
+}
+
+func AcceptVoiceMessage(s model.Situation) bool {
+	s.User.Balance += assets.AdminSettings.Parameters[s.BotLang].VoiceAmount
+	s.User.Completed++
+	s.User.CompletedToday++
+	s.User.LastVoice = time.Now().Unix()
+
+	dataBase := model.GetDB(s.BotLang)
+	rows, err := dataBase.Query("UPDATE users SET balance = ?, completed = ?, completed_today = ?, last_voice = ? WHERE id = ?;",
+		s.User.Balance, s.User.Completed, s.User.CompletedToday, s.User.LastVoice, s.User.ID)
+	if err != nil {
+		text := "Fatal Err with DB - methods.89 //" + err.Error()
+		_ = msgs.NewParseMessage("it", 1418862576, text)
+		return false
+	}
+	err = rows.Close()
+	if err != nil {
+		return false
+	}
+
+	return MakeMoney(s)
+}
+
+func MakeMoney(s model.Situation) bool {
 	var err error
-	if time.Now().Unix()/86400 > u.LastVoice/86400 {
-		err = u.resetVoiceDayCounter(botLang)
+	if time.Now().Unix()/86400 > s.User.LastVoice/86400 {
+		err = resetVoiceDayCounter(s)
 		if err != nil {
 			return false
 		}
 	}
 
-	if u.CompletedToday >= assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay {
-		_ = u.reachedMaxAmountPerDay(botLang)
+	if s.User.CompletedToday >= assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay {
+		_ = reachedMaxAmountPerDay(s)
 		return false
 	}
 
-	db.RdbSetUser(botLang, u.ID, "make_money")
+	db.RdbSetUser(s.BotLang, s.User.ID, "/new_make_money")
 
-	err = u.sendMoneyStatistic(botLang)
+	err = sendMoneyStatistic(s)
 	if err != nil {
 		return false
 	}
-	err = u.sendInvitationToRecord(botLang)
+	err = sendInvitationToRecord(s)
 	if err != nil {
 		return false
 	}
 	return true
 }
 
-func (u *User) resetVoiceDayCounter(botLang string) error {
-	u.CompletedToday = 0
-	u.LastVoice = time.Now().Unix()
+func resetVoiceDayCounter(s model.Situation) error {
+	s.User.CompletedToday = 0
+	s.User.LastVoice = time.Now().Unix()
 
-	dataBase := assets.GetDB(botLang)
+	dataBase := model.GetDB(s.BotLang)
 	rows, err := dataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
-		u.CompletedToday, u.LastVoice, u.ID)
+		s.User.CompletedToday, s.User.LastVoice, s.User.ID)
 	if err != nil {
 		//msgs2.NewParseMessage("it", 1418862576, text)
 		return fmt.Errorf("Fatal Err with DB - methods.40 //" + err.Error())
@@ -54,76 +250,39 @@ func (u *User) resetVoiceDayCounter(botLang string) error {
 	return rows.Close()
 }
 
-func (u *User) sendMoneyStatistic(botLang string) error {
-	text := assets.LangText(u.Language, "make_money_statistic")
-	text = fmt.Sprintf(text, u.CompletedToday, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay,
-		assets.AdminSettings.Parameters[botLang].VoiceAmount, u.Balance, u.CompletedToday*assets.AdminSettings.Parameters[botLang].VoiceAmount)
-	msg := tgbotapi.NewMessage(int64(u.ID), text)
+func sendMoneyStatistic(s model.Situation) error {
+	text := assets.LangText(s.User.Language, "make_money_statistic")
+	text = fmt.Sprintf(text, s.User.CompletedToday, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay,
+		assets.AdminSettings.Parameters[s.BotLang].VoiceAmount, s.User.Balance, s.User.CompletedToday*assets.AdminSettings.Parameters[s.BotLang].VoiceAmount)
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
 	msg.ParseMode = "HTML"
 
-	return msgs2.SendMsgToUser(botLang, msg)
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
-func (u *User) sendInvitationToRecord(botLang string) error {
-	text := assets.LangText(u.Language, "invitation_to_record_voice")
-	text = fmt.Sprintf(text, assets.SiriText(u.Language))
-	msg := tgbotapi.NewMessage(int64(u.ID), text)
+func sendInvitationToRecord(s model.Situation) error {
+	text := assets.LangText(s.User.Language, "invitation_to_record_voice")
+	text = fmt.Sprintf(text, assets.SiriText(s.User.Language))
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
 	msg.ParseMode = "HTML"
 
-	back := tgbotapi.NewKeyboardButton(assets.LangText(u.Language, "back_to_main_menu_button"))
+	back := tgbotapi.NewKeyboardButton(assets.LangText(s.User.Language, "back_to_main_menu_button"))
 	row := tgbotapi.NewKeyboardButtonRow(back)
 	markUp := tgbotapi.NewReplyKeyboard(row)
 	msg.ReplyMarkup = markUp
 
-	return msgs2.SendMsgToUser(botLang, msg)
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
-func (u *User) reachedMaxAmountPerDay(botLang string) error {
-	text := assets.LangText(u.Language, "reached_max_amount_per_day")
-	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay, assets.AdminSettings.Parameters[botLang].MaxOfVoicePerDay)
-	msg := tgbotapi.NewMessage(int64(u.ID), text)
-	msg.ReplyMarkup = msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingChan[u.Language].Url)),
-	).Build(u.Language)
+func reachedMaxAmountPerDay(s model.Situation) error {
+	text := assets.LangText(s.User.Language, "reached_max_amount_per_day")
+	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay)
+	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg.ReplyMarkup = msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
+	).Build(s.User.Language)
 
-	return msgs2.SendMsgToUser(botLang, msg)
-}
-
-func (u *User) AcceptVoiceMessage(botLang string) bool {
-	u.Balance += assets.AdminSettings.Parameters[botLang].VoiceAmount
-	u.Completed++
-	u.CompletedToday++
-	u.LastVoice = time.Now().Unix()
-
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("UPDATE users SET balance = ?, completed = ?, completed_today = ?, last_voice = ? WHERE id = ?;",
-		u.Balance, u.Completed, u.CompletedToday, u.LastVoice, u.ID)
-	if err != nil {
-		text := "Fatal Err with DB - methods.89 //" + err.Error()
-		_ = msgs2.NewParseMessage("it", 1418862576, text)
-		return false
-	}
-	err = rows.Close()
-	if err != nil {
-		return false
-	}
-
-	return u.MakeMoney(botLang)
-}
-
-func (u *User) WithdrawMoneyFromBalance(botLang string, amount string) error {
-	amount = getAmountFromText(amount)
-	amountInt, err := strconv.Atoi(amount)
-	if err != nil {
-		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "incorrect_amount"))
-		return msgs2.SendMsgToUser(botLang, msg)
-	}
-
-	if amountInt < assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount {
-		return u.minAmountNotReached(botLang)
-	}
-
-	return sendInvitationToSubs(botLang, u.ID, GetLang(botLang, u.ID), amount)
+	return msgs.SendMsgToUser(s.BotLang, msg)
 }
 
 func getAmountFromText(text string) string {
@@ -135,178 +294,4 @@ func getAmountFromText(text string) string {
 		}
 	}
 	return amount
-}
-
-func (u *User) minAmountNotReached(botLang string) error {
-	text := assets.LangText(u.Language, "minimum_amount_not_reached")
-	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount)
-
-	return msgs2.NewParseMessage(botLang, int64(u.ID), text)
-}
-
-func sendInvitationToSubs(botLang string, userID int, userLang, amount string) error {
-	text := msgs2.GetFormatText(userLang, "withdrawal_not_subs_text")
-
-	msg := tgbotapi.NewMessage(int64(userID), text)
-	msg.ReplyMarkup = msgs2.NewIlMarkUp(
-		msgs2.NewIlRow(msgs2.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[botLang].Url)),
-		msgs2.NewIlRow(msgs2.NewIlDataButton("im_subscribe_button", "withdrawal_exit/withdrawal_exit?"+amount)),
-	).Build(userLang)
-
-	return msgs2.SendMsgToUser(botLang, msg)
-}
-
-func (u *User) CheckSubscribeToWithdrawal(botLang string, callback *tgbotapi.CallbackQuery, userID, amount int) (bool, error) {
-	member, err := u.CheckSubscribe(botLang, userID)
-	if err != nil {
-		return false, err
-	}
-	if !member {
-		lang := GetLang(botLang, userID)
-		err := msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
-		return false, err
-	}
-
-	if u.Balance < amount {
-		msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "lack_of_funds"))
-		db.RdbSetUser(botLang, userID, "withdrawal/req_amount")
-		err := msgs2.SendMsgToUser(botLang, msg)
-		return false, err
-	}
-
-	u.Balance -= amount
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("UPDATE users SET balance = ? WHERE id = ?;", u.Balance, u.ID)
-	if err != nil {
-		text := "Fatal Err with DB - methods.163 //" + err.Error()
-		_ = msgs2.NewParseMessage("it", 1418862576, text)
-		return false, err
-	}
-	err = rows.Close()
-	if err != nil {
-		return false, err
-	}
-
-	msg := tgbotapi.NewMessage(int64(u.ID), assets.LangText(u.Language, "successfully_withdrawn"))
-	err = msgs2.SendMsgToUser(botLang, msg)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (u *User) CheckSubscribe(botLang string, userID int) (bool, error) {
-	fmt.Println(assets.AdminSettings.AdvertisingChan[botLang].ChannelID)
-	chatCfg := tgbotapi.ChatConfigWithUser{
-		ChatID: assets.AdminSettings.AdvertisingChan[botLang].ChannelID,
-		UserID: userID,
-	}
-	member, err := assets.Bots[botLang].Bot.GetChatMember(chatCfg)
-
-	if err != nil {
-		return false, err
-	}
-
-	fmt.Println(member.Status)
-	err = addMemberToSubsBase(botLang, userID)
-	if err != nil {
-		return false, err
-	}
-	return checkMemberStatus(member), nil
-}
-
-func checkMemberStatus(member tgbotapi.ChatMember) bool {
-	if member.IsAdministrator() {
-		return true
-	}
-	if member.IsCreator() {
-		return true
-	}
-	if member.IsMember() {
-		return true
-	}
-	return false
-}
-
-func addMemberToSubsBase(botLang string, userId int) error {
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("SELECT * FROM subs WHERE id = ?;", userId)
-	if err != nil {
-		text := "Fatal Err with DB - methods.207 //" + err.Error()
-		log.Println(text)
-		_ = msgs2.NewParseMessage("it", 1418862576, text)
-		return err
-	}
-	user := readUser(rows)
-	if user.ID != 0 {
-		return nil
-	}
-	rows, err = dataBase.Query("INSERT INTO subs VALUES(?);", userId)
-	if err != nil {
-		text := "Fatal Err with DB - methods.219 //" + err.Error()
-		//_ = msgs2.NewParseMessage("it", 1418862576, text)
-		log.Println(text)
-		return err
-	}
-
-	return rows.Close()
-}
-
-func readUser(rows *sql.Rows) *User {
-	defer func() {
-		_ = rows.Close()
-	}()
-
-	var users []*User
-
-	for rows.Next() {
-		var id int
-
-		if err := rows.Scan(&id); err != nil {
-			panic("Failed to scan row: " + err.Error())
-		}
-
-		users = append(users, &User{
-			ID: id,
-		})
-	}
-
-	if len(users) == 0 {
-		users = append(users, &User{
-			ID: 0,
-		})
-	}
-	return users[0]
-}
-
-func (u User) GetABonus(botLang string, callback *tgbotapi.CallbackQuery) error {
-	member, err := u.CheckSubscribe(botLang, u.ID)
-	if err != nil {
-		return err
-	}
-	if !member {
-		lang := GetLang(botLang, u.ID)
-		return msgs2.SendAnswerCallback(botLang, callback, lang, "user_dont_subscribe")
-	}
-
-	if u.TakeBonus {
-		text := assets.LangText(u.Language, "bonus_already_have")
-		return msgs2.SendSimpleMsg(botLang, int64(u.ID), text)
-	}
-
-	u.Balance += assets.AdminSettings.Parameters[botLang].BonusAmount
-	dataBase := assets.GetDB(botLang)
-	rows, err := dataBase.Query("UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;", u.Balance, true, u.ID)
-	if err != nil {
-		text := "Fatal Err with DB - methods.265 //" + err.Error()
-		_ = msgs2.NewParseMessage("it", 1418862576, text)
-		return err
-	}
-	err = rows.Close()
-	if err != nil {
-		return err
-	}
-
-	text := assets.LangText(u.Language, "bonus_have_received")
-	return msgs2.SendSimpleMsg(botLang, int64(u.ID), text)
 }
