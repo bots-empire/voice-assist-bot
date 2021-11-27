@@ -1,10 +1,11 @@
 package db
 
 import (
-	"github.com/Stepan1328/voice-assist-bot/model"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strconv"
+
+	"github.com/Stepan1328/voice-assist-bot/model"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 const (

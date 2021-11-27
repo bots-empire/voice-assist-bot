@@ -3,12 +3,13 @@ package assets
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Stepan1328/voice-assist-bot/model"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/Stepan1328/voice-assist-bot/model"
 )
 
 const (

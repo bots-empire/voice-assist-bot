@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"

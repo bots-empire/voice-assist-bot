@@ -3,12 +3,13 @@ package model
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
+	"os"
+
 	"github.com/go-redis/redis"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"github.com/Stepan1328/voice-assist-bot/cfg"
-	"log"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )

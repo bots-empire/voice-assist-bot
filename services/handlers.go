@@ -2,6 +2,9 @@ package services
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"github.com/Stepan1328/voice-assist-bot/assets"
@@ -11,8 +14,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
-	"strings"
-	"time"
 )
 
 const (

@@ -2,11 +2,11 @@ package administrator
 
 import (
 	"database/sql"
-	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/model"
-
 	"log"
 	"strconv"
+
+	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/model"
 )
 
 const (

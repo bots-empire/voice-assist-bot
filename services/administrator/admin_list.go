@@ -1,14 +1,15 @@
 package administrator
 
 import (
-	"github.com/Stepan1328/voice-assist-bot/assets"
-	"github.com/Stepan1328/voice-assist-bot/db"
-	"github.com/Stepan1328/voice-assist-bot/model"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Stepan1328/voice-assist-bot/assets"
+	"github.com/Stepan1328/voice-assist-bot/db"
+	"github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
 )
 
 const (

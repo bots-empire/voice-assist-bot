@@ -2,15 +2,16 @@ package auth
 
 import (
 	"database/sql"
+	"log"
+	"strconv"
+	"strings"
+
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"log"
-	"strconv"
-	"strings"
 )
 
 const (
