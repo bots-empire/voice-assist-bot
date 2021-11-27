@@ -48,13 +48,13 @@ func minAmountNotReached(u *model.User, botLang string) error {
 	text := assets.LangText(u.Language, "minimum_amount_not_reached")
 	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[botLang].MinWithdrawalAmount)
 
-	return msgs.NewParseMessage(botLang, int64(u.ID), text)
+	return msgs.NewParseMessage(botLang, u.ID, text)
 }
 
 func sendInvitationToSubs(s model.Situation, amount string) error {
 	text := msgs.GetFormatText(s.User.Language, "withdrawal_not_subs_text")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
 		msgs.NewIlRow(msgs.NewIlDataButton("im_subscribe_button", "/withdrawal_money?"+amount)),
@@ -79,9 +79,9 @@ func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
 	if err != nil {
 		return false
 	}
-	rows.Close()
+	_ = rows.Close()
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "successfully_withdrawn"))
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "successfully_withdrawn"))
 	_ = msgs.SendMsgToUser(s.BotLang, msg)
 	return true
 }
@@ -89,12 +89,12 @@ func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
 func GetABonus(s model.Situation) error {
 	if !CheckSubscribe(s) {
 		text := assets.LangText(s.User.Language, "user_dont_subscribe")
-		return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+		return msgs.SendSimpleMsg(s.BotLang, s.User.ID, text)
 	}
 
 	if s.User.TakeBonus {
 		text := assets.LangText(s.User.Language, "bonus_already_have")
-		return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+		return msgs.SendSimpleMsg(s.BotLang, s.User.ID, text)
 	}
 
 	s.User.Balance += assets.AdminSettings.Parameters[s.BotLang].BonusAmount
@@ -103,10 +103,10 @@ func GetABonus(s model.Situation) error {
 	if err != nil {
 		return err
 	}
-	rows.Close()
+	_ = rows.Close()
 
 	text := assets.LangText(s.User.Language, "bonus_have_received")
-	return msgs.SendSimpleMsg(s.BotLang, int64(s.User.ID), text)
+	return msgs.SendSimpleMsg(s.BotLang, s.User.ID, text)
 }
 
 func CheckSubscribe(s model.Situation) bool {
@@ -158,7 +158,7 @@ func addMemberToSubsBase(s model.Situation) error {
 	if err != nil {
 		return err
 	}
-	rows.Close()
+	_ = rows.Close()
 	return nil
 }
 
@@ -265,7 +265,7 @@ func sendMoneyStatistic(s model.Situation) error {
 func sendInvitationToRecord(s model.Situation) error {
 	text := assets.LangText(s.User.Language, "invitation_to_record_voice")
 	text = fmt.Sprintf(text, assets.SiriText(s.User.Language))
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ParseMode = "HTML"
 
 	back := tgbotapi.NewKeyboardButton(assets.LangText(s.User.Language, "back_to_main_menu_button"))
@@ -279,21 +279,10 @@ func sendInvitationToRecord(s model.Situation) error {
 func reachedMaxAmountPerDay(s model.Situation) error {
 	text := assets.LangText(s.User.Language, "reached_max_amount_per_day")
 	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay)
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
+	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
 	).Build(s.User.Language)
 
 	return msgs.SendMsgToUser(s.BotLang, msg)
-}
-
-func getAmountFromText(text string) string {
-	var amount string
-	rs := []rune(text)
-	for i := range rs {
-		if rs[i] >= 48 && rs[i] <= 57 {
-			amount += string(rs[i])
-		}
-	}
-	return amount
 }

@@ -105,7 +105,7 @@ func (c *RecheckSubscribeCommand) Serve(s model.Situation) error {
 	amountInt, _ := strconv.Atoi(amount)
 
 	if auth.CheckSubscribeToWithdrawal(s, amountInt) {
-		db.RdbSetUser(s.BotLang, int64(s.User.ID), "main")
+		db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
 		return NewStartCommand().Serve(s)
 	}
@@ -129,8 +129,8 @@ func (c *PromotionCaseCommand) Serve(s model.Situation) error {
 		return msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "not_enough_money")
 	}
 
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), s.CallbackQuery.Data)
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "invitation_to_send_link_text"))
+	db.RdbSetUser(s.BotLang, s.User.ID, s.CallbackQuery.Data)
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "invitation_to_send_link_text"))
 	msg.ReplyMarkup = msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(s.User.Language)

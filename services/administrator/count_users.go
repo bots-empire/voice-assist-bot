@@ -7,7 +7,6 @@ import (
 
 	"log"
 	"strconv"
-	"time"
 )
 
 const (
@@ -74,15 +73,6 @@ func countBlockedUsers(botLang string) int {
 
 func countSubscribers(botLang string) int {
 	rows, err := model.Bots[botLang].DataBase.Query(getDistinctUsersQuery)
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	return readRows(rows)
-}
-
-func countUserFromLastDay(botLang string) int {
-	rows, err := model.Bots[botLang].DataBase.Query(getLastDayUsersQuery, time.Now().Unix()-86400)
 	if err != nil {
 		log.Println(err.Error())
 	}

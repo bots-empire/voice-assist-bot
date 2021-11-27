@@ -16,6 +16,7 @@ const (
 	voiceAmount         = "voice_amount"
 	voicePDAmount       = "voice_pd_amount"
 	referralAmount      = "referral_amount"
+	currencyType        = "currency_type"
 )
 
 type MakeMoneySettingCommand struct {
@@ -58,6 +59,7 @@ func sendMakeMoneyMenu(botLang string, userID int64) (*tgbotapi.InlineKeyboardMa
 		msgs.NewIlRow(msgs.NewIlAdminButton("change_voice_amount_button", "admin/make_money?voice_amount")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("change_voice_pd_amount_button", "admin/make_money?voice_pd_amount")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("change_referral_amount_button", "admin/make_money?referral_amount")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_currency_type_button", "admin/make_money?currency_type")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
 	).Build(lang)
 
@@ -77,7 +79,7 @@ func (c *ChangeParameterCommand) Serve(s model2.Situation) error {
 
 	lang := assets.AdminLang(s.User.ID)
 	var parameter, text string
-	var value int
+	var value interface{}
 
 	db.RdbSetUser(s.BotLang, s.User.ID, "admin/make_money?"+changeParameter)
 
@@ -95,8 +97,11 @@ func (c *ChangeParameterCommand) Serve(s model2.Situation) error {
 		parameter = assets.AdminText(lang, "change_voice_pd_amount_button")
 		value = assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay
 	case referralAmount:
-		parameter = assets.AdminText(lang, "admin/make_money?referral_amount")
+		parameter = assets.AdminText(lang, "change_referral_amount_button")
 		value = assets.AdminSettings.Parameters[s.BotLang].ReferralAmount
+	case currencyType:
+		parameter = assets.AdminText(lang, "change_currency_type_button")
+		value = assets.AdminSettings.Parameters[s.BotLang].Currency
 	}
 
 	text = adminFormatText(lang, "set_new_amount_text", parameter, value)

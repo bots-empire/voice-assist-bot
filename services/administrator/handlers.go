@@ -36,14 +36,6 @@ func NewUpdateParameterCommand() *UpdateParameterCommand {
 }
 
 func (c *UpdateParameterCommand) Serve(s model.Situation) error {
-	lang := assets.AdminLang(s.User.ID)
-
-	newAmount, err := strconv.Atoi(s.Message.Text)
-	if (err != nil || newAmount <= 0) && s.Message.Text != "← Назад к ⚙️ Заработок" {
-		text := assets.AdminText(lang, "incorrect_make_money_change_input")
-		return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
-	}
-
 	if strings.Contains(s.Params.Level, "make_money?") && s.Message.Text == "← Назад к ⚙️ Заработок" {
 		if err := setAdminBackButton(s.BotLang, s.User.ID, "operation_canceled"); err != nil {
 			return err
@@ -55,6 +47,35 @@ func (c *UpdateParameterCommand) Serve(s model.Situation) error {
 	}
 
 	partition := strings.Split(s.Params.Level, "?")[1]
+
+	if partition == currencyType {
+		assets.AdminSettings.Parameters[s.BotLang].Currency = s.Message.Text
+	} else {
+		err := setNewIntParameter(s, partition)
+		if err != nil {
+			return err
+		}
+	}
+
+	assets.SaveAdminSettings()
+	err := setAdminBackButton(s.BotLang, s.User.ID, "operation_completed")
+	if err != nil {
+		return nil
+	}
+	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
+	s.Command = "admin/make_money_setting"
+
+	return NewMakeMoneySettingCommand().Serve(s)
+}
+
+func setNewIntParameter(s model.Situation, partition string) error {
+	lang := assets.AdminLang(s.User.ID)
+
+	newAmount, err := strconv.Atoi(s.Message.Text)
+	if err != nil || newAmount <= 0 {
+		text := assets.AdminText(lang, "incorrect_make_money_change_input")
+		return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
+	}
 
 	switch partition {
 	case bonusAmount:
@@ -69,15 +90,7 @@ func (c *UpdateParameterCommand) Serve(s model.Situation) error {
 		assets.AdminSettings.Parameters[s.BotLang].ReferralAmount = newAmount
 	}
 
-	assets.SaveAdminSettings()
-	err = setAdminBackButton(s.BotLang, s.User.ID, "operation_completed")
-	if err != nil {
-		return nil
-	}
-	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
-	s.Command = "admin/make_money_setting"
-
-	return NewMakeMoneySettingCommand().Serve(s)
+	return nil
 }
 
 type SetNewTextUrlCommand struct {

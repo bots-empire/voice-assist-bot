@@ -54,11 +54,11 @@ func CheckNewAdmin(s model.Situation) error {
 
 		text := assets.AdminText(s.User.Language, "welcome_to_admin")
 		delete(availableKeys, key)
-		return msgs.NewParseMessage(s.BotLang, int64(s.User.ID), text)
+		return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
 	}
 
 	text := assets.LangText(s.User.Language, "invalid_link_err")
-	return msgs.NewParseMessage(s.BotLang, int64(s.User.ID), text)
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
 }
 
 type NewAdminToListCommand struct {
@@ -74,7 +74,7 @@ func (c *NewAdminToListCommand) Serve(s model.Situation) error {
 	link := createNewAdminLink(s.BotLang)
 	text := adminFormatText(lang, "new_admin_key_text", link, LinkLifeTime)
 
-	err := msgs.NewParseMessage(s.BotLang, int64(s.User.ID), text)
+	err := msgs.NewParseMessage(s.BotLang, s.User.ID, text)
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func (c *DeleteAdminCommand) Serve(s model.Situation) error {
 	db.RdbSetUser(s.BotLang, s.User.ID, s.CallbackQuery.Data)
 
 	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "type_the_text")
-	return msgs.NewParseMessage(s.BotLang, int64(s.User.ID), createListOfAdminText(lang))
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, createListOfAdminText(lang))
 }
 
 func adminHavePrivileges(s model.Situation) bool {

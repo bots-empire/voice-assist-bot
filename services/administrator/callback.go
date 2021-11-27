@@ -101,7 +101,7 @@ func ContainsInAdmin(userID int64) bool {
 
 func notAdmin(botLang string, user *model.User) error {
 	text := assets.LangText(user.Language, "not_admin")
-	return msgs.SendSimpleMsg(botLang, int64(user.ID), text)
+	return msgs.SendSimpleMsg(botLang, user.ID, text)
 }
 
 func updateFirstNameInfo(message *tgbotapi.Message) {
@@ -111,14 +111,14 @@ func updateFirstNameInfo(message *tgbotapi.Message) {
 }
 
 func setAdminBackButton(botLang string, userID int64, key string) error {
-	lang := assets.AdminLang(int64(userID))
+	lang := assets.AdminLang(userID)
 	text := assets.AdminText(lang, key)
 
 	markUp := msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewAdminButton("admin_log_out_text")),
 	).Build(lang)
 
-	return msgs.NewParseMarkUpMessage(botLang, int64(userID), markUp, text)
+	return msgs.NewParseMarkUpMessage(botLang, userID, markUp, text)
 }
 
 type GetUpdateCommand struct {
@@ -144,8 +144,8 @@ func NewAdminMenuCommand() *AdminMenuCommand {
 }
 
 func (c *AdminMenuCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "admin")
-	lang := assets.AdminLang(int64(s.User.ID))
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin")
+	lang := assets.AdminLang(s.User.ID)
 	text := assets.AdminText(lang, "admin_main_menu_text")
 
 	markUp := msgs.NewIlMarkUp(
@@ -165,7 +165,7 @@ func (c *AdminMenuCommand) Serve(s model.Situation) error {
 			text,
 		)
 	}
-	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, int64(s.User.ID), markUp, text)
+	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func (c *AdminSettingCommand) Serve(s model.Situation) error {
 	}
 
 	db.RdbSetUser(s.BotLang, s.CallbackQuery.From.ID, "admin/mailing")
-	lang := assets.AdminLang(int64(s.User.ID))
+	lang := assets.AdminLang(s.User.ID)
 	text := assets.AdminText(lang, "admin_setting_text")
 
 	markUp := msgs.NewIlMarkUp(
@@ -211,7 +211,7 @@ func NewChangeLangCommand() *ChangeLangCommand {
 }
 
 func (c *ChangeLangCommand) Serve(s model.Situation) error {
-	lang := assets.AdminLang(int64(s.User.ID))
+	lang := assets.AdminLang(s.User.ID)
 	text := assets.AdminText(lang, "admin_set_lang_text")
 
 	markUp := msgs.NewIlMarkUp(
@@ -262,7 +262,7 @@ func (c *AdvertisementMenuCommand) Serve(s model.Situation) error {
 	msgID := db.RdbGetAdminMsgID(s.BotLang, s.User.ID)
 	if msgID == 0 {
 		var err error
-		msgID, err = msgs.NewIDParseMarkUpMessage(s.BotLang, int64(s.User.ID), markUp, text)
+		msgID, err = msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
 		if err != nil {
 			return err
 		}
@@ -358,7 +358,7 @@ func promptForInput(botLang string, userID int64, key string, values ...interfac
 		msgs.NewRow(msgs.NewAdminButton("exit")),
 	).Build(lang)
 
-	return msgs.NewParseMarkUpMessage(botLang, int64(userID), markUp, text)
+	return msgs.NewParseMarkUpMessage(botLang, userID, markUp, text)
 }
 
 type StatisticCommand struct {
@@ -380,7 +380,7 @@ func (c *StatisticCommand) Serve(s model.Situation) error {
 	text := adminFormatText(lang, "statistic_text",
 		allCount, count, referrals, blocked, subscribers, count-blocked)
 
-	if err := msgs.NewParseMessage(s.BotLang, int64(s.User.ID), text); err != nil {
+	if err := msgs.NewParseMessage(s.BotLang, s.User.ID, text); err != nil {
 		return err
 	}
 	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
@@ -401,7 +401,7 @@ func sendMsgAdnAnswerCallback(s model.Situation, markUp *tgbotapi.InlineKeyboard
 	if db.RdbGetAdminMsgID(s.BotLang, s.User.ID) != 0 {
 		return msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), markUp, text)
 	}
-	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, int64(s.User.ID), markUp, text)
+	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
 	if err != nil {
 		return err
 	}

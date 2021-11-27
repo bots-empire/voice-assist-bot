@@ -9,7 +9,6 @@ import (
 
 const (
 	emptyLevelName = "empty"
-	nilRedisErr    = "redis: nil"
 )
 
 func RdbSetUser(botLang string, ID int64, level string) {

@@ -96,7 +96,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 50,
-      "Currency": "€"
+      "Currency": "EUR"
     },
     "mx": {
       "BonusAmount": 100,

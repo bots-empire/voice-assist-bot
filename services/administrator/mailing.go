@@ -58,7 +58,7 @@ func sendMailingMenu(botLang string, userID int64) error {
 	markUp := createMailingMarkUp(lang)
 
 	if db.RdbGetAdminMsgID(botLang, userID) == 0 {
-		msgID, err := msgs.NewIDParseMarkUpMessage(botLang, int64(userID), &markUp, text)
+		msgID, err := msgs.NewIDParseMarkUpMessage(botLang, userID, &markUp, text)
 		if err != nil {
 			return err
 		}
@@ -89,7 +89,7 @@ func resendAdvertisementMenuLevel(botLang string, userID int64) error {
 
 	db.RdbSetUser(botLang, userID, "admin/advertisement")
 	inlineMarkUp, text := getAdvertisementMenu(botLang, userID)
-	msgID, err := msgs.NewIDParseMarkUpMessage(botLang, int64(userID), inlineMarkUp, text)
+	msgID, err := msgs.NewIDParseMarkUpMessage(botLang, userID, inlineMarkUp, text)
 	if err != nil {
 		return err
 	}

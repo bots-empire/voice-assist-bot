@@ -12,9 +12,8 @@ import (
 )
 
 const (
-	adminPath           = "assets/admin"
-	beginningOfTaskPath = "assets/task/"
-	jsonFormatName      = ".json"
+	adminPath      = "assets/admin"
+	jsonFormatName = ".json"
 )
 
 type Admin struct {

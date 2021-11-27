@@ -22,7 +22,7 @@ const (
 	notificationChatID  = 872383555
 	godUserID           = 872383555
 
-	defaultTimeInServiceMod = time.Hour * 2
+	//defaultTimeInServiceMod = time.Hour * 2
 )
 
 type MessagesHandlers struct {
@@ -376,7 +376,7 @@ func NewSpendMoneyWithdrawalCommand() *SpendMoneyWithdrawalCommand {
 }
 
 func (c *SpendMoneyWithdrawalCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "withdrawal")
+	db.RdbSetUser(s.BotLang, s.User.ID, "withdrawal")
 
 	text := msgs.GetFormatText(s.User.Language, "select_payment")
 	markUp := msgs.NewMarkUp(
@@ -417,9 +417,9 @@ func NewCreditCardReqCommand() *CreditCardReqCommand {
 }
 
 func (c *CreditCardReqCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+	db.RdbSetUser(s.BotLang, s.User.ID, "/withdrawal_req_amount")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "credit_card_number"))
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "credit_card_number"))
 	msg.ReplyMarkup = msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(s.User.Language)
@@ -435,9 +435,9 @@ func NewWithdrawalMethodCommand() *WithdrawalMethodCommand {
 }
 
 func (c *WithdrawalMethodCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, int64(s.User.ID), "/withdrawal_req_amount")
+	db.RdbSetUser(s.BotLang, s.User.ID, "/withdrawal_req_amount")
 
-	msg := tgbotapi.NewMessage(int64(s.User.ID), assets.LangText(s.User.Language, "req_withdrawal_amount"))
+	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "req_withdrawal_amount"))
 	msg.ReplyMarkup = msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(s.User.Language)
@@ -484,7 +484,6 @@ func (c *AdminLogOutCommand) Serve(s model.Situation) error {
 		return err
 	}
 
-	return NewStartCommand().Serve(s)
 	return NewStartCommand().Serve(s)
 }
 

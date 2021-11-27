@@ -14,12 +14,10 @@ import (
 )
 
 const (
-	typeFriend = "friend"
+	//typeFriend = "friend"
 	//typeGroup  = "group"
 
-	newUserQuery             = "INSERT INTO users VALUES(?, ?, 0, 0, FALSE, ?, ?, ?, FALSE);"
-	UpdateAfterReferralQuery = "UPDATE users SET balance = ?, referral_%s = ? WHERE id = ?;"
-	getUsersUserQuery        = "SELECT * FROM users WHERE id = ?;"
+	getUsersUserQuery = "SELECT * FROM users WHERE id = ?;"
 )
 
 type ParentOfRef struct {
@@ -46,7 +44,7 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, er
 			user.Language = "not_defined"
 		}
 		referralID := pullReferralID(message)
-		if err := addNewUser(message, user, botLang, referralID); err != nil {
+		if err := addNewUser(user, botLang, referralID); err != nil {
 			return nil, errors.Wrap(err, "add new user")
 		}
 		if user.Language == "not_defined" {
@@ -73,7 +71,7 @@ func SetStartLanguage(botLang string, callback *tgbotapi.CallbackQuery) error {
 	return nil
 }
 
-func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referralID int64) error {
+func addNewUser(u *model.User, botLang string, referralID int64) error {
 	dataBase := model.GetDB(botLang)
 	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
@@ -82,7 +80,7 @@ func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referr
 		log.Println(text)
 		return errors.Wrap(err, "query failed")
 	}
-	rows.Close()
+	_ = rows.Close()
 
 	if referralID == u.ID || referralID == 0 {
 		return nil
@@ -97,10 +95,10 @@ func addNewUser(message *tgbotapi.Message, u *model.User, botLang string, referr
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
 	if err != nil {
 		text := "Fatal Err with DB - auth.85 //" + err.Error()
-		msgs.NewParseMessage("it", 1418862576, text)
+		_ = msgs.NewParseMessage("it", 1418862576, text)
 		panic(err.Error())
 	}
-	rows.Close()
+	_ = rows.Close()
 
 	return nil
 }
