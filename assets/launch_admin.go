@@ -38,6 +38,8 @@ type Params struct {
 	VoiceAmount         int
 	MaxOfVoicePerDay    int
 	ReferralAmount      int
+
+	Currency string
 }
 
 type AdvertChannel struct {

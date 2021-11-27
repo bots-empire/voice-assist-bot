@@ -158,7 +158,12 @@ func (c *AdminMenuCommand) Serve(s model.Situation) error {
 	if db.RdbGetAdminMsgID(s.BotLang, s.User.ID) != 0 {
 		_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
 		return msgs.NewEditMarkUpMessage(
-			s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), &markUp, text)
+			s.BotLang,
+			s.User.ID,
+			db.RdbGetAdminMsgID(s.BotLang, s.User.ID),
+			&markUp,
+			text,
+		)
 	}
 	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, int64(s.User.ID), markUp, text)
 	if err != nil {

@@ -109,7 +109,7 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 	}
 
 	if update.CallbackQuery != nil {
-		if strings.Contains(update.CallbackQuery.Data, "/set_language") {
+		if strings.Contains(update.CallbackQuery.Data, "/language") {
 			err := auth.SetStartLanguage(botLang, update.CallbackQuery)
 			if err != nil {
 				smthWentWrong(botLang, update.CallbackQuery.Message.Chat.ID, botLang)

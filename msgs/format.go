@@ -5,6 +5,11 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"strings"
+)
+
+const (
+	currency = "{{currency}}"
 )
 
 func SendMessageToChat(botLang string, msg tgbotapi.MessageConfig) bool {
@@ -19,7 +24,7 @@ func NewParseMessage(botLang string, chatID int64, text string) error {
 		BaseChat: tgbotapi.BaseChat{
 			ChatID: chatID,
 		},
-		Text:      text,
+		Text:      insertCurrency(botLang, text),
 		ParseMode: "HTML",
 	}
 
@@ -31,7 +36,7 @@ func NewIDParseMessage(botLang string, chatID int64, text string) (int, error) {
 		BaseChat: tgbotapi.BaseChat{
 			ChatID: chatID,
 		},
-		Text:      text,
+		Text:      insertCurrency(botLang, text),
 		ParseMode: "HTML",
 	}
 
@@ -48,7 +53,7 @@ func NewParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, tex
 			ChatID:      chatID,
 			ReplyMarkup: markUp,
 		},
-		Text:      text,
+		Text:      insertCurrency(botLang, text),
 		ParseMode: "HTML",
 	}
 
@@ -61,7 +66,7 @@ func NewIDParseMarkUpMessage(botLang string, chatID int64, markUp interface{}, t
 			ChatID:      chatID,
 			ReplyMarkup: markUp,
 		},
-		Text:                  text,
+		Text:                  insertCurrency(botLang, text),
 		ParseMode:             "HTML",
 		DisableWebPagePreview: true,
 	}
@@ -80,7 +85,7 @@ func NewEditMarkUpMessage(botLang string, userID int64, msgID int, markUp *tgbot
 			MessageID:   msgID,
 			ReplyMarkup: markUp,
 		},
-		Text:                  text,
+		Text:                  insertCurrency(botLang, text),
 		ParseMode:             "HTML",
 		DisableWebPagePreview: true,
 	}
@@ -115,7 +120,7 @@ func GetFormatText(lang, text string, values ...interface{}) string {
 }
 
 func SendSimpleMsg(botLang string, chatID int64, text string) error {
-	msg := tgbotapi.NewMessage(chatID, text)
+	msg := tgbotapi.NewMessage(chatID, insertCurrency(botLang, text))
 
 	return SendMsgToUser(botLang, msg)
 }
@@ -125,4 +130,8 @@ func SendMsgToUser(botLang string, msg tgbotapi.Chattable) error {
 		return err
 	}
 	return nil
+}
+
+func insertCurrency(botLang string, text string) string {
+	return strings.Replace(text, currency, assets.AdminSettings.Parameters[botLang].Currency, -1)
 }

@@ -252,12 +252,14 @@ func resetVoiceDayCounter(s model.Situation) error {
 
 func sendMoneyStatistic(s model.Situation) error {
 	text := assets.LangText(s.User.Language, "make_money_statistic")
-	text = fmt.Sprintf(text, s.User.CompletedToday, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay,
-		assets.AdminSettings.Parameters[s.BotLang].VoiceAmount, s.User.Balance, s.User.CompletedToday*assets.AdminSettings.Parameters[s.BotLang].VoiceAmount)
-	msg := tgbotapi.NewMessage(int64(s.User.ID), text)
-	msg.ParseMode = "HTML"
+	text = fmt.Sprintf(text,
+		s.User.CompletedToday,
+		assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay,
+		assets.AdminSettings.Parameters[s.BotLang].VoiceAmount,
+		s.User.Balance,
+		s.User.CompletedToday*assets.AdminSettings.Parameters[s.BotLang].VoiceAmount)
 
-	return msgs.SendMsgToUser(s.BotLang, msg)
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
 }
 
 func sendInvitationToRecord(s model.Situation) error {

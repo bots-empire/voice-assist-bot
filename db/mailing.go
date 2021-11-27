@@ -30,8 +30,7 @@ func MailToUser(botLang string, rows *sql.Rows) {
 	defer rows.Close()
 	fillMessageMap()
 
-	blockedUsers := copyBlockedMap()
-	clearSelectedLang(blockedUsers)
+	var blockedUsers int
 
 	for rows.Next() {
 		var (
@@ -43,39 +42,39 @@ func MailToUser(botLang string, rows *sql.Rows) {
 			panic("Failed to scan row: " + err.Error())
 		}
 
-		msg := message[lang]
-		msg.ChatID = id
-
 		if containsInAdmin(id) {
 			continue
 		}
 
+		msg := message[lang]
+		msg.ChatID = id
+
 		if !msgs.SendMessageToChat(botLang, msg) {
-			blockedUsers[botLang] += 1
+			blockedUsers += 1
 		}
 	}
 
-	assets.AdminSettings.BlockedUsers = blockedUsers
+	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
 	assets.SaveAdminSettings()
 }
 
-func copyBlockedMap() map[string]int {
-	blockedUsers := make(map[string]int, 5)
-	for _, lang := range assets.AvailableLang {
-		if assets.AdminSettings.LangSelectedMap[lang] {
-			blockedUsers[lang] = 0
-		}
-	}
-	return blockedUsers
-}
-
-func clearSelectedLang(blockedUsers map[string]int) {
-	for _, lang := range assets.AvailableLang {
-		if assets.AdminSettings.LangSelectedMap[lang] {
-			blockedUsers[lang] = 0
-		}
-	}
-}
+//func copyBlockedMap() map[string]int {
+//	blockedUsers := make(map[string]int, 5)
+//	for _, lang := range assets.AvailableLang {
+//		if assets.AdminSettings.LangSelectedMap[lang] {
+//			blockedUsers[lang] = 0
+//		}
+//	}
+//	return blockedUsers
+//}
+//
+//func clearSelectedLang(blockedUsers map[string]int) {
+//	for _, lang := range assets.AvailableLang {
+//		if assets.AdminSettings.LangSelectedMap[lang] {
+//			blockedUsers[lang] = 0
+//		}
+//	}
+//}
 
 func containsInAdmin(userID int64) bool {
 	for key := range assets.AdminSettings.AdminID {
@@ -85,17 +84,6 @@ func containsInAdmin(userID int64) bool {
 	}
 	return false
 }
-
-//func createAStringOfLang() string {
-//	var str string
-//
-//	for _, lang := range assets.AvailableLang {
-//		if assets.AdminSettings.LangSelectedMap[lang] {
-//			str += " lang = '" + lang + "' OR"
-//		}
-//	}
-//	return strings.TrimRight(str, " OR")
-//}
 
 func fillMessageMap() {
 	for _, lang := range assets.AvailableLang {
