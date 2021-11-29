@@ -22,6 +22,8 @@ const (
 
 	getSubsUserQuery = "SELECT * FROM subs WHERE id = ?;"
 	updateSubsQuery  = "INSERT INTO subs VALUES(?);"
+
+	assistName = "{{assist_name}}"
 )
 
 func WithdrawMoneyFromBalance(s model.Situation, amount string) error {
@@ -265,15 +267,13 @@ func sendMoneyStatistic(s model.Situation) error {
 func sendInvitationToRecord(s model.Situation) error {
 	text := assets.LangText(s.User.Language, "invitation_to_record_voice")
 	text = fmt.Sprintf(text, assets.SiriText(s.User.Language))
-	msg := tgbotapi.NewMessage(s.User.ID, text)
-	msg.ParseMode = "HTML"
+	text = strings.Replace(text, assistName, model.GetGlobalBot(s.BotLang).AssistName, -1)
 
-	back := tgbotapi.NewKeyboardButton(assets.LangText(s.User.Language, "back_to_main_menu_button"))
-	row := tgbotapi.NewKeyboardButtonRow(back)
-	markUp := tgbotapi.NewReplyKeyboard(row)
-	msg.ReplyMarkup = markUp
+	markup := msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("back_to_main_menu_button")),
+	).Build(s.User.Language)
 
-	return msgs.SendMsgToUser(s.BotLang, msg)
+	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &markup, text)
 }
 
 func reachedMaxAmountPerDay(s model.Situation) error {

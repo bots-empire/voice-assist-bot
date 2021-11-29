@@ -134,14 +134,8 @@ func adminHavePrivileges(s model.Situation) bool {
 
 func createListOfAdminText(lang string) string {
 	var listOfAdmins string
-	for i, admin := range assets.AdminSettings.AdminID {
-		listOfAdmins += strconv.Itoa(int(i+1)) + ") " + admin.FirstName + "\n"
-		//listOfAdmins += "Language: " + admin.Language + "\nSpecial possibility: "
-		//if admin.SpecialPossibility {
-		//	listOfAdmins += "yes\n\n"
-		//} else {
-		//	listOfAdmins += "no\n\n"
-		//}
+	for id, admin := range assets.AdminSettings.AdminID {
+		listOfAdmins += strconv.FormatInt(id, 10) + ") " + admin.FirstName + "\n"
 	}
 
 	return adminFormatText(lang, "delete_admin_body_text", listOfAdmins)

@@ -37,6 +37,7 @@ type GlobalBot struct {
 	BotToken      string
 	BotLink       string
 	LanguageInBot []string
+	AssistName    string
 
 	MaintenanceMode bool
 }

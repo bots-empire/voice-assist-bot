@@ -21,7 +21,7 @@ func RdbSetUser(botLang string, ID int64, level string) {
 }
 
 func userIDToRdb(userID int64) string {
-	return "user:" + strconv.Itoa(int(userID))
+	return "user:" + strconv.FormatInt(userID, 10)
 }
 
 func GetLevel(botLang string, id int64) string {
@@ -50,7 +50,7 @@ func RdbSetAdminMsgID(botLang string, userID int64, msgID int) {
 }
 
 func adminMsgIDToRdb(userID int64) string {
-	return "admin_msg_id:" + strconv.Itoa(int(userID))
+	return "admin_msg_id:" + strconv.FormatInt(userID, 10)
 }
 
 func RdbGetAdminMsgID(botLang string, userID int64) int {
