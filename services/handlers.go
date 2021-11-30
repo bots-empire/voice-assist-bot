@@ -496,7 +496,7 @@ func NewMakeStatisticCommand() *MakeStatisticCommand {
 }
 
 func (c *MakeStatisticCommand) Serve(s model.Situation) error {
-	text := assets.LangText(s.BotLang, "statistic_to_user")
+	text := assets.LangText(s.User.Language, "statistic_to_user")
 
 	text = getDate(text)
 
