@@ -279,10 +279,10 @@ func sendInvitationToRecord(s model.Situation) error {
 func reachedMaxAmountPerDay(s model.Situation) error {
 	text := assets.LangText(s.User.Language, "reached_max_amount_per_day")
 	text = fmt.Sprintf(text, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay, assets.AdminSettings.Parameters[s.BotLang].MaxOfVoicePerDay)
-	msg := tgbotapi.NewMessage(s.User.ID, text)
-	msg.ReplyMarkup = msgs.NewIlMarkUp(
+
+	markUp := msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
 	).Build(s.User.Language)
 
-	return msgs.SendMsgToUser(s.BotLang, msg)
+	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &markUp, text)
 }

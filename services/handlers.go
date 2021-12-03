@@ -84,13 +84,11 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 		return
 	}
 
-	if update.Message != nil {
-		if update.Message.PinnedMessage != nil {
-			return
-		}
+	if update.Message != nil && update.Message.PinnedMessage != nil {
+		return
 	}
 
-	PrintNewUpdate(botLang, update, logger)
+	printNewUpdate(botLang, update, logger)
 	if update.Message != nil {
 		var command string
 		user, err := auth.CheckingTheUser(botLang, update.Message)
@@ -129,19 +127,12 @@ func checkUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 	}
 }
 
-func PrintNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
+func printNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) {
 	assets.UpdateStatistic.Mu.Lock()
 	defer assets.UpdateStatistic.Mu.Unlock()
 
 	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
-		text := fmt.Sprintf(updateCounterHeader, assets.UpdateStatistic.Counter)
-		msgID, _ := msgs.NewIDParseMessage(administrator.DefaultNotificationBot, 1418862576, text)
-		_ = msgs.SendMsgToUser(administrator.DefaultNotificationBot, tgbotapi.PinChatMessageConfig{
-			ChatID:    notificationChatID,
-			MessageID: msgID,
-		})
-		assets.UpdateStatistic.Counter = 0
-		assets.UpdateStatistic.Day = int(time.Now().Unix()+6500) / 86400
+		sendTodayUpdateMsg()
 	}
 
 	assets.UpdateStatistic.Counter++
@@ -160,6 +151,18 @@ func PrintNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) 
 	}
 
 	logger.Info(updatePrintHeader, assets.UpdateStatistic.Counter, botLang, extraneousUpdate)
+}
+
+func sendTodayUpdateMsg() {
+	text := fmt.Sprintf(updateCounterHeader, assets.UpdateStatistic.Counter)
+	msgID, _ := msgs.NewIDParseMessage(administrator.DefaultNotificationBot, 1418862576, text)
+	_ = msgs.SendMsgToUser(administrator.DefaultNotificationBot, tgbotapi.PinChatMessageConfig{
+		ChatID:    notificationChatID,
+		MessageID: msgID,
+	})
+
+	assets.UpdateStatistic.Counter = 0
+	assets.UpdateStatistic.Day = int(time.Now().Unix()) / 86400
 }
 
 func createSituationFromMsg(botLang string, message *tgbotapi.Message, user *model.User) model.Situation {

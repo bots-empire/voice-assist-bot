@@ -67,18 +67,18 @@ func startBot(b *model.GlobalBot, log log.Logger, lang string, k int) {
 	b.DataBase = model.UploadDataBase(lang)
 }
 
-func startHandlers(log log.Logger) {
+func startHandlers(logger log.Logger) {
 	wg := new(sync.WaitGroup)
 
 	for botLang, handler := range model.Bots {
 		wg.Add(1)
 		go func(botLang string, handler *model.GlobalBot, wg *sync.WaitGroup) {
 			defer wg.Done()
-			services.ActionsWithUpdates(botLang, handler.Chanel, log)
+			services.ActionsWithUpdates(botLang, handler.Chanel, logger)
 		}(botLang, handler, wg)
 	}
 
-	log.Ok("All handlers are running")
+	logger.Ok("All handlers are running")
 	_ = msgs.NewParseMessage("it", 872383555, "All bots are restart")
 	wg.Wait()
 }
