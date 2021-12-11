@@ -131,7 +131,7 @@ func printNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) 
 	assets.UpdateStatistic.Mu.Lock()
 	defer assets.UpdateStatistic.Mu.Unlock()
 
-	if (time.Now().Unix()+6500)/86400 > int64(assets.UpdateStatistic.Day) {
+	if (time.Now().Unix())/86400 > int64(assets.UpdateStatistic.Day) {
 		sendTodayUpdateMsg()
 	}
 
