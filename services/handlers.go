@@ -557,13 +557,12 @@ func (c *MoreMoneyCommand) Serve(s model.Situation) error {
 	text := msgs.GetFormatText(s.User.Language, "more_money_text",
 		assets.AdminSettings.Parameters[s.BotLang].BonusAmount, assets.AdminSettings.Parameters[s.BotLang].BonusAmount)
 
-	msg := tgbotapi.NewMessage(s.User.ID, text)
-	msg.ReplyMarkup = msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.User.Language].Url)),
+	markup := msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", assets.AdminSettings.AdvertisingChan[s.BotLang].Url)),
 		msgs.NewIlRow(msgs.NewIlDataButton("get_bonus_button", "/send_bonus_to_user")),
 	).Build(s.User.Language)
 
-	return msgs.SendMsgToUser(s.BotLang, msg)
+	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &markup, text)
 }
 
 func simpleAdminMsg(s model.Situation, key string) error {
