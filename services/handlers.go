@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -61,8 +62,9 @@ func (h *MessagesHandlers) Init() {
 	h.OnCommand("/admin_log_out", NewAdminLogOutCommand())
 
 	//Tech command
+	h.OnCommand("/getLink", NewGetLinkCommand())
 	//	h.OnCommand("/MaintenanceModeOn", NewMaintenanceModeOnCommand())
-	//h.OnCommand("/MaintenanceModeOff", NewMaintenanceModeOffCommand())
+	//    h.OnCommand("/MaintenanceModeOff", NewMaintenanceModeOffCommand())
 }
 
 func (h *MessagesHandlers) OnCommand(command string, handler model.Handler) {
@@ -311,9 +313,18 @@ func (c *MoneyForAFriendCommand) Serve(s model.Situation) error {
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
 	text := msgs.GetFormatText(s.User.Language, "referral_text", model.GetGlobalBot(s.BotLang).BotLink,
-		s.User.ID, assets.AdminSettings.Parameters[s.BotLang].ReferralAmount, s.User.ReferralCount)
+		constructLinkPayload(s.User.ID), assets.AdminSettings.Parameters[s.BotLang].ReferralAmount, s.User.ReferralCount)
 
 	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
+}
+
+func constructLinkPayload(referralID int64) string {
+	var str string
+
+	str += "referralID--" + strconv.FormatInt(referralID, 10) + "_"
+	str += "source--bot"
+
+	return str
 }
 
 type SelectLangCommand struct {
@@ -563,6 +574,24 @@ func (c *MoreMoneyCommand) Serve(s model.Situation) error {
 	).Build(s.User.Language)
 
 	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, &markup, text)
+}
+
+type GetLinkCommand struct {
+}
+
+func NewGetLinkCommand() *GetLinkCommand {
+	return &GetLinkCommand{}
+}
+
+func (c *GetLinkCommand) Serve(s model.Situation) error {
+	params := strings.Split(s.Message.Text, " ")
+
+	link := fmt.Sprintf("%s?start=source--", model.GetGlobalBot(s.BotLang).BotLink)
+	if len(params) > 1 {
+		link += params[1]
+	}
+
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, link)
 }
 
 func simpleAdminMsg(s model.Situation, key string) error {

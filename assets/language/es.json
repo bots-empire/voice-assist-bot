@@ -31,7 +31,7 @@
   "lack_of_funds": "Fondos insuficientes!\n\nEspecificar el importe del retiro 👇\nPor ejemplo: \"1000\"",
   "minimum_amount_not_reached": "Error! El importe mínimo de retiro es %d {{currency}}.\n\nEspecificar el importe del retiro 👇\nPor ejemplo: \"1000\"",
   "successfully_withdrawn": "✅ Empezaste a retirar fondos . Los retiros pueden tardar hasta 3 días hábiles. Hasta este momento, no puede darse de baja de los canales de nuestros socios, de lo contrario, no recibirá fondos",
-  "referral_text": "💼 Obtén bonos por los amigos invitados\n📲 Envía un enlace a un amigo - %s?start=%d\n\n%d {{currency}}. - se obtiene por cada amigo invitado.\n\n\nHas invitado: %d (Número de personas)",
+  "referral_text": "💼 Obtén bonos por los amigos invitados\n📲 Envía un enlace a un amigo - %s?start=%s\n\n%d {{currency}}. - se obtiene por cada amigo invitado.\n\n\nHas invitado: %d (Número de personas)",
   "more_money_text": "❗️OBTENGA %d {{currency}} POR SUSCRIPCIÓN AL CANAL❗️\n\n\uD83D\uDC49 Suscríbase al canal y vea las publicaciones más recientes, luego haga clic en el botón \"obtener Bonificación\". ¡Después de eso, recibirás  %d {{currency}} ! \n\n❗️ ATENCIÓN: si cancela su suscripción al canal del patrocinador, se cancelará el retiro",
   "bonus_already_have": "Ya has recibido el bono",
   "bonus_have_received": "Has recibido un bono",

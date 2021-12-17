@@ -12,6 +12,8 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 const (
@@ -19,6 +21,16 @@ const (
 	//typeGroup  = "group"
 
 	getUsersUserQuery = "SELECT * FROM users WHERE id = ?;"
+)
+
+var (
+	IncomeSource = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "type_income_source",
+			Help: "Source where the user came from",
+		},
+		[]string{"source"},
+	)
 )
 
 type ParentOfRef struct {
@@ -110,16 +122,45 @@ func pullReferralID(message *tgbotapi.Message) int64 {
 		return 0
 	}
 
-	id, err := strconv.Atoi(str[1])
-	if err != nil {
-		log.Println(err)
+	payload := decodeURLPayload(str[1])
+	if len(payload) == 0 {
+		id, err := strconv.Atoi(str[1])
+		if err != nil {
+			return 0
+		}
+
+		if id > 0 {
+			return int64(id)
+		}
 		return 0
 	}
 
-	if id > 0 {
-		return int64(id)
+	source := payload["source"]
+	if source == "" {
+		source = "unknown"
 	}
-	return 0
+	IncomeSource.WithLabelValues(source).Inc()
+
+	referralID, _ := strconv.ParseInt(payload["referralID"], 10, 64)
+	return referralID
+}
+
+func decodeURLPayload(url string) map[string]string {
+	payload := make(map[string]string)
+
+	pairs := strings.Split(url, "_")
+	for _, pair := range pairs {
+		arr := strings.Split(pair, "--")
+		if len(arr) < 2 {
+			continue
+		}
+
+		if arr[0] != "" {
+			payload[arr[0]] = arr[1]
+		}
+	}
+
+	return payload
 }
 
 func createSimpleUser(botLang string, message *tgbotapi.Message) *model.User {

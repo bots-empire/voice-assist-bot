@@ -31,5 +31,6 @@
   "back_to_make_money_setting" :"/make_money",
   "back_to_advertisement_setting": "/advertisement_setting",
 
-  "/plusRefCount": "/plusRefCount"
+  "/plusRefCount": "/plusRefCount",
+  "/getLink": "/getLink"
 }

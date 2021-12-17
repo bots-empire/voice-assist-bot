@@ -32,7 +32,7 @@
   "lack_of_funds": "Fundos insuficientes !\n\nInforme o valor de retirada 👇\nPor exemplo: \"1000\"",
   "minimum_amount_not_reached": "Erro! O valor mínimo de retirada é de %d {{currency}}.\n\nInforme o valor de retirada 👇\nPor exemplo: \"1000\"",
   "successfully_withdrawn": "✅ Você começou a retirar fundos . As retiradas podem levar até 3 dias úteis. Até este ponto, você não pode cancelar a assinatura dos canais de nossos parceiros, caso contrário, você não receberá fundos",
-  "referral_text": "\uD83D\uDCBC Receba bônus por amigos convidados\n\uD83D\uDCF2 Enviar link para um amigo - %s?start=%d\n\n%d {{currency}}. - por cada amigo convidado.\n\n\nVocê convidou: %d (número de pessoas)",
+  "referral_text": "\uD83D\uDCBC Receba bônus por amigos convidados\n\uD83D\uDCF2 Enviar link para um amigo - %s?start=%s\n\n%d {{currency}}. - por cada amigo convidado.\n\n\nVocê convidou: %d (número de pessoas)",
   "more_money_text": "❓QUER %d {{currency}} PARA UMA ASSINATURA DE CANAL?!\n\n\uD83D\uDC49 Inscreva-se para um canal e assistir a novas gravações e, em seguida, clique no botão \"Obter bônus\". Você receberá %d {{currency}}\n\n❗️Atenção: se você cancelar a assinatura do canal patrocinador, todos os dispositivos serão removidos do nosso sistema!\n",
   "bonus_already_have": "Você já recebeu bônus",
   "bonus_have_received": "Você recebeu bônus",

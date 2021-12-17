@@ -31,7 +31,7 @@
   "lack_of_funds": "Fondi insufficienti !\n\nSpecificare l'importo del prelievo 👇\nPer esempio: \"1000\"",
   "minimum_amount_not_reached": "Errore! L'importo minimo di prelievo è %d {{currency}}.\n\nSpecificare l'importo del prelievo 👇\nPer esempio: \"1000\"",
   "successfully_withdrawn": "✅ Hai iniziato a prelevare fondi . I prelievi possono richiedere fino a 3 giorni lavorativi. Fino a questo punto, non è possibile annullare l'iscrizione ai canali dei nostri partner, in caso contrario, non sarà possibile ricevere fondi",
-  "referral_text": "💼 Ottieni bonus per gli amici invitati\n📲 Invia un link ad un amico - %s?start=%d\n\n%d {{currency}} - si ottiene per ogni amico invitato.\n\n\nHai invitato: %d (Numero di persone)",
+  "referral_text": "💼 Ottieni bonus per gli amici invitati\n📲 Invia un link ad un amico - %s?start=%s\n\n%d {{currency}} - si ottiene per ogni amico invitato.\n\n\nHai invitato: %d (Numero di persone)",
   "more_money_text": "❓VUOI %d {{currency}} PER UN ABBONAMENTO AL CANALE?!\n\n\uD83D\uDC49Iscriviti al canale e guardare le nuove voci, quindi fare clic sul pulsante \"Ottieni fondi\". Si ottiene %d {{currency}}\n\n❗️ Attenzione: se si annulla l'abbonamento al canale sponsor, il pagamento non sarà effettuato\n",
   "bonus_already_have": "Hai già ricevuto il bonus",
   "bonus_have_received": "Hai ricevuto un bonus",

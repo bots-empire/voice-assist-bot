@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"net/http"
 	"sync"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services"
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -23,6 +25,8 @@ func main() {
 	startServices(logger)
 	startAllBot(logger)
 	assets.UploadUpdateStatistic()
+
+	go startPrometheusHandler(logger)
 
 	startHandlers(logger)
 }
@@ -65,6 +69,15 @@ func startBot(b *model.GlobalBot, log log.Logger, lang string, k int) {
 
 	b.Rdb = model.StartRedis(k)
 	b.DataBase = model.UploadDataBase(lang)
+}
+
+func startPrometheusHandler(logger log.Logger) {
+	http.Handle("/metrics", promhttp.Handler())
+	logger.Ok("Metrics can be read from %s port", "7011")
+	metricErr := http.ListenAndServe(":7011", nil)
+	if metricErr != nil {
+		logger.Fatal("metrics stoped by metricErr: %s\n", metricErr.Error())
+	}
 }
 
 func startHandlers(logger log.Logger) {

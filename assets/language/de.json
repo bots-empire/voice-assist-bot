@@ -29,7 +29,7 @@
   "lack_of_funds": "Nicht genug Mittel !\n\nGeben Sie den abzuhebenden Betrag an \uD83D\uDC47",
   "minimum_amount_not_reached": "Fehler! Es müssen mindestens abgehoben werden %d {{currency}}.\n\nGeben Sie den abzuhebenden Betrag an \uD83D\uDC47",
   "successfully_withdrawn": "✅ Die Anfrage wurde an das Zahlungsgateway gesendet ...\\n\\nIl Die Überweisung wird bis zu 3 Werktage in Anspruch nehmen!lavorativi!",
-  "referral_text": "💼 Erhalten Sie Boni für eingeladene Freunde\n📲 Link einem Freund senden - %s?start=%d\n\n%d {{currency}} - pro eingeladenen Freund.\n\n\nSie haben eingeladen: %d (Personen)",
+  "referral_text": "💼 Erhalten Sie Boni für eingeladene Freunde\n📲 Link einem Freund senden - %s?start=%s\n\n%d {{currency}} - pro eingeladenen Freund.\n\n\nSie haben eingeladen: %d (Personen)",
   "more_money_text": "Mehr verdienen !\n\nUm einen zusätzlichen %d {{currency}} zu verdienen, abonnieren Sie den Partnerkanal und sehen Sie sich die vorherigen 15 Beiträge an !",
   "bonus_already_have": "Sie haben bereits einen Bonus erhalten",
   "bonus_have_received": "Sie haben einen Bonus erhalten",

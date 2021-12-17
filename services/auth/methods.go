@@ -117,7 +117,8 @@ func CheckSubscribe(s model.Situation) bool {
 		ChatConfigWithUser: tgbotapi.ChatConfigWithUser{
 			ChatID: assets.AdminSettings.AdvertisingChan[s.BotLang].ChannelID,
 			UserID: s.User.ID,
-		}})
+		},
+	})
 
 	if err == nil {
 		if err := addMemberToSubsBase(s); err != nil {
