@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	message = make(map[string]tgbotapi.MessageConfig, 5)
+	message = make(map[string]tgbotapi.MessageConfig, 10)
 )
 
 func StartMailing(botLang string) {
@@ -59,22 +59,50 @@ func MailToUser(botLang string, rows *sql.Rows) {
 	assets.SaveAdminSettings()
 }
 
-//func copyBlockedMap() map[string]int {
-//	blockedUsers := make(map[string]int, 5)
-//	for _, lang := range assets.AvailableLang {
-//		if assets.AdminSettings.LangSelectedMap[lang] {
-//			blockedUsers[lang] = 0
-//		}
-//	}
-//	return blockedUsers
-//}
+//func MailToUser(botLang string, rows *sql.Rows) {
+//	fillMessageMap()
 //
-//func clearSelectedLang(blockedUsers map[string]int) {
-//	for _, lang := range assets.AvailableLang {
-//		if assets.AdminSettings.LangSelectedMap[lang] {
-//			blockedUsers[lang] = 0
+//	var users []*model.User
+//
+//	for rows.Next() {
+//		var (
+//			id   int64
+//			lang string
+//		)
+//
+//		if err := rows.Scan(&id, &lang); err != nil {
+//			panic("Failed to scan row: " + err.Error())
 //		}
+//
+//		if containsInAdmin(id) {
+//			continue
+//		}
+//
+//		users = append(users, &model.User{
+//			ID:       id,
+//			Language: lang,
+//		})
 //	}
+//	rows.Close()
+//
+//	var blockedUsers int
+//	mu := &sync.Mutex{}
+//
+//	for _, user := range users {
+//		msg := message[user.Language]
+//		msg.ChatID = user.ID
+//
+//		go func(config tgbotapi.MessageConfig) {
+//			if !msgs.SendMessageToChat(botLang, config) {
+//				mu.Lock()
+//				blockedUsers += 1
+//				mu.Unlock()
+//			}
+//		}(msg)
+//	}
+//
+//	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
+//	assets.SaveAdminSettings()
 //}
 
 func containsInAdmin(userID int64) bool {

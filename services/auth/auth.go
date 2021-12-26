@@ -12,8 +12,6 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 const (
@@ -22,21 +20,6 @@ const (
 
 	getUsersUserQuery = "SELECT * FROM users WHERE id = ?;"
 )
-
-var (
-	IncomeSource = promauto.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "type_income_source",
-			Help: "Source where the user came from",
-		},
-		[]string{"source"},
-	)
-)
-
-type ParentOfRef struct {
-	ID        int
-	TypeOfRef string
-}
 
 func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, error) {
 	dataBase := model.GetDB(botLang)
@@ -56,10 +39,16 @@ func CheckingTheUser(botLang string, message *tgbotapi.Message) (*model.User, er
 		if len(model.GetGlobalBot(botLang).LanguageInBot) > 1 && !administrator.ContainsInAdmin(message.From.ID) {
 			user.Language = "not_defined"
 		}
-		referralID := pullReferralID(message)
+		referralID := pullReferralID(botLang, message)
 		if err := addNewUser(user, botLang, referralID); err != nil {
 			return nil, errors.Wrap(err, "add new user")
 		}
+
+		model.TotalIncome.WithLabelValues(
+			model.GetGlobalBot(botLang).BotLink,
+			botLang,
+		).Inc()
+
 		if user.Language == "not_defined" {
 			return user, model.ErrNotSelectedLanguage
 		}
@@ -116,7 +105,7 @@ func addNewUser(u *model.User, botLang string, referralID int64) error {
 	return nil
 }
 
-func pullReferralID(message *tgbotapi.Message) int64 {
+func pullReferralID(botLang string, message *tgbotapi.Message) int64 {
 	str := strings.Split(message.Text, " ")
 	if len(str) < 2 {
 		return 0
@@ -129,6 +118,11 @@ func pullReferralID(message *tgbotapi.Message) int64 {
 			return 0
 		}
 
+		model.IncomeBySource.WithLabelValues(
+			model.GetGlobalBot(botLang).BotLink,
+			botLang,
+			"unknown",
+		).Inc()
 		if id > 0 {
 			return int64(id)
 		}
@@ -139,7 +133,11 @@ func pullReferralID(message *tgbotapi.Message) int64 {
 	if source == "" {
 		source = "unknown"
 	}
-	IncomeSource.WithLabelValues(source).Inc()
+	model.IncomeBySource.WithLabelValues(
+		model.GetGlobalBot(botLang).BotLink,
+		botLang,
+		source,
+	).Inc()
 
 	referralID, _ := strconv.ParseInt(payload["referralID"], 10, 64)
 	return referralID

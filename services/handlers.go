@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/log"
@@ -15,11 +13,12 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/Stepan1328/voice-assist-bot/services/administrator"
 	"github.com/Stepan1328/voice-assist-bot/services/auth"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 const (
 	updateCounterHeader = "Today Update's counter: %d"
-	updatePrintHeader   = "update number: %d    // ref-bot-update:  %s %s"
+	updatePrintHeader   = "update number: %d    // voice-bot-update:  %s %s"
 	extraneousUpdate    = "extraneous update"
 	notificationChatID  = 872383555
 	godUserID           = 872383555
@@ -139,6 +138,11 @@ func printNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) 
 
 	assets.UpdateStatistic.Counter++
 	assets.SaveUpdateStatistic()
+
+	model.HandleUpdates.WithLabelValues(
+		model.GetGlobalBot(botLang).BotLink,
+		botLang,
+	).Inc()
 
 	if update.Message != nil {
 		if update.Message.Text != "" {
@@ -564,6 +568,11 @@ func NewMoreMoneyCommand() *MoreMoneyCommand {
 }
 
 func (c *MoreMoneyCommand) Serve(s model.Situation) error {
+	model.MoreMoneyButtonClick.WithLabelValues(
+		model.GetGlobalBot(s.BotLang).BotLink,
+		s.BotLang,
+	).Inc()
+
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 	text := msgs.GetFormatText(s.User.Language, "more_money_text",
 		assets.AdminSettings.Parameters[s.BotLang].BonusAmount, assets.AdminSettings.Parameters[s.BotLang].BonusAmount)

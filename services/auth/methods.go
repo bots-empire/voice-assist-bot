@@ -70,7 +70,7 @@ func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
 		return false
 	}
 
-	if !CheckSubscribe(s) {
+	if !CheckSubscribe(s, "withdrawal") {
 		_ = sendInvitationToSubs(s, strconv.Itoa(amount))
 		return false
 	}
@@ -89,7 +89,7 @@ func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
 }
 
 func GetABonus(s model.Situation) error {
-	if !CheckSubscribe(s) {
+	if !CheckSubscribe(s, "get_bonus") {
 		text := assets.LangText(s.User.Language, "user_dont_subscribe")
 		return msgs.SendSimpleMsg(s.BotLang, s.User.ID, text)
 	}
@@ -111,8 +111,14 @@ func GetABonus(s model.Situation) error {
 	return msgs.SendSimpleMsg(s.BotLang, s.User.ID, text)
 }
 
-func CheckSubscribe(s model.Situation) bool {
-	fmt.Println(assets.AdminSettings.AdvertisingChan[s.BotLang].ChannelID)
+func CheckSubscribe(s model.Situation, source string) bool {
+	model.CheckSubscribe.WithLabelValues(
+		model.GetGlobalBot(s.BotLang).BotLink,
+		s.BotLang,
+		assets.AdminSettings.AdvertisingChan[s.BotLang].Url,
+		source,
+	).Inc()
+
 	member, err := model.Bots[s.BotLang].Bot.GetChatMember(tgbotapi.GetChatMemberConfig{
 		ChatConfigWithUser: tgbotapi.ChatConfigWithUser{
 			ChatID: assets.AdminSettings.AdvertisingChan[s.BotLang].ChannelID,
