@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
@@ -31,7 +32,10 @@ func MailToUser(botLang string, rows *sql.Rows) {
 	defer rows.Close()
 	fillMessageMap()
 
-	var blockedUsers int
+	var (
+		sendToUsers  int
+		blockedUsers int
+	)
 
 	for rows.Next() {
 		var (
@@ -52,8 +56,15 @@ func MailToUser(botLang string, rows *sql.Rows) {
 
 		if !msgs.SendMessageToChat(botLang, msg) {
 			blockedUsers += 1
+			continue
 		}
+
+		sendToUsers++
 	}
+
+	_ = msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
+		fmt.Sprintf("%s // send to %d users mail", botLang, sendToUsers)),
+	)
 
 	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
 	assets.SaveAdminSettings()

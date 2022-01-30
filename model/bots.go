@@ -51,7 +51,7 @@ type Handler interface {
 }
 
 func UploadDataBase(dbLang string) *sql.DB {
-	dataBase, err := sql.Open(dbDriver, cfg.DBCfg.User+cfg.DBCfg.Password+"@/"+cfg.DBCfg.Names[dbLang])
+	dataBase, err := sql.Open(dbDriver, cfg.DBCfg.User+cfg.DBCfg.Password+"@/"+cfg.DBCfg.Names[dbLang]) //TODO: refactor
 	if err != nil {
 		log.Fatalf("Failed open database: %s\n", err.Error())
 	}
