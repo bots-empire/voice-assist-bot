@@ -37,6 +37,10 @@ func MailToUser(botLang string, rows *sql.Rows) {
 		blockedUsers int
 	)
 
+	_ = msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
+		fmt.Sprintf("%s // mailing started", botLang)),
+	)
+
 	for rows.Next() {
 		var (
 			id   int64
@@ -62,9 +66,11 @@ func MailToUser(botLang string, rows *sql.Rows) {
 		sendToUsers++
 	}
 
-	_ = msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
+	if err := msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
 		fmt.Sprintf("%s // send to %d users mail", botLang, sendToUsers)),
-	)
+	); err != nil {
+		fmt.Println("error, ", err)
+	}
 
 	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
 	assets.SaveAdminSettings()
