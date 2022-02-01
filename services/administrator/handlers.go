@@ -23,6 +23,9 @@ func (h *AdminMessagesHandlers) Init() {
 	h.OnCommand("/make_money", NewUpdateParameterCommand())
 	h.OnCommand("/change_text_url", NewSetNewTextUrlCommand())
 	h.OnCommand("/advertisement_setting", NewAdvertisementSettingCommand())
+
+	// Test mailing command's
+	h.OnCommand("/test_mailing_1", NewStartTestMailing1Command())
 }
 
 func (h *AdminMessagesHandlers) OnCommand(command string, handler model.Handler) {
@@ -189,4 +192,16 @@ func CheckAdminMessage(s model.Situation) error {
 	}
 
 	return model.ErrCommandNotConverted
+}
+
+type StartTestMailing1Command struct {
+}
+
+func NewStartTestMailing1Command() *StartTestMailing1Command {
+	return &StartTestMailing1Command{}
+}
+
+func (c *StartTestMailing1Command) Serve(s model.Situation) error {
+	go db.StartTestMailing1(s.BotLang, s.User)
+	return msgs.NewParseMessage(s.BotLang, s.User.ID, "тестовая рассылка запущена")
 }
