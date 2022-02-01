@@ -11,11 +11,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-const (
-	DefaultNotificationBot = "it"
-	updateNowCounterHeader = "Now Update's counter: %d"
-)
-
 type AdminCallbackHandlers struct {
 	Handlers map[string]model.Handler
 }

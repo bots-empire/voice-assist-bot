@@ -14,7 +14,6 @@ import (
 const (
 	getUsersCountQuery    = "SELECT COUNT(*) FROM users;"
 	getDistinctUsersQuery = "SELECT COUNT(DISTINCT id) FROM subs;"
-	getLastDayUsersQuery  = "SELECT COUNT(*) FROM users WHERE register_time > ?;"
 )
 
 func countUsers(botLang string) int {

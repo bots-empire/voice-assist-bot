@@ -11,6 +11,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/pkg/errors"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -252,7 +253,7 @@ func resetVoiceDayCounter(s model.Situation) error {
 	rows, err := dataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
 		s.User.CompletedToday, s.User.LastVoice, s.User.ID)
 	if err != nil {
-		return fmt.Errorf("Fatal Err with DB - methods.40 //" + err.Error())
+		return errors.Wrap(err, "query failed")
 	}
 
 	return rows.Close()

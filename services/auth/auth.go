@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"log"
 	"strconv"
 	"strings"
 
@@ -77,8 +76,6 @@ func addNewUser(u *model.User, botLang string, referralID int64) error {
 	dataBase := model.GetDB(botLang)
 	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
-		text := "Fatal Err with DB - auth.70 //" + err.Error()
-		log.Println(text)
 		return errors.Wrap(err, "query failed")
 	}
 	_ = rows.Close()

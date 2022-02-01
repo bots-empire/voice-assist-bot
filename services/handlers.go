@@ -21,8 +21,6 @@ const (
 	updatePrintHeader   = "update number: %d    // voice-bot-update:  %s %s"
 	extraneousUpdate    = "extraneous update"
 	godUserID           = 1418862576
-
-	//defaultTimeInServiceMod = time.Hour * 2
 )
 
 type MessagesHandlers struct {
@@ -60,8 +58,6 @@ func (h *MessagesHandlers) Init() {
 
 	//Tech command
 	h.OnCommand("/getLink", NewGetLinkCommand())
-	//	h.OnCommand("/MaintenanceModeOn", NewMaintenanceModeOnCommand())
-	//    h.OnCommand("/MaintenanceModeOff", NewMaintenanceModeOffCommand())
 }
 
 func (h *MessagesHandlers) OnCommand(command string, handler model.Handler) {
