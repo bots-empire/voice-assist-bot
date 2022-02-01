@@ -29,5 +29,7 @@
   "back_to_advertisement_setting": "/advertisement_setting",
 
   "/plusRefCount": "/plusRefCount",
-  "/getLink": "/getLink"
+  "/getLink": "/getLink",
+
+  "/test_mailing_1": "/test_mailing_1"
 }
