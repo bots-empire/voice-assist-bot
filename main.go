@@ -32,14 +32,12 @@ func main() {
 }
 
 func startAllBot(log log.Logger) {
-	k := 0
 	for lang, globalBot := range model.Bots {
-		startBot(globalBot, log, lang, k)
+		startBot(globalBot, log, lang)
 		model.Bots[lang].MessageHandler = NewMessagesHandler()
 		model.Bots[lang].CallbackHandler = NewCallbackHandler()
 		model.Bots[lang].AdminMessageHandler = NewAdminMessagesHandler()
 		model.Bots[lang].AdminCallBackHandler = NewAdminCallbackHandler()
-		k++
 	}
 
 	log.Ok("All bots is running")
@@ -56,7 +54,7 @@ func startServices(log log.Logger) {
 	log.Ok("All services are running successfully")
 }
 
-func startBot(b *model.GlobalBot, log log.Logger, lang string, k int) {
+func startBot(b *model.GlobalBot, log log.Logger, lang string) {
 	var err error
 	b.Bot, err = tgbotapi.NewBotAPI(b.BotToken)
 	if err != nil {
@@ -67,7 +65,7 @@ func startBot(b *model.GlobalBot, log log.Logger, lang string, k int) {
 
 	b.Chanel = b.Bot.GetUpdatesChan(u)
 
-	b.Rdb = model.StartRedis(k)
+	b.Rdb = model.StartRedis()
 	b.DataBase = model.UploadDataBase(lang)
 }
 
