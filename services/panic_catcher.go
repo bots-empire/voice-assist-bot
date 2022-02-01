@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	msgs2 "github.com/Stepan1328/voice-assist-bot/msgs"
-	"github.com/Stepan1328/voice-assist-bot/services/administrator"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"github.com/Stepan1328/voice-assist-bot/log"
@@ -29,14 +28,12 @@ func panicCather(botLang string, update *tgbotapi.Update) {
 	)
 	panicLogger.Warn(panicText)
 
-	alertMsg := tgbotapi.NewMessage(notificationChatID, panicText)
-	_ = msgs2.SendMsgToUser(administrator.DefaultNotificationBot, alertMsg)
+	msgs.SendNotificationToDeveloper(panicText)
 
 	data, err := json.MarshalIndent(update, "", "  ")
 	if err != nil {
 		return
 	}
 
-	updateDataMsg := tgbotapi.NewMessage(notificationChatID, string(data))
-	_ = msgs2.SendMsgToUser(administrator.DefaultNotificationBot, updateDataMsg)
+	msgs.SendNotificationToDeveloper(string(data))
 }

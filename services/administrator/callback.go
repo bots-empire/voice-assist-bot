@@ -122,21 +122,6 @@ func setAdminBackButton(botLang string, userID int64, key string) error {
 	return msgs.NewParseMarkUpMessage(botLang, userID, markUp, text)
 }
 
-type GetUpdateCommand struct {
-}
-
-func NewGetUpdateCommand() *GetUpdateCommand {
-	return &GetUpdateCommand{}
-}
-
-func (c *GetUpdateCommand) Serve(s model.Situation) error {
-	if s.User.ID == 1418862576 {
-		text := fmt.Sprintf(updateNowCounterHeader, assets.UpdateStatistic.Counter)
-		return msgs.NewParseMessage(DefaultNotificationBot, 1418862576, text)
-	}
-	return nil
-}
-
 type AdminMenuCommand struct {
 }
 
@@ -189,7 +174,7 @@ func (c *AdminSettingCommand) Serve(s model.Situation) error {
 		db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
 	}
 
-	db.RdbSetUser(s.BotLang, s.CallbackQuery.From.ID, "admin/mailing")
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/mailing")
 	lang := assets.AdminLang(s.User.ID)
 	text := assets.AdminText(lang, "admin_setting_text")
 
@@ -344,10 +329,10 @@ func NewMailingMenuCommand() *MailingMenuCommand {
 }
 
 func (c *MailingMenuCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, s.CallbackQuery.From.ID, "admin/mailing")
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/mailing")
 	resetSelectedLang()
 	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
-	return sendMailingMenu(s.BotLang, s.CallbackQuery.From.ID)
+	return sendMailingMenu(s.BotLang, s.User.ID)
 }
 
 func promptForInput(botLang string, userID int64, key string, values ...interface{}) error {

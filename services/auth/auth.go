@@ -78,7 +78,6 @@ func addNewUser(u *model.User, botLang string, referralID int64) error {
 	rows, err := dataBase.Query("INSERT INTO users VALUES(?, 0, 0, 0, 0, 0, FALSE, ?);", u.ID, u.Language)
 	if err != nil {
 		text := "Fatal Err with DB - auth.70 //" + err.Error()
-		//msgs.NewParseMessage("it", 1418862576, text)
 		log.Println(text)
 		return errors.Wrap(err, "query failed")
 	}
@@ -97,8 +96,8 @@ func addNewUser(u *model.User, botLang string, referralID int64) error {
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
 	if err != nil {
 		text := "Fatal Err with DB - auth.85 //" + err.Error()
-		_ = msgs.NewParseMessage("it", 1418862576, text)
-		panic(err.Error())
+		msgs.SendNotificationToDeveloper(text)
+		return err
 	}
 	_ = rows.Close()
 
@@ -197,7 +196,7 @@ func ReadUsers(rows *sql.Rows) ([]*model.User, error) {
 		)
 
 		if err := rows.Scan(&id, &balance, &completed, &completedToday, &lastVoice, &referralCount, &takeBonus, &lang); err != nil {
-			panic("Failed to scan row: " + err.Error())
+			msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error())
 		}
 
 		users = append(users, &model.User{

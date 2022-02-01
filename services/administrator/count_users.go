@@ -7,6 +7,8 @@ import (
 
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
+	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -31,7 +33,7 @@ func readRows(rows *sql.Rows) int {
 
 	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
-			panic("Failed to scan row: " + err.Error())
+			msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error())
 		}
 	}
 

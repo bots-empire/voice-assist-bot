@@ -1,35 +1,25 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/pkg/errors"
 )
 
 const (
-	getLangIDQuery = "SELECT id, lang FROM users;"
+	getLangIDQuery = "SELECT id, lang FROM users ORDER BY id LIMIT ? OFFSET ?;"
 )
 
 var (
-	message = make(map[string]tgbotapi.MessageConfig, 10)
+	message           = make(map[string]tgbotapi.MessageConfig, 10)
+	usersPerIteration = 100
 )
 
-func StartMailing(botLang string) {
-	dataBase := model.Bots[botLang].DataBase
-	rows, err := dataBase.Query(getLangIDQuery)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	MailToUser(botLang, rows)
-}
-
-func MailToUser(botLang string, rows *sql.Rows) {
-	defer rows.Close()
+func StartMailing(botLang string, initiator *model.User) {
 	fillMessageMap()
 
 	var (
@@ -37,9 +27,80 @@ func MailToUser(botLang string, rows *sql.Rows) {
 		blockedUsers int
 	)
 
-	_ = msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
-		fmt.Sprintf("%s // mailing started", botLang)),
+	msgs.SendNotificationToDeveloper(
+		fmt.Sprintf("%s // mailing started", botLang),
 	)
+
+	for offset := 0; ; offset += usersPerIteration {
+		countSend, errCount := mailToUserWithPagination(botLang, offset)
+		if countSend == -1 {
+			sendRespMsgToMailingInitiator(botLang, initiator, "failing_mailing_text", sendToUsers)
+			break
+		}
+
+		if countSend == 0 && errCount == 0 {
+			break
+		}
+
+		sendToUsers += countSend
+		blockedUsers += errCount
+	}
+
+	msgs.SendNotificationToDeveloper(
+		fmt.Sprintf("%s // send to %d users mail", botLang, sendToUsers),
+	)
+
+	sendRespMsgToMailingInitiator(botLang, initiator, "complete_mailing_text", sendToUsers)
+
+	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
+	assets.SaveAdminSettings()
+}
+
+func sendRespMsgToMailingInitiator(botLang string, user *model.User, key string, countOfSends int) {
+	lang := assets.AdminLang(user.ID)
+	text := fmt.Sprintf(assets.AdminText(lang, key), countOfSends)
+
+	_ = msgs.NewParseMessage(botLang, user.ID, text)
+}
+
+func mailToUserWithPagination(botLang string, offset int) (int, int) {
+	users, err := getUsersWithPagination(botLang, offset)
+	if err != nil {
+		msgs.SendNotificationToDeveloper(errors.Wrap(err, "get users with pagination").Error())
+		return -1, 0
+	}
+
+	totalCount := len(users)
+	if totalCount == 0 {
+		return 0, 0
+	}
+
+	responseChan := make(chan bool)
+	var sendToUsers int
+
+	for _, user := range users {
+		go sendMailToUser(botLang, user, responseChan)
+	}
+
+	for countOfResp := 0; countOfResp < len(users); countOfResp++ {
+		select {
+		case resp := <-responseChan:
+			if resp {
+				sendToUsers++
+			}
+		}
+	}
+
+	return sendToUsers, totalCount - sendToUsers
+}
+
+func getUsersWithPagination(botLang string, offset int) ([]*model.User, error) {
+	rows, err := model.GetDB(botLang).Query(getLangIDQuery, usersPerIteration, offset)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed execute query")
+	}
+
+	var users []*model.User
 
 	for rows.Next() {
 		var (
@@ -48,79 +109,29 @@ func MailToUser(botLang string, rows *sql.Rows) {
 		)
 
 		if err := rows.Scan(&id, &lang); err != nil {
-			panic("Failed to scan row: " + err.Error())
+			return nil, errors.Wrap(err, "failed scan row")
 		}
 
-		if containsInAdmin(id) {
-			continue
-		}
+		//if containsInAdmin(id) {
+		//	continue
+		//}
 
-		msg := message[lang]
-		msg.ChatID = id
-
-		if !msgs.SendMessageToChat(botLang, msg) {
-			blockedUsers += 1
-			continue
-		}
-
-		sendToUsers++
+		users = append(users, &model.User{
+			ID:       id,
+			Language: lang,
+		})
 	}
 
-	if err := msgs.SendMsgToUser("it", tgbotapi.NewMessage(1418862576,
-		fmt.Sprintf("%s // send to %d users mail", botLang, sendToUsers)),
-	); err != nil {
-		fmt.Println("error, ", err)
-	}
-
-	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
-	assets.SaveAdminSettings()
+	return users, nil
 }
 
-//func MailToUser(botLang string, rows *sql.Rows) {
-//	fillMessageMap()
-//
-//	var users []*model.User
-//
-//	for rows.Next() {
-//		var (
-//			id   int64
-//			lang string
-//		)
-//
-//		if err := rows.Scan(&id, &lang); err != nil {
-//			panic("Failed to scan row: " + err.Error())
-//		}
-//
-//		if containsInAdmin(id) {
-//			continue
-//		}
-//
-//		users = append(users, &model.User{
-//			ID:       id,
-//			Language: lang,
-//		})
-//	}
-//	rows.Close()
-//
-//	var blockedUsers int
-//	mu := &sync.Mutex{}
-//
-//	for _, user := range users {
-//		msg := message[user.Language]
-//		msg.ChatID = user.ID
-//
-//		go func(config tgbotapi.MessageConfig) {
-//			if !msgs.SendMessageToChat(botLang, config) {
-//				mu.Lock()
-//				blockedUsers += 1
-//				mu.Unlock()
-//			}
-//		}(msg)
-//	}
-//
-//	assets.AdminSettings.BlockedUsers[botLang] = blockedUsers
-//	assets.SaveAdminSettings()
-//}
+func sendMailToUser(botLang string, user *model.User, respChan chan<- bool) {
+	msg := message[user.Language]
+	msg.ChatID = user.ID
+
+	_, err := model.GetGlobalBot(botLang).Bot.Send(msg)
+	respChan <- err == nil
+}
 
 func containsInAdmin(userID int64) bool {
 	for key := range assets.AdminSettings.AdminID {

@@ -82,6 +82,7 @@ func FillBotsConfig() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	err = json.Unmarshal(bytes, &Bots)
 	if err != nil {
 		panic(err)

@@ -12,6 +12,8 @@ const (
 	emptyLevelName = "empty"
 )
 
+// TODO: make one redis client: add to key botLang
+
 func RdbSetUser(botLang string, ID int64, level string) {
 	userID := userIDToRdb(ID)
 	_, err := model.Bots[botLang].Rdb.Set(userID, level, 0).Result()

@@ -20,7 +20,6 @@ const (
 	updateCounterHeader = "Today Update's counter: %d"
 	updatePrintHeader   = "update number: %d    // voice-bot-update:  %s %s"
 	extraneousUpdate    = "extraneous update"
-	notificationChatID  = 1418862576
 	godUserID           = 1418862576
 
 	//defaultTimeInServiceMod = time.Hour * 2
@@ -39,7 +38,6 @@ func (h *MessagesHandlers) Init() {
 	h.OnCommand("/select_language", NewSelectLangCommand())
 	h.OnCommand("/start", NewStartCommand())
 	h.OnCommand("/admin", administrator.NewAdminCommand())
-	h.OnCommand("/getUpdate", administrator.NewGetUpdateCommand())
 
 	//Main command
 	h.OnCommand("/main_profile", NewSendProfileCommand())
@@ -161,11 +159,8 @@ func printNewUpdate(botLang string, update *tgbotapi.Update, logger log.Logger) 
 
 func sendTodayUpdateMsg() {
 	text := fmt.Sprintf(updateCounterHeader, assets.UpdateStatistic.Counter)
-	msgID, _ := msgs.NewIDParseMessage(administrator.DefaultNotificationBot, notificationChatID, text)
-	_ = msgs.SendMsgToUser(administrator.DefaultNotificationBot, tgbotapi.PinChatMessageConfig{
-		ChatID:    notificationChatID,
-		MessageID: msgID,
-	})
+	id := msgs.SendNotificationToDeveloper(text)
+	msgs.PinMsgToDeveloper(id)
 
 	assets.UpdateStatistic.Counter = 0
 	assets.UpdateStatistic.Day = int(time.Now().Unix()) / 86400

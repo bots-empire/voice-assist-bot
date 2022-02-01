@@ -206,7 +206,7 @@ func AcceptVoiceMessage(s model.Situation) bool {
 		s.User.Balance, s.User.Completed, s.User.CompletedToday, s.User.LastVoice, s.User.ID)
 	if err != nil {
 		text := "Fatal Err with DB - methods.89 //" + err.Error()
-		_ = msgs.NewParseMessage("it", 1418862576, text)
+		msgs.SendNotificationToDeveloper(text)
 		return false
 	}
 	err = rows.Close()
@@ -252,7 +252,6 @@ func resetVoiceDayCounter(s model.Situation) error {
 	rows, err := dataBase.Query("UPDATE users SET completed_today = ?, last_voice = ? WHERE id = ?;",
 		s.User.CompletedToday, s.User.LastVoice, s.User.ID)
 	if err != nil {
-		//msgs2.NewParseMessage("it", 1418862576, text)
 		return fmt.Errorf("Fatal Err with DB - methods.40 //" + err.Error())
 	}
 

@@ -18,9 +18,9 @@ func NewStartMailingCommand() *StartMailingCommand {
 }
 
 func (c *StartMailingCommand) Serve(s model.Situation) error {
-	go db.StartMailing(s.BotLang)
+	go db.StartMailing(s.BotLang, s.User)
 	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "mailing_successful")
-	return resendAdvertisementMenuLevel(s.BotLang, s.CallbackQuery.From.ID)
+	return resendAdvertisementMenuLevel(s.BotLang, s.User.ID)
 }
 
 type SelectedLangCommand struct {

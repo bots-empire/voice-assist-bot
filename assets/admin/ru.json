@@ -102,6 +102,8 @@
   "advert_button_on": "Кнопка под рассылкой ✅",
   "advert_button_off": "Кнопка под рассылкой ❌",
   "start_mailing_button": "Запустить рассылку \uD83D\uDCE3",
+  "complete_mailing_text": "Рассылка завершена, охвачено пользователей: %d",
+  "failing_mailing_text": "Рассылка завершилась ошибкой, охвачено пользователей: %d",
   "type_the_text": "Наберите текст",
   "send_the_video": "Пришлите видео",
   "no_language_selected": "Выберите хотя бы один язык",
