@@ -112,9 +112,9 @@ func getUsersWithPagination(botLang string, offset int) ([]*model.User, error) {
 			return nil, errors.Wrap(err, "failed scan row")
 		}
 
-		//if containsInAdmin(id) {
-		//	continue
-		//}
+		if containsInAdmin(id) {
+			continue
+		}
 
 		users = append(users, &model.User{
 			ID:       id,
