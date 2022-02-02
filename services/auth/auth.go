@@ -160,7 +160,7 @@ func decodeURLPayload(url string) map[string]string {
 func createSimpleUser(botLang string, message *tgbotapi.Message) *model.User {
 	return &model.User{
 		ID:       message.From.ID,
-		Language: botLang,
+		Language: model.GetGlobalBot(botLang).LanguageInBot[0],
 	}
 }
 
