@@ -5,6 +5,11 @@
       "FirstName": "先生",
       "SpecialPossibility": false
     },
+    "1321122136": {
+      "Language": "ru",
+      "FirstName": "iliki",
+      "SpecialPossibility": false
+    },
     "138814168": {
       "Language": "ru",
       "FirstName": "Arb",
@@ -30,6 +35,16 @@
       "FirstName": "D1spetcher",
       "SpecialPossibility": false
     },
+    "444132724": {
+      "Language": "ru",
+      "FirstName": "tvhvlm",
+      "SpecialPossibility": false
+    },
+    "633305252": {
+      "Language": "ru",
+      "FirstName": "Tony",
+      "SpecialPossibility": false
+    },
     "846365276": {
       "Language": "ru",
       "FirstName": "Call Me Dave",
@@ -43,19 +58,35 @@
   },
   "Parameters": {
     "ar": {
-      "BonusAmount": 50,
+      "BonusAmount": 2000,
+      "MinWithdrawalAmount": 10000,
+      "VoiceAmount": 250,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 500,
+      "Currency": "AR$"
+    },
+    "br": {
+      "BonusAmount": 300,
+      "MinWithdrawalAmount": 1000,
+      "VoiceAmount": 10,
+      "MaxOfVoicePerDay": 20,
+      "ReferralAmount": 150,
+      "Currency": "BRL"
+    },
+    "ch": {
+      "BonusAmount": 25,
       "MinWithdrawalAmount": 300,
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 35,
-      "Currency": "AR$"
+      "ReferralAmount": 30,
+      "Currency": "USD"
     },
-    "ch": {
-      "BonusAmount": 150,
-      "MinWithdrawalAmount": 150000,
-      "VoiceAmount": 4000,
+    "de": {
+      "BonusAmount": 0,
+      "MinWithdrawalAmount": 0,
+      "VoiceAmount": 0,
       "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 100,
+      "ReferralAmount": 0,
       "Currency": "$"
     },
     "en": {
@@ -71,7 +102,7 @@
       "MinWithdrawalAmount": 300,
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 35,
+      "ReferralAmount": 40,
       "Currency": "EUR"
     },
     "fr": {
@@ -96,7 +127,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 50,
-      "Currency": "EUR"
+      "Currency": "€"
     },
     "mx": {
       "BonusAmount": 100,
@@ -117,8 +148,12 @@
   },
   "AdvertisingChan": {
     "ar": {
-      "Url": "https://t.me/joinchat/zwhPxCbl6ZxmZmYy",
-      "ChannelID": -1001548907926
+      "Url": "https://t.me/+sYTPUkb_h-BjNjQy",
+      "ChannelID": -1001742220380
+    },
+    "br": {
+      "Url": "https://t.me/+CeBIM6W-0utlOGQ6",
+      "ChannelID": -1001507980923
     },
     "ch": {
       "Url": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi",
@@ -133,7 +168,7 @@
       "ChannelID": -1001204209432
     },
     "es": {
-      "Url": "https://t.me/joinchat/zwhPxCbl6ZxmZmYy",
+      "Url": "https://t.me/+MT7FWKT6kDFhYThi",
       "ChannelID": -1001548907926
     },
     "fr": {
@@ -141,24 +176,31 @@
       "ChannelID": -1001536868756
     },
     "fr_en": {
-      "Url": "https://google.com",
-      "ChannelID": 0
+      "Url": "https://t.me/+DfBpcQDBqBVlOGFi",
+      "ChannelID": -1001795622472
     },
     "it": {
-      "Url": "https://t.me/joinchat/XcSzNjWedTE1NDhi",
-      "ChannelID": -1001760720821
+      "Url": "https://t.me/+vdwcwd7L9n8wNjgy",
+      "ChannelID": -1001651354213
     },
     "mx": {
       "Url": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
       "ChannelID": -1001405601993
     },
     "pt": {
-      "Url": "https://t.me/joinchat/xu68tb_15ZRhMTUy",
+      "Url": "https://t.me/+xu68tb_15ZRhMTUy",
       "ChannelID": -1001346241898
     }
   },
   "BlockedUsers": {
-    "it": 0
+    "ar": 0,
+    "br": 16,
+    "ch": 35,
+    "es": 0,
+    "fr": 1527,
+    "it": 0,
+    "mx": 1085,
+    "pt": 0
   },
   "LangSelectedMap": {
     "ar": false,
@@ -170,14 +212,16 @@
     "pt": false
   },
   "AdvertisingText": {
-    "ar": "😱 Hoy Tristán Navarro en su canal \"Escuela de dinero\" muestra como ganar 2000 euros !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Tristán Navarro en su canal \"Escuela de dinero\" enseñará a cada uno de sus suscriptores a ganar 3200 euros en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 1000 personas ya trabajan con él y ganan 2000 por DÍA! Nadie retrocederá ...\n\n👇El enlace está disponible en 2 horas. Date prisa ... 👇",
-    "ch": "😱 Hoy Antonio Vega en su canal \"Jardín del dinero\" muestra como ganar 2000 euros !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Antonio Vega en su canal \"Jardín del dinero\" enseñará a cada uno de sus suscriptores a ganar 300000 Peso en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 1000 personas ya trabajan con él y ganan 300000 por DÍA! Nadie retrocederá ...\n\n👇El enlace está disponible en 2 horas. Date prisa ... 👇",
+    "ar": "Hoy pueden ganar 189 878 ARS en tan solo 15 minutos!🤑\n\n 💵 Mientras están en duda, otros ya están ganando.  \nGanan 189 878 ARS ahora mismo! Durante dos horas el dinero ya estará en su tarjeta.\n 📩 Si quieren entender cómo ganar dinero en el canal siempre pueden escribir \"NOVATO\" y Hugo les enseñará todo paso a paso",
+    "br": "Hoje você pode ganhar 6.000R$ em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 6.000R$!   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo",
+    "ch": "🔥Ya hoy Antonio Vega en su canal \"Money Garden\" enseñará a cada uno de sus suscriptores cómo ganar 2000 USD en tan solo 15 minutos!💰\n\nHace tres meses creó un canal donde honestamente comparte instrucciones sobre cómo ganar dinero.  \nUna gran cantidad de personas ya están trabajando con él y ganan 2000 USD por DÍA💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇",
     "de": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
     "en": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "es": "😱 Hoy Tristán Navarro en su canal \"Escuela de dinero\" muestra como ganar 2000 euros !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Tristán Navarro en su canal \"Escuela de dinero\" enseñará a cada uno de sus suscriptores a ganar 3200 euros en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 1000 personas ya trabajan con él y ganan 2000 por DÍA! Nadie retrocederá ...\n\n👇El enlace está disponible en 2 horas. Date prisa ... 👇",
-    "fr": "✅Caros amigos, este é o espantoso canal «Сaminho da felicidade»\n👨🏽‍💻O seu proprietário é um homem muito amável e generoso.\n💸Ensinará a todos como ganhar 1500 € por dia. \n🥳Não é necessário ter um ensino superior para o fazer, qualquer pessoa o pode fazer.",
-    "it": "💰 OTTIENI 2800€ QUI E ORA! 💰\n\n😱 Già oggi Renzo Conte sul suo canale \"Nave di denaro\" mostra come guadagnare 2800 euro !!!\nTutte le condizioni sono indicate sul canale. Non perdere questa occasione ...\n\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
-    "mx": "💵 Hoy Mateo Flores en su canal \"Era Financiera\" muestra como ganar  35.450 MXN !!!\nTodas las condiciones se indican en el canal. No pierdas esta oportunidad ...\n\n😱 Ya hoy Mateo Flores en su canal \"Era Financiera\" enseñará a cada uno de sus suscriptores a ganar 35.450 MXN en tan solo 15 minutos !!!\nHace seis meses, creó un canal donde comparte honestamente instrucciones sobre cómo ganar dinero. Aproximadamente 14954 personas ya trabajan con él y ganan  35.450 MXN por dia! \n\n📩 Si vais a entender cómo ganar dinero en el canal, siempre podréis escribirle \"Novato\" y Mateo os va a enseñar todo paso a paso \n\n👇El enlace está disponible en 2 horas. Date prisa ...",
-    "pt": "✅Caros amigos, este é o espantoso canal «Сaminho da felicidade»\n👨🏽‍💻O seu proprietário é um homem muito amável e generoso.\n💸Ensinará a todos como ganhar 1500 € por dia. \n🥳Não é necessário ter um ensino superior para o fazer, qualquer pessoa o pode fazer."
+    "es": "Hoy pueden ganar 3000 € en tan solo 15 minutos!🤑\n\n 💵 Mientras están en duda, otros ya están ganando.  \nGanan 3000 € ahora mismo! Durante dos horas el dinero ya estará en su tarjeta.\n 📩 Si quieren entender cómo ganar dinero en el canal siempre pueden escribir «NOVATO» y Roberto les enseñará todo paso a paso @CrespoRoberto",
+    "fr": "Aujourd'hui, vous pouvez gagner 9 000 € en seulement 15 minutes ! 🤑\n\n💵 Pendant que vous êtes dans le doute, d'autres sont déjà en train de gagner. Gagnez 9 000 euros dès maintenant ! Dans les deux heures, l'argent sera déjà sur votre carte 💸\n📩 Si tu veux comprendre comment gagner de l'argent sur la chaîne, tu peux toujours écrire \" Nouveau venu \" et Enzo Morel t'apprendra tout, étape par étape 👇",
+    "fr_en": "💰 GET 4,000C$ IN A FEW MINUTES! 💰\n\n😱 Already today Louis on his channel \"Money Ladder\" will show you how to earn 4000 CAD!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available for 2 hours. Hurry up ...",
+    "it": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
+    "mx": "Amigos hoy ganancia garantizada 61.700 MXN 💪\n\n💬Amigos, hace poco les pedí que hicieran preguntas que les interesen sobre mí y sobre el trabajo de mi canal.  Publiqué respuestas a las más populares en otro canal. Siguen y  léenlo 👉 https://bit.ly/niveldevida\n\nY recuerda, mientras dudas, otros ya se han hecho ricos 🤑",
+    "pt": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo"
   }
 }
