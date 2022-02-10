@@ -250,27 +250,14 @@ func emptyLevel(botLang string, message *tgbotapi.Message, lang string) {
 }
 
 func createMainMenu() msgs.MarkUp {
-	var markUp msgs.MarkUp
-
-	newRow := msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_make_money"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	newRow = msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_profile"))
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_statistic"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	newRow = msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_withdrawal_of_money"))
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_money_for_a_friend"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	newRow = msgs.NewRow()
-	newRow.Buttons = append(newRow.Buttons, msgs.NewDataButton("main_more_money"))
-	markUp.Rows = append(markUp.Rows, newRow)
-
-	return markUp
+	return msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewDataButton("main_make_money")),
+		msgs.NewRow(msgs.NewDataButton("main_profile"),
+			msgs.NewDataButton("main_statistic")),
+		msgs.NewRow(msgs.NewDataButton("main_withdrawal_of_money"),
+			msgs.NewDataButton("main_money_for_a_friend")),
+		msgs.NewRow(msgs.NewDataButton("main_more_money")),
+	)
 }
 
 type SendProfileCommand struct {
