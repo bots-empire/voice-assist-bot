@@ -17,13 +17,6 @@ import (
 )
 
 const (
-	updateBalanceQuery = "UPDATE users SET balance = ? WHERE id = ?;"
-
-	updateAfterBonusQuery = "UPDATE users SET balance = ?, take_bonus = ? WHERE id = ?;"
-
-	getSubsUserQuery = "SELECT * FROM subs WHERE id = ?;"
-	updateSubsQuery  = "INSERT INTO subs VALUES(?);"
-
 	assistName = "{{assist_name}}"
 )
 
@@ -78,7 +71,12 @@ func CheckSubscribeToWithdrawal(s model.Situation, amount int) bool {
 
 	s.User.Balance -= amount
 	dataBase := model.GetDB(s.BotLang)
-	rows, err := dataBase.Query(updateBalanceQuery, s.User.Balance, s.User.ID)
+	rows, err := dataBase.Query(`
+UPDATE users 
+	SET balance = ?
+WHERE id = ?;`,
+		s.User.Balance,
+		s.User.ID)
 	if err != nil {
 		return false
 	}
@@ -102,7 +100,13 @@ func GetABonus(s model.Situation) error {
 
 	s.User.Balance += assets.AdminSettings.Parameters[s.BotLang].BonusAmount
 	dataBase := model.GetDB(s.BotLang)
-	rows, err := dataBase.Query(updateAfterBonusQuery, s.User.Balance, true, s.User.ID)
+	rows, err := dataBase.Query(`
+UPDATE users 
+	SET balance = ?, take_bonus = ?
+WHERE id = ?;`,
+		s.User.Balance,
+		true,
+		s.User.ID)
 	if err != nil {
 		return err
 	}
@@ -151,7 +155,10 @@ func checkMemberStatus(member tgbotapi.ChatMember) bool {
 
 func addMemberToSubsBase(s model.Situation) error {
 	dataBase := model.GetDB(s.BotLang)
-	rows, err := dataBase.Query(getSubsUserQuery, s.User.ID)
+	rows, err := dataBase.Query(`
+SELECT * FROM subs 
+	WHERE id = ?;`,
+		s.User.ID)
 	if err != nil {
 		return err
 	}
@@ -164,7 +171,9 @@ func addMemberToSubsBase(s model.Situation) error {
 	if user.ID != 0 {
 		return nil
 	}
-	rows, err = dataBase.Query(updateSubsQuery, s.User.ID)
+	rows, err = dataBase.Query(`
+INSERT INTO subs VALUES(?);`,
+		s.User.ID)
 	if err != nil {
 		return err
 	}
