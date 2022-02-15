@@ -31,7 +31,7 @@
   "lack_of_funds": "Les fonds ne suffisent pas!\n\nSpécifiez le montant du retrait \uD83D\uDC47",
   "minimum_amount_not_reached": "Erreur ! Le montant minimum de retrait est de %d {{currency}}.\n\nSpécifiez le montant du retrait \uD83D\uDC47",
   "successfully_withdrawn": "✅ La demande a été envoyée à la passerelle de paiement...\n\nLe paiement peut prendre jusqu'à 3 jours ouvrables!",
-  "referral_text": "\uD83D\uDCBC Obtenez des bonus pour les amis invités\n\uD83D\uDCF2 Envoyer le lien à un ami - %s?start=%s\n\n%d {{currency}} - vous obtenez pour chaque ami que vous invitez.\n\n\nVous avez invité: %d (Nombre de personnes)",
+  "referral_text": "\uD83D\uDCBC Obtenez des bonus pour les amis invités\n\uD83D\uDCF2 Envoyer le lien à un ami - %s\n\n%d {{currency}} - vous obtenez pour chaque ami que vous invitez.\n\n\nVous avez invité: %d (Nombre de personnes)",
   "more_money_text": "Plus d'argent \n\nOBTENEZ %d {{currency}} POUR L'ABONNEMENT À LA CHAÎNE \nAbonnez-vous à la chaîne et regardez les derniers messages, puis cliquez sur le bouton \"Obtenir un bonus\".  Après cela, vous recevrez %d {{currency}} ! \n\nREMARQUE : Si vous vous désabonnez de la chaîne du sponsor, le retrait sera annulé.",
   "bonus_already_have": "Vous avez déjà reçu un bonus",
   "bonus_have_received": "Vous avez reçu un bonus",

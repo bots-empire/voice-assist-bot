@@ -28,6 +28,8 @@ func (h *AdminCallbackHandlers) Init() {
 	h.OnCommand("/send_admin_list", NewAdminListCommand())
 	h.OnCommand("/add_admin_msg", NewNewAdminToListCommand())
 	h.OnCommand("/delete_admin", NewDeleteAdminCommand())
+	h.OnCommand("/send_advert_source_menu", NewAdvertSourceMenuCommand())
+	h.OnCommand("/add_new_source", NewAddNewSourceCommand())
 
 	//Make Money Setting command
 	h.OnCommand("/make_money_setting", NewMakeMoneySettingCommand())
@@ -176,6 +178,7 @@ func (c *AdminSettingCommand) Serve(s model.Situation) error {
 	markUp := msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_language_button", "admin/change_language")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("admin_list_button", "admin/send_admin_list")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("advertisement_source_button", "admin/send_advert_source_menu")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
 	).Build(lang)
 	if err := sendMsgAdnAnswerCallback(s, &markUp, text); err != nil {

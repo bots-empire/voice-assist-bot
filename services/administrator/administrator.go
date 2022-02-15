@@ -10,6 +10,7 @@ import (
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/model"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -139,4 +140,70 @@ func createListOfAdminText(lang string) string {
 	}
 
 	return adminFormatText(lang, "delete_admin_body_text", listOfAdmins)
+}
+
+type AdvertSourceMenuCommand struct {
+}
+
+func NewAdvertSourceMenuCommand() *AdvertSourceMenuCommand {
+	return &AdvertSourceMenuCommand{}
+}
+
+func (c *AdvertSourceMenuCommand) Serve(s model.Situation) error {
+	lang := assets.AdminLang(s.User.ID)
+	text := assets.AdminText(lang, "add_new_source_text")
+
+	markUp := msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlAdminButton("add_new_source_button", "admin/add_new_source")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_admin_settings", "admin/admin_setting")),
+	).Build(lang)
+
+	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
+	return msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), &markUp, text)
+}
+
+type AddNewSourceCommand struct {
+}
+
+func NewAddNewSourceCommand() *AddNewSourceCommand {
+	return &AddNewSourceCommand{}
+}
+
+func (c *AddNewSourceCommand) Serve(s model.Situation) error {
+	lang := assets.AdminLang(s.User.ID)
+	text := assets.AdminText(lang, "input_new_source_text")
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/get_new_source")
+
+	markUp := msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewAdminButton("back_to_admin_settings")),
+		msgs.NewRow(msgs.NewAdminButton("admin_log_out_text")),
+	).Build(lang)
+
+	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "type_the_text")
+	return msgs.NewParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
+}
+
+type GetNewSourceCommand struct {
+}
+
+func NewGetNewSourceCommand() *GetNewSourceCommand {
+	return &GetNewSourceCommand{}
+}
+
+func (c *GetNewSourceCommand) Serve(s model.Situation) error { // TODO: fix back button
+	link, err := model.EncodeLink(s.BotLang, &model.ReferralLinkInfo{
+		Source: s.Message.Text,
+	})
+	if err != nil {
+		return errors.Wrap(err, "encode link")
+	}
+
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin")
+
+	if err := msgs.NewParseMessage(s.BotLang, s.User.ID, link); err != nil {
+		return errors.Wrap(err, "send message with link")
+	}
+
+	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
+	return NewAdminMenuCommand().Serve(s)
 }

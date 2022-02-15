@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -291,19 +290,20 @@ func NewMoneyForAFriendCommand() *MoneyForAFriendCommand {
 func (c *MoneyForAFriendCommand) Serve(s model.Situation) error {
 	db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
-	text := msgs.GetFormatText(s.User.Language, "referral_text", model.GetGlobalBot(s.BotLang).BotLink,
-		constructLinkPayload(s.User.ID), assets.AdminSettings.Parameters[s.BotLang].ReferralAmount, s.User.ReferralCount)
+	link, err := model.EncodeLink(s.BotLang, &model.ReferralLinkInfo{
+		ReferralID: s.User.ID,
+		Source:     "bot",
+	})
+	if err != nil {
+		return err
+	}
+
+	text := msgs.GetFormatText(s.User.Language, "referral_text",
+		link,
+		assets.AdminSettings.Parameters[s.BotLang].ReferralAmount,
+		s.User.ReferralCount)
 
 	return msgs.NewParseMessage(s.BotLang, s.User.ID, text)
-}
-
-func constructLinkPayload(referralID int64) string {
-	var str string
-
-	str += "referralID--" + strconv.FormatInt(referralID, 10) + "_"
-	str += "source--bot"
-
-	return str
 }
 
 type SelectLangCommand struct {
@@ -561,7 +561,8 @@ func (c *MoreMoneyCommand) Serve(s model.Situation) error {
 }
 
 func simpleAdminMsg(s model.Situation, key string) error {
-	text := assets.AdminText(s.User.Language, key)
+	lang := assets.AdminLang(s.User.ID)
+	text := assets.AdminText(lang, key)
 	msg := tgbotapi.NewMessage(s.User.ID, text)
 
 	return msgs.SendMsgToUser(s.BotLang, msg)

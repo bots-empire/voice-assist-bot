@@ -2,7 +2,7 @@ package auth
 
 import (
 	"database/sql"
-	"strconv"
+	"fmt"
 	"strings"
 
 	"github.com/Stepan1328/voice-assist-bot/assets"
@@ -102,16 +102,15 @@ func addNewUser(u *model.User, botLang string, referralID int64) error {
 }
 
 func pullReferralID(botLang string, message *tgbotapi.Message) int64 {
-	str := strings.Split(message.Text, " ")
-	if len(str) < 2 {
+	readParams := strings.Split(message.Text, " ")
+	if len(readParams) < 2 {
 		return 0
 	}
 
-	payload := decodeURLPayload(str[1])
-	if len(payload) == 0 {
-		id, err := strconv.Atoi(str[1])
+	linkInfo, err := model.DecodeLink(botLang, readParams[1])
+	if err != nil || linkInfo == nil {
 		if err != nil {
-			return 0
+			msgs.SendNotificationToDeveloper("some err in decode link: " + err.Error())
 		}
 
 		model.IncomeBySource.WithLabelValues(
@@ -119,24 +118,18 @@ func pullReferralID(botLang string, message *tgbotapi.Message) int64 {
 			botLang,
 			"unknown",
 		).Inc()
-		if id > 0 {
-			return int64(id)
-		}
+
 		return 0
 	}
 
-	source := payload["source"]
-	if source == "" {
-		source = "unknown"
-	}
 	model.IncomeBySource.WithLabelValues(
 		model.GetGlobalBot(botLang).BotLink,
 		botLang,
-		source,
+		linkInfo.Source,
 	).Inc()
 
-	referralID, _ := strconv.ParseInt(payload["referralID"], 10, 64)
-	return referralID
+	fmt.Println(linkInfo)
+	return linkInfo.ReferralID
 }
 
 func decodeURLPayload(url string) map[string]string {

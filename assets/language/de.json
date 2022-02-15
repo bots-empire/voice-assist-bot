@@ -31,7 +31,7 @@
   "lack_of_funds": "Guthaben reicht nicht aus!\n\nGeben Sie den Auszahlungsbetrag an \uD83D\uDC47",
   "minimum_amount_not_reached": "Fehler! Der minimale Auszahlungsbetrag beträgt %d {{currency}}.\n\nGeben Sie den Auszahlungsbetrag an \uD83D\uDC47",
   "successfully_withdrawn": "✅ Die Anfrage wurde an das Zahlungsgateway gesendet...\n\nDie Zahlung kann bis zu 3 Werktage dauern!",
-  "referral_text": "💼 Erhalte Bonusgeld für eingeladene Freunde\n📲 Sende einen Link an einen Freund - %s?start=%s\n\n%d {{currency}} - du bekommst für jeden eingeladenen Freund.\n \n\nSie haben eingeladen: %d (Anzahl der Personen)",
+  "referral_text": "💼 Erhalte Bonusgeld für eingeladene Freunde\n📲 Sende einen Link an einen Freund - %s\n\n%d {{currency}} - du bekommst für jeden eingeladenen Freund.\n \n\nSie haben eingeladen: %d (Anzahl der Personen)",
   "more_money_text": "❓WOLLEN SIE %dC$ FÜR EIN ABONNEMENT DES KANALS?!\n\n\uD83D\uDC49Abonnieren Sie den Kanal und sehen Sie sich die neuen Einträge an und klicken Sie dann auf die Schaltfläche \"Geld erhalten\". Sie erhalten %dC$\n\n❗️ Achtung: Wenn Sie Ihr Abonnement für den Kanal des Sponsors kündigen, erfolgt keine Zahlung\n",
   "bonus_already_have": "Sie haben bereits einen Bonus",
   "bonus_have_received": "Sie haben einen Bonus erhalten",

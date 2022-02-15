@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"runtime/debug"
 
+	"github.com/Stepan1328/voice-assist-bot/log"
 	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-
-	"github.com/Stepan1328/voice-assist-bot/log"
 )
 
 var (
