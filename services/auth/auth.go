@@ -132,24 +132,6 @@ func pullReferralID(botLang string, message *tgbotapi.Message) int64 {
 	return linkInfo.ReferralID
 }
 
-func decodeURLPayload(url string) map[string]string {
-	payload := make(map[string]string)
-
-	pairs := strings.Split(url, "_")
-	for _, pair := range pairs {
-		arr := strings.Split(pair, "--")
-		if len(arr) < 2 {
-			continue
-		}
-
-		if arr[0] != "" {
-			payload[arr[0]] = arr[1]
-		}
-	}
-
-	return payload
-}
-
 func createSimpleUser(botLang string, message *tgbotapi.Message) *model.User {
 	return &model.User{
 		ID:       message.From.ID,
