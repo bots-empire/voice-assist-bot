@@ -18,12 +18,15 @@ const (
 )
 
 type Admin struct {
-	AdminID         map[int64]*AdminUser
-	Parameters      map[string]*Params
-	AdvertisingChan map[string]*AdvertChannel
-	BlockedUsers    map[string]int
-	LangSelectedMap map[string]bool
-	AdvertisingText map[string]string
+	AdminID           map[int64]*AdminUser
+	Parameters        map[string]*Params
+	AdvertisingChan   map[string]*AdvertChannel
+	BlockedUsers      map[string]int
+	LangSelectedMap   map[string]bool
+	AdvertisingText   map[string]string
+	AdvertisingPhoto  map[string]string
+	AdvertisingVideo  map[string]string
+	AdvertisingChoice map[string]string
 }
 
 type AdminUser struct {
@@ -38,6 +41,8 @@ type Params struct {
 	VoiceAmount         int
 	MaxOfVoicePerDay    int
 	ReferralAmount      int
+
+	ButtonUnderAdvert bool
 
 	Currency string
 }
@@ -80,6 +85,15 @@ func nilSettings(settings *Admin, lang string) {
 		settings.AdvertisingChan[lang] = &AdvertChannel{
 			Url: "https://google.com",
 		}
+	}
+	if settings.AdvertisingPhoto == nil {
+		settings.AdvertisingPhoto = make(map[string]string)
+	}
+	if settings.AdvertisingVideo == nil {
+		settings.AdvertisingVideo = make(map[string]string)
+	}
+	if settings.AdvertisingChoice == nil {
+		settings.AdvertisingChoice = make(map[string]string)
 	}
 }
 

@@ -1,58 +1,8 @@
 {
   "AdminID": {
-    "130328733": {
+    "872383555": {
       "Language": "ru",
-      "FirstName": "先生",
-      "SpecialPossibility": false
-    },
-    "1321122136": {
-      "Language": "ru",
-      "FirstName": "iliki",
-      "SpecialPossibility": false
-    },
-    "138814168": {
-      "Language": "ru",
-      "FirstName": "Arb",
-      "SpecialPossibility": true
-    },
-    "1418862576": {
-      "Language": "ru",
-      "FirstName": "Тимофей",
-      "SpecialPossibility": true
-    },
-    "1615496334": {
-      "Language": "ru",
-      "FirstName": "Дмитрий",
-      "SpecialPossibility": false
-    },
-    "1615496335": {
-      "Language": "ru",
-      "FirstName": "Дмитрий",
-      "SpecialPossibility": false
-    },
-    "1673490959": {
-      "Language": "ru",
-      "FirstName": "D1spetcher",
-      "SpecialPossibility": false
-    },
-    "444132724": {
-      "Language": "ru",
-      "FirstName": "tvhvlm",
-      "SpecialPossibility": false
-    },
-    "633305252": {
-      "Language": "ru",
-      "FirstName": "Tony",
-      "SpecialPossibility": false
-    },
-    "846365276": {
-      "Language": "ru",
-      "FirstName": "Call Me Dave",
-      "SpecialPossibility": false
-    },
-    "976672877": {
-      "Language": "ru",
-      "FirstName": "Alex Sinochek",
+      "FirstName": "Слава",
       "SpecialPossibility": false
     }
   },
@@ -63,6 +13,7 @@
       "VoiceAmount": 250,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 500,
+      "ButtonUnderAdvert": false,
       "Currency": "AR$"
     },
     "br": {
@@ -71,6 +22,7 @@
       "VoiceAmount": 10,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 150,
+      "ButtonUnderAdvert": false,
       "Currency": "BRL"
     },
     "ch": {
@@ -79,6 +31,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 30,
+      "ButtonUnderAdvert": false,
       "Currency": "USD"
     },
     "de": {
@@ -87,6 +40,7 @@
       "VoiceAmount": 0,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 0,
+      "ButtonUnderAdvert": false,
       "Currency": "$"
     },
     "en": {
@@ -95,6 +49,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 15,
+      "ButtonUnderAdvert": false,
       "Currency": "$"
     },
     "es": {
@@ -103,6 +58,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 40,
+      "ButtonUnderAdvert": false,
       "Currency": "EUR"
     },
     "fr": {
@@ -111,6 +67,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 100,
+      "ButtonUnderAdvert": false,
       "Currency": "EUR"
     },
     "fr_en": {
@@ -119,6 +76,7 @@
       "VoiceAmount": 10,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 100,
+      "ButtonUnderAdvert": false,
       "Currency": "C$"
     },
     "it": {
@@ -127,6 +85,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 50,
+      "ButtonUnderAdvert": true,
       "Currency": "€"
     },
     "mx": {
@@ -135,6 +94,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 150,
+      "ButtonUnderAdvert": false,
       "Currency": "$"
     },
     "pt": {
@@ -143,6 +103,7 @@
       "VoiceAmount": 5,
       "MaxOfVoicePerDay": 20,
       "ReferralAmount": 100,
+      "ButtonUnderAdvert": false,
       "Currency": "EUR"
     }
   },
@@ -198,7 +159,7 @@
     "ch": 35,
     "es": 0,
     "fr": 1527,
-    "it": 0,
+    "it": 1,
     "mx": 1085,
     "pt": 0
   },
@@ -223,5 +184,8 @@
     "it": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
     "mx": "Amigos hoy ganancia garantizada 61.700 MXN 💪\n\n💬Amigos, hace poco les pedí que hicieran preguntas que les interesen sobre mí y sobre el trabajo de mi canal.  Publiqué respuestas a las más populares en otro canal. Siguen y  léenlo 👉 https://bit.ly/niveldevida\n\nY recuerda, mientras dudas, otros ya se han hecho ricos 🤑",
     "pt": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo"
-  }
+  },
+  "AdvertisingPhoto": {},
+  "AdvertisingVideo": {},
+  "AdvertisingChoice": {}
 }
