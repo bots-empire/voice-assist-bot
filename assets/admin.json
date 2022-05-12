@@ -1,191 +1,563 @@
 {
   "AdminID": {
-    "872383555": {
+    "130328733": {
       "Language": "ru",
-      "FirstName": "Слава",
+      "FirstName": "先生",
+      "SpecialPossibility": false
+    },
+    "1321122136": {
+      "Language": "ru",
+      "FirstName": "iliki",
+      "SpecialPossibility": false
+    },
+    "138814168": {
+      "Language": "ru",
+      "FirstName": "Arb",
+      "SpecialPossibility": true
+    },
+    "1418862576": {
+      "Language": "ru",
+      "FirstName": "Тимофей",
+      "SpecialPossibility": true
+    },
+    "1615496334": {
+      "Language": "ru",
+      "FirstName": "Дмитрий",
+      "SpecialPossibility": false
+    },
+    "1615496335": {
+      "Language": "ru",
+      "FirstName": "Дмитрий",
+      "SpecialPossibility": false
+    },
+    "1673490959": {
+      "Language": "ru",
+      "FirstName": "D1spetcher",
+      "SpecialPossibility": false
+    },
+    "2102898771": {
+      "Language": "ru",
+      "FirstName": "Ilya",
+      "SpecialPossibility": false
+    },
+    "444132724": {
+      "Language": "ru",
+      "FirstName": "tvhvlm",
+      "SpecialPossibility": false
+    },
+    "633305252": {
+      "Language": "ru",
+      "FirstName": "Tony",
+      "SpecialPossibility": false
+    },
+    "643440433": {
+      "Language": "ru",
+      "FirstName": "Илья",
+      "SpecialPossibility": false
+    },
+    "846365276": {
+      "Language": "ru",
+      "FirstName": "Call Me Dave",
+      "SpecialPossibility": false
+    },
+    "917567114": {
+      "Language": "ru",
+      "FirstName": "Zzz",
+      "SpecialPossibility": false
+    },
+    "976672877": {
+      "Language": "ru",
+      "FirstName": "Alex Sinochek",
       "SpecialPossibility": false
     }
   },
-  "Parameters": {
+  "GlobalParameters": {
     "ar": {
-      "BonusAmount": 2000,
-      "MinWithdrawalAmount": 10000,
-      "VoiceAmount": 250,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 500,
-      "ButtonUnderAdvert": false,
-      "Currency": "AR$"
+      "Parameters": {
+        "BonusAmount": 2000,
+        "MinWithdrawalAmount": 10000,
+        "VoiceAmount": 250,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 500,
+        "ButtonUnderAdvert": true,
+        "Currency": "AR$"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+sYTPUkb_h-BjNjQy",
+          "2": "https://t.me/+sYTPUkb_h-BjNjQy",
+          "3": "https://t.me/+sYTPUkb_h-BjNjQy",
+          "5": "https://t.me/+sYTPUkb_h-BjNjQy"
+        },
+        "channel_id": {
+          "1": -1001742220380,
+          "2": -1001742220380,
+          "3": -1001742220380,
+          "5": -1001742220380
+        }
+      },
+      "BlockedUsers": 63428,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "💰 ACÁ TENÉS 418mil pesos AQUÍ Y AHORA MISMO💰\nNoticias espectaculares!\nEl administrador del canal VIP El Dorado abrió acceso a su canal privado para cualquier usuario de VOZ BOT! Apurate! Podés ganar 418mil pesos  ya!",
+        "2": "💰 ACÁ TENÉS 418mil pesos AQUÍ Y AHORA MISMO💰\nNoticias espectaculares!\nEl administrador del canal VIP El Dorado abrió acceso a su canal privado para cualquier usuario de VOZ BOT! Apurate! Podés ganar 418mil pesos  ya!",
+        "3": "💰 ACÁ TENÉS 418mil pesos AQUÍ Y AHORA MISMO💰\nNoticias espectaculares!\nEl administrador del canal VIP El Dorado abrió acceso a su canal privado para cualquier usuario de VOZ BOT! Apurate! Podés ganar 418mil pesos  ya!",
+        "5": "💰 ACÁ TENÉS 418mil pesos AQUÍ Y AHORA MISMO💰\nNoticias espectaculares!\nEl administrador del canal VIP El Dorado abrió acceso a su canal privado para cualquier usuario de VOZ BOT! Apurate! Podés ganar 418mil pesos  ya!"
+      },
+      "AdvertisingPhoto": {
+        "1": "AgACAgIAAxkBAAHImcRiVHzfh4CdoJT7KKSABMA8-0GaewAC0LoxG2BLoEqJbnlkzqKadQEAAwIAA3MAAyME",
+        "2": "AgACAgIAAxkBAAHImcRiVHzfh4CdoJT7KKSABMA8-0GaewAC0LoxG2BLoEqJbnlkzqKadQEAAwIAA3MAAyME",
+        "3": "AgACAgIAAxkBAAHImcRiVHzfh4CdoJT7KKSABMA8-0GaewAC0LoxG2BLoEqJbnlkzqKadQEAAwIAA3MAAyME",
+        "5": "AgACAgIAAxkBAAHImcRiVHzfh4CdoJT7KKSABMA8-0GaewAC0LoxG2BLoEqJbnlkzqKadQEAAwIAA3MAAyME"
+      },
+      "AdvertisingVideo": {
+        "1": "BAACAgIAAxkBAAHnw5diYF_QmFMrqLY7k-cJWPxhzjaQIwACgxcAAsElAUusmGptLUXTHSQE",
+        "2": "BAACAgIAAxkBAAHnw5diYF_QmFMrqLY7k-cJWPxhzjaQIwACgxcAAsElAUusmGptLUXTHSQE",
+        "3": "BAACAgIAAxkBAAHnw5diYF_QmFMrqLY7k-cJWPxhzjaQIwACgxcAAsElAUusmGptLUXTHSQE",
+        "5": "BAACAgIAAxkBAAHnw5diYF_QmFMrqLY7k-cJWPxhzjaQIwACgxcAAsElAUusmGptLUXTHSQE"
+      },
+      "AdvertisingChoice": {
+        "1": "nothing",
+        "2": "nothing",
+        "3": "nothing",
+        "5": "nothing"
+      }
     },
     "br": {
-      "BonusAmount": 300,
-      "MinWithdrawalAmount": 1000,
-      "VoiceAmount": 10,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 150,
-      "ButtonUnderAdvert": false,
-      "Currency": "BRL"
+      "Parameters": {
+        "BonusAmount": 300,
+        "MinWithdrawalAmount": 1000,
+        "VoiceAmount": 10,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 150,
+        "ButtonUnderAdvert": true,
+        "Currency": "BRL"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+CeBIM6W-0utlOGQ6",
+          "2": "https://t.me/+CeBIM6W-0utlOGQ6",
+          "3": "https://t.me/+CeBIM6W-0utlOGQ6",
+          "5": "https://t.me/+CeBIM6W-0utlOGQ6"
+        },
+        "channel_id": {
+          "1": -1001507980923,
+          "2": -1001507980923,
+          "3": -1001507980923,
+          "5": -1001507980923
+        }
+      },
+      "BlockedUsers": 53434,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "✅✅Caros amigos, estou compartilhando com vocês o link para o canal de um empresário de muito sucesso que os ajudará a ganhar a partir de 5000 R$ por dia 💶💶💶\ninscreva-se e siga seu canal se você quiser ganhar muito dinheiro 📈💰",
+        "2": "✅✅Caros amigos, estou compartilhando com vocês o link para o canal de um empresário de muito sucesso que os ajudará a ganhar a partir de 5000 R$ por dia 💶💶💶\ninscreva-se e siga seu canal se você quiser ganhar muito dinheiro 📈💰",
+        "3": "✅✅Caros amigos, estou compartilhando com vocês o link para o canal de um empresário de muito sucesso que os ajudará a ganhar a partir de 5000 R$ por dia 💶💶💶\ninscreva-se e siga seu canal se você quiser ganhar muito dinheiro 📈💰",
+        "5": "✅✅Caros amigos, estou compartilhando com vocês o link para o canal de um empresário de muito sucesso que os ajudará a ganhar a partir de 5000 R$ por dia 💶💶💶\ninscreva-se e siga seu canal se você quiser ganhar muito dinheiro 📈💰"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {
+        "1": "BAACAgIAAxkBAAGCEixiWv_-Mg1jZLktRH7q7OK_c4JKIgACNhoAArkj2Urt0r__BC2S2SQE",
+        "2": "BAACAgIAAxkBAAGCEixiWv_-Mg1jZLktRH7q7OK_c4JKIgACNhoAArkj2Urt0r__BC2S2SQE",
+        "3": "BAACAgIAAxkBAAGCEixiWv_-Mg1jZLktRH7q7OK_c4JKIgACNhoAArkj2Urt0r__BC2S2SQE",
+        "5": "BAACAgIAAxkBAAGCEixiWv_-Mg1jZLktRH7q7OK_c4JKIgACNhoAArkj2Urt0r__BC2S2SQE"
+      },
+      "AdvertisingChoice": {
+        "1": "video",
+        "2": "video",
+        "3": "video",
+        "5": "video"
+      }
     },
     "ch": {
-      "BonusAmount": 25,
-      "MinWithdrawalAmount": 300,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 30,
-      "ButtonUnderAdvert": false,
-      "Currency": "USD"
+      "Parameters": {
+        "BonusAmount": 25,
+        "MinWithdrawalAmount": 300,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 45,
+        "ButtonUnderAdvert": true,
+        "Currency": "USD"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi",
+          "2": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi",
+          "3": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi",
+          "5": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi"
+        },
+        "channel_id": {
+          "1": -1001781044830,
+          "2": -1001781044830,
+          "3": -1001781044830,
+          "5": -1001781044830
+        }
+      },
+      "BlockedUsers": 85491,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "🔥Ya hoy Antonio Vega en su canal \"Jardín del dinero\" enseñará a cada uno de sus suscriptores cómo ganar 3355 USD en tan solo 15 minutos!💰\n\nNo hace mucho tiempo creó un canal en el que comparte honestamente instrucciones sobre cómo ganar dinero.  \nMucha gente ya está trabajando y ganando con él 💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇",
+        "2": "🔥Ya hoy Antonio Vega en su canal \"Jardín del dinero\" enseñará a cada uno de sus suscriptores cómo ganar 3355 USD en tan solo 15 minutos!💰\n\nNo hace mucho tiempo creó un canal en el que comparte honestamente instrucciones sobre cómo ganar dinero.  \nMucha gente ya está trabajando y ganando con él 💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇",
+        "3": "🔥Ya hoy Antonio Vega en su canal \"Jardín del dinero\" enseñará a cada uno de sus suscriptores cómo ganar 3355 USD en tan solo 15 minutos!💰\n\nNo hace mucho tiempo creó un canal en el que comparte honestamente instrucciones sobre cómo ganar dinero.  \nMucha gente ya está trabajando y ganando con él 💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇",
+        "5": "🔥Ya hoy Antonio Vega en su canal \"Jardín del dinero\" enseñará a cada uno de sus suscriptores cómo ganar 3355 USD en tan solo 15 minutos!💰\n\nNo hace mucho tiempo creó un canal en el que comparte honestamente instrucciones sobre cómo ganar dinero.  \nMucha gente ya está trabajando y ganando con él 💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇"
+      },
+      "AdvertisingPhoto": {
+        "1": "AgACAgIAAxkBAAHxLThiZu7jhaqUGxrfqha_9Ar25pvUuAACsLsxG1JqOEuR_bWkDnuB0wEAAwIAA3MAAyQE",
+        "2": "AgACAgIAAxkBAAHxLThiZu7jhaqUGxrfqha_9Ar25pvUuAACsLsxG1JqOEuR_bWkDnuB0wEAAwIAA3MAAyQE",
+        "3": "AgACAgIAAxkBAAHxLThiZu7jhaqUGxrfqha_9Ar25pvUuAACsLsxG1JqOEuR_bWkDnuB0wEAAwIAA3MAAyQE",
+        "5": "AgACAgIAAxkBAAHxLThiZu7jhaqUGxrfqha_9Ar25pvUuAACsLsxG1JqOEuR_bWkDnuB0wEAAwIAA3MAAyQE"
+      },
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     },
     "de": {
-      "BonusAmount": 0,
-      "MinWithdrawalAmount": 0,
-      "VoiceAmount": 0,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 0,
-      "ButtonUnderAdvert": false,
-      "Currency": "$"
+      "Parameters": {
+        "BonusAmount": 150,
+        "MinWithdrawalAmount": 350,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 100,
+        "ButtonUnderAdvert": true,
+        "Currency": "EUR"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+fmd39vgZQgViMzFi",
+          "2": "https://t.me/+fmd39vgZQgViMzFi",
+          "3": "https://t.me/+fmd39vgZQgViMzFi",
+          "5": "https://t.me/+fmd39vgZQgViMzFi"
+        },
+        "channel_id": {
+          "1": -1001603184532,
+          "2": -1001603184532,
+          "3": -1001603184532,
+          "5": -1001603184532
+        }
+      },
+      "BlockedUsers": 5671,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
+        "2": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
+        "3": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
+        "5": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {
+        "1": "BAACAgIAAxkBAAENIT1iZo1ssGZAKrZWygHIooS4Nj1EmgAC2hgAAqkjOEt0DLpb12EU-yQE",
+        "2": "BAACAgIAAxkBAAENIT1iZo1ssGZAKrZWygHIooS4Nj1EmgAC2hgAAqkjOEt0DLpb12EU-yQE",
+        "3": "BAACAgIAAxkBAAENIT1iZo1ssGZAKrZWygHIooS4Nj1EmgAC2hgAAqkjOEt0DLpb12EU-yQE",
+        "5": "BAACAgIAAxkBAAENIT1iZo1ssGZAKrZWygHIooS4Nj1EmgAC2hgAAqkjOEt0DLpb12EU-yQE"
+      },
+      "AdvertisingChoice": {
+        "1": "nothing",
+        "2": "nothing",
+        "3": "nothing",
+        "5": "nothing"
+      }
     },
     "en": {
-      "BonusAmount": 50,
-      "MinWithdrawalAmount": 300,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 15,
-      "ButtonUnderAdvert": false,
-      "Currency": "$"
+      "Parameters": {
+        "BonusAmount": 50,
+        "MinWithdrawalAmount": 300,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 15,
+        "ButtonUnderAdvert": false,
+        "Currency": "$"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+          "2": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+          "3": "https://t.me/joinchat/MaMFymHLR6MzODhi",
+          "5": "https://t.me/joinchat/MaMFymHLR6MzODhi"
+        },
+        "channel_id": {
+          "1": -1001204209432,
+          "2": -1001204209432,
+          "3": -1001204209432,
+          "5": -1001204209432
+        }
+      },
+      "BlockedUsers": 0,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
+        "2": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
+        "3": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
+        "5": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up..."
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     },
     "es": {
-      "BonusAmount": 50,
-      "MinWithdrawalAmount": 300,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 40,
-      "ButtonUnderAdvert": false,
-      "Currency": "EUR"
+      "Parameters": {
+        "BonusAmount": 50,
+        "MinWithdrawalAmount": 300,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 50,
+        "ButtonUnderAdvert": true,
+        "Currency": "EUR"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+r65EPtG8B-IyNTJi",
+          "2": "https://t.me/+r65EPtG8B-IyNTJi",
+          "3": "https://t.me/+r65EPtG8B-IyNTJi",
+          "5": "https://t.me/+r65EPtG8B-IyNTJi"
+        },
+        "channel_id": {
+          "1": -1001454558087,
+          "2": -1001454558087,
+          "3": -1001454558087,
+          "5": -1001454558087
+        }
+      },
+      "BlockedUsers": 29631,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "💶 Quieres saber cómo ganar entre 2.900 y 5.000 euros en un par de horas? \n\n🤑Ramón Alvarado enseña a la gente a ganar dinero en su canal.\n\n📈El número de plazas en el canal es limitado, el enlace funcionará hasta alcanzar las 20.000 personas. El canal ya cuenta con más de 15.000 suscriptores y el número crec rápidamente",
+        "2": "💶 Quieres saber cómo ganar entre 2.900 y 5.000 euros en un par de horas? \n\n🤑Ramón Alvarado enseña a la gente a ganar dinero en su canal.\n\n📈El número de plazas en el canal es limitado, el enlace funcionará hasta alcanzar las 20.000 personas. El canal ya cuenta con más de 15.000 suscriptores y el número crec rápidamente",
+        "3": "💶 Quieres saber cómo ganar entre 2.900 y 5.000 euros en un par de horas? \n\n🤑Ramón Alvarado enseña a la gente a ganar dinero en su canal.\n\n📈El número de plazas en el canal es limitado, el enlace funcionará hasta alcanzar las 20.000 personas. El canal ya cuenta con más de 15.000 suscriptores y el número crec rápidamente",
+        "5": "💶 Quieres saber cómo ganar entre 2.900 y 5.000 euros en un par de horas? \n\n🤑Ramón Alvarado enseña a la gente a ganar dinero en su canal.\n\n📈El número de plazas en el canal es limitado, el enlace funcionará hasta alcanzar las 20.000 personas. El canal ya cuenta con más de 15.000 suscriptores y el número crec rápidamente"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {
+        "1": "nothing",
+        "2": "nothing",
+        "3": "nothing",
+        "5": "nothing"
+      }
     },
     "fr": {
-      "BonusAmount": 150,
-      "MinWithdrawalAmount": 350,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 100,
-      "ButtonUnderAdvert": false,
-      "Currency": "EUR"
+      "Parameters": {
+        "BonusAmount": 150,
+        "MinWithdrawalAmount": 350,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 100,
+        "ButtonUnderAdvert": true,
+        "Currency": "EUR"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+ri0jXmtt-wpiM2Ri",
+          "2": "https://t.me/+ri0jXmtt-wpiM2Ri",
+          "3": "https://t.me/+ri0jXmtt-wpiM2Ri",
+          "5": "https://t.me/+ri0jXmtt-wpiM2Ri"
+        },
+        "channel_id": {
+          "1": -1001536868756,
+          "2": -1001536868756,
+          "3": -1001536868756,
+          "5": -1001536868756
+        }
+      },
+      "BlockedUsers": 26670,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "🔥 +11 240 € reçus sur votre compte 🔥\n\n✨ Voici les messages que les abonnés du canal \"Revenu Fiable\" reçoivent chaque jour\n\n📩 Écrivez à Enzo Morel \"Nouveau venu\" et il vous aidera à gagner 11 240 € en 15 minutes\n\n💶 Commencez à gagner de l'argent dès maintenant",
+        "2": "🔥 +11 240 € reçus sur votre compte 🔥\n\n✨ Voici les messages que les abonnés du canal \"Revenu Fiable\" reçoivent chaque jour\n\n📩 Écrivez à Enzo Morel \"Nouveau venu\" et il vous aidera à gagner 11 240 € en 15 minutes\n\n💶 Commencez à gagner de l'argent dès maintenant",
+        "3": "🔥 +11 240 € reçus sur votre compte 🔥\n\n✨ Voici les messages que les abonnés du canal \"Revenu Fiable\" reçoivent chaque jour\n\n📩 Écrivez à Enzo Morel \"Nouveau venu\" et il vous aidera à gagner 11 240 € en 15 minutes\n\n💶 Commencez à gagner de l'argent dès maintenant",
+        "5": "🔥 +11 240 € reçus sur votre compte 🔥\n\n✨ Voici les messages que les abonnés du canal \"Revenu Fiable\" reçoivent chaque jour\n\n📩 Écrivez à Enzo Morel \"Nouveau venu\" et il vous aidera à gagner 11 240 € en 15 minutes\n\n💶 Commencez à gagner de l'argent dès maintenant"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {
+        "1": "BAACAgIAAxkBAAEzsCRiVI1UlyHKOPDgMqC6M_VIl3YKLAAC7xgAAhz7oUpeVlcrwYf81iME",
+        "2": "BAACAgIAAxkBAAEzsCRiVI1UlyHKOPDgMqC6M_VIl3YKLAAC7xgAAhz7oUpeVlcrwYf81iME",
+        "3": "BAACAgIAAxkBAAEzsCRiVI1UlyHKOPDgMqC6M_VIl3YKLAAC7xgAAhz7oUpeVlcrwYf81iME",
+        "5": "BAACAgIAAxkBAAEzsCRiVI1UlyHKOPDgMqC6M_VIl3YKLAAC7xgAAhz7oUpeVlcrwYf81iME"
+      },
+      "AdvertisingChoice": {
+        "1": "nothing",
+        "2": "nothing",
+        "3": "nothing",
+        "5": "nothing"
+      }
     },
     "fr_en": {
-      "BonusAmount": 75,
-      "MinWithdrawalAmount": 1000,
-      "VoiceAmount": 10,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 100,
-      "ButtonUnderAdvert": false,
-      "Currency": "C$"
+      "Parameters": {
+        "BonusAmount": 75,
+        "MinWithdrawalAmount": 1000,
+        "VoiceAmount": 10,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 100,
+        "ButtonUnderAdvert": true,
+        "Currency": "£"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+isBf-k-ZX9szOGIy",
+          "2": "https://t.me/+isBf-k-ZX9szOGIy",
+          "3": "https://t.me/+isBf-k-ZX9szOGIy",
+          "5": "https://t.me/+isBf-k-ZX9szOGIy"
+        },
+        "channel_id": {
+          "1": -1001621703326,
+          "2": -1001621703326,
+          "3": -1001621703326,
+          "5": -1001621703326
+        }
+      },
+      "BlockedUsers": 407,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
+        "2": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
+        "3": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
+        "5": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ..."
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
+    },
+    "in": {
+      "Parameters": {
+        "BonusAmount": 5000,
+        "MinWithdrawalAmount": 0,
+        "VoiceAmount": 300,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 3000,
+        "ButtonUnderAdvert": false,
+        "Currency": "INR"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://google.com",
+          "2": "https://google.com",
+          "3": "https://google.com",
+          "5": "https://google.com"
+        },
+        "channel_id": {}
+      },
+      "BlockedUsers": 0,
+      "LangSelectedMap": null,
+      "AdvertisingText": {},
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     },
     "it": {
-      "BonusAmount": 50,
-      "MinWithdrawalAmount": 800,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 50,
-      "ButtonUnderAdvert": true,
-      "Currency": "€"
+      "Parameters": {
+        "BonusAmount": 50,
+        "MinWithdrawalAmount": 800,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 50,
+        "ButtonUnderAdvert": true,
+        "Currency": "€"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+vdwcwd7L9n8wNjgy",
+          "2": "https://t.me/+vdwcwd7L9n8wNjgy",
+          "3": "https://t.me/+vdwcwd7L9n8wNjgy",
+          "5": "https://t.me/+vdwcwd7L9n8wNjgy"
+        },
+        "channel_id": {
+          "0": -1001651354213,
+          "1": -1001651354213,
+          "2": -1001651354213,
+          "5": -1001651354213
+        }
+      },
+      "BlockedUsers": 25032,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
+        "2": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
+        "3": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
+        "5": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ..."
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     },
     "mx": {
-      "BonusAmount": 100,
-      "MinWithdrawalAmount": 1200,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 150,
-      "ButtonUnderAdvert": false,
-      "Currency": "$"
+      "Parameters": {
+        "BonusAmount": 100,
+        "MinWithdrawalAmount": 1200,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 150,
+        "ButtonUnderAdvert": true,
+        "Currency": "$"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
+          "2": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
+          "3": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
+          "5": "https://t.me/joinchat/t80rEI1sxVc4ZGVi"
+        },
+        "channel_id": {
+          "1": -1001405601993,
+          "2": -1001405601993,
+          "3": -1001405601993,
+          "5": -1001405601993
+        }
+      },
+      "BlockedUsers": 77198,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "+127.200 MXN acreditados en tu cuenta\n\n 📩 A los suscriptores del canal \"Nivel de vida\" se les envían los siguientes mensajes 📩\n\n 💰Escribe Daniel Murillo \"NOVATO\" y te ayudará a ganar 127.200 MXN en 20 minutos💰\n\n 🔥Cumple tus sueños y obtén ingresos ilimitados🔥",
+        "2": "+127.200 MXN acreditados en tu cuenta\n\n 📩 A los suscriptores del canal \"Nivel de vida\" se les envían los siguientes mensajes 📩\n\n 💰Escribe Daniel Murillo \"NOVATO\" y te ayudará a ganar 127.200 MXN en 20 minutos💰\n\n 🔥Cumple tus sueños y obtén ingresos ilimitados🔥",
+        "3": "+127.200 MXN acreditados en tu cuenta\n\n 📩 A los suscriptores del canal \"Nivel de vida\" se les envían los siguientes mensajes 📩\n\n 💰Escribe Daniel Murillo \"NOVATO\" y te ayudará a ganar 127.200 MXN en 20 minutos💰\n\n 🔥Cumple tus sueños y obtén ingresos ilimitados🔥",
+        "5": "+127.200 MXN acreditados en tu cuenta\n\n 📩 A los suscriptores del canal \"Nivel de vida\" se les envían los siguientes mensajes 📩\n\n 💰Escribe Daniel Murillo \"NOVATO\" y te ayudará a ganar 127.200 MXN en 20 minutos💰\n\n 🔥Cumple tus sueños y obtén ingresos ilimitados🔥"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {
+        "1": "BAACAgIAAxkBAXOAMWJ1QuYZwxyTknOLBReoHkOvU1lrAAIVEwACB4OwS2zcEF5p8oE1JAQ",
+        "2": "BAACAgIAAxkBAXOAMWJ1QuYZwxyTknOLBReoHkOvU1lrAAIVEwACB4OwS2zcEF5p8oE1JAQ",
+        "3": "BAACAgIAAxkBAXOAMWJ1QuYZwxyTknOLBReoHkOvU1lrAAIVEwACB4OwS2zcEF5p8oE1JAQ",
+        "5": "BAACAgIAAxkBAXOAMWJ1QuYZwxyTknOLBReoHkOvU1lrAAIVEwACB4OwS2zcEF5p8oE1JAQ"
+      },
+      "AdvertisingChoice": {
+        "1": "nothing",
+        "2": "nothing",
+        "3": "nothing",
+        "5": "nothing"
+      }
     },
     "pt": {
-      "BonusAmount": 150,
-      "MinWithdrawalAmount": 350,
-      "VoiceAmount": 5,
-      "MaxOfVoicePerDay": 20,
-      "ReferralAmount": 100,
-      "ButtonUnderAdvert": false,
-      "Currency": "EUR"
+      "Parameters": {
+        "BonusAmount": 150,
+        "MinWithdrawalAmount": 350,
+        "VoiceAmount": 5,
+        "MaxOfVoicePerDay": 20,
+        "ReferralAmount": 100,
+        "ButtonUnderAdvert": false,
+        "Currency": "EUR"
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://t.me/+xu68tb_15ZRhMTUy",
+          "2": "https://t.me/+xu68tb_15ZRhMTUy",
+          "3": "https://t.me/+xu68tb_15ZRhMTUy",
+          "5": "https://t.me/+xu68tb_15ZRhMTUy"
+        },
+        "channel_id": {
+          "1": -1001346241898,
+          "2": -1001346241898,
+          "3": -1001346241898,
+          "5": -1001346241898
+        }
+      },
+      "BlockedUsers": 0,
+      "LangSelectedMap": null,
+      "AdvertisingText": {
+        "1": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo",
+        "2": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo",
+        "3": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo",
+        "5": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo"
+      },
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     }
-  },
-  "AdvertisingChan": {
-    "ar": {
-      "Url": "https://t.me/+sYTPUkb_h-BjNjQy",
-      "ChannelID": -1001742220380
-    },
-    "br": {
-      "Url": "https://t.me/+CeBIM6W-0utlOGQ6",
-      "ChannelID": -1001507980923
-    },
-    "ch": {
-      "Url": "https://t.me/joinchat/qT_lVyc-0NI3ZTZi",
-      "ChannelID": -1001781044830
-    },
-    "de": {
-      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
-      "ChannelID": -1001204209432
-    },
-    "en": {
-      "Url": "https://t.me/joinchat/MaMFymHLR6MzODhi",
-      "ChannelID": -1001204209432
-    },
-    "es": {
-      "Url": "https://t.me/+MT7FWKT6kDFhYThi",
-      "ChannelID": -1001548907926
-    },
-    "fr": {
-      "Url": "https://t.me/+ri0jXmtt-wpiM2Ri",
-      "ChannelID": -1001536868756
-    },
-    "fr_en": {
-      "Url": "https://t.me/+DfBpcQDBqBVlOGFi",
-      "ChannelID": -1001795622472
-    },
-    "it": {
-      "Url": "https://t.me/+vdwcwd7L9n8wNjgy",
-      "ChannelID": -1001651354213
-    },
-    "mx": {
-      "Url": "https://t.me/joinchat/t80rEI1sxVc4ZGVi",
-      "ChannelID": -1001405601993
-    },
-    "pt": {
-      "Url": "https://t.me/+xu68tb_15ZRhMTUy",
-      "ChannelID": -1001346241898
-    }
-  },
-  "BlockedUsers": {
-    "ar": 0,
-    "br": 16,
-    "ch": 35,
-    "es": 0,
-    "fr": 1527,
-    "it": 1,
-    "mx": 1085,
-    "pt": 0
-  },
-  "LangSelectedMap": {
-    "ar": false,
-    "de": false,
-    "en": false,
-    "es": false,
-    "fr": false,
-    "it": false,
-    "pt": false
-  },
-  "AdvertisingText": {
-    "ar": "Hoy pueden ganar 189 878 ARS en tan solo 15 minutos!🤑\n\n 💵 Mientras están en duda, otros ya están ganando.  \nGanan 189 878 ARS ahora mismo! Durante dos horas el dinero ya estará en su tarjeta.\n 📩 Si quieren entender cómo ganar dinero en el canal siempre pueden escribir \"NOVATO\" y Hugo les enseñará todo paso a paso",
-    "br": "Hoje você pode ganhar 6.000R$ em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 6.000R$!   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo",
-    "ch": "🔥Ya hoy Antonio Vega en su canal \"Money Garden\" enseñará a cada uno de sus suscriptores cómo ganar 2000 USD en tan solo 15 minutos!💰\n\nHace tres meses creó un canal donde honestamente comparte instrucciones sobre cómo ganar dinero.  \nUna gran cantidad de personas ya están trabajando con él y ganan 2000 USD por DÍA💵\n\n 👇 El enlace estará disponible en 2 horas.  Date prisa...👇",
-    "de": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "en": "💰 Get $ 5,800 here and now! 💰\n\n😱 Today Amit Kotak shows on his channel \"MONEY GENERATOR\" how to earn 5800 dollars !!!\nAll conditions are specified on the channel. Don't miss this opportunity ...\n\n😱 Already today, Amit Kotak on his channel \"MONEY GENERATOR\" will teach each of his subscribers to earn $ 5800 in just 15 minutes !!!\nSix months ago, he founded a channel where he honestly shares instructions on how to make money. About 5,000 people already work with it and earn $ 5,800 ! No one will give up ...\n\n👇 The link is available for 2 hours. Hurry up...",
-    "es": "Hoy pueden ganar 3000 € en tan solo 15 minutos!🤑\n\n 💵 Mientras están en duda, otros ya están ganando.  \nGanan 3000 € ahora mismo! Durante dos horas el dinero ya estará en su tarjeta.\n 📩 Si quieren entender cómo ganar dinero en el canal siempre pueden escribir «NOVATO» y Roberto les enseñará todo paso a paso @CrespoRoberto",
-    "fr": "Aujourd'hui, vous pouvez gagner 9 000 € en seulement 15 minutes ! 🤑\n\n💵 Pendant que vous êtes dans le doute, d'autres sont déjà en train de gagner. Gagnez 9 000 euros dès maintenant ! Dans les deux heures, l'argent sera déjà sur votre carte 💸\n📩 Si tu veux comprendre comment gagner de l'argent sur la chaîne, tu peux toujours écrire \" Nouveau venu \" et Enzo Morel t'apprendra tout, étape par étape 👇",
-    "fr_en": "💰 GET 4,000C$ IN A FEW MINUTES! 💰\n\n😱 Already today Louis on his channel \"Money Ladder\" will show you how to earn 4000 CAD!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available for 2 hours. Hurry up ...",
-    "it": "💰 OTTIENI 3.400€ QUI E ORA! 💰\nOttime notizie! L'amministratore del canale VIP \"Club dei Ricchi\" ha aperto l'accesso al suo canale privato per ogni utente del nostro AI BOT! Sbrigati!\nPerché  già oggi si può guadagnare 3.400 euro!!!\n👇Il collegamento è disponibile entro 2 ore. Sbrigati ...",
-    "mx": "Amigos hoy ganancia garantizada 61.700 MXN 💪\n\n💬Amigos, hace poco les pedí que hicieran preguntas que les interesen sobre mí y sobre el trabajo de mi canal.  Publiqué respuestas a las más populares en otro canal. Siguen y  léenlo 👉 https://bit.ly/niveldevida\n\nY recuerda, mientras dudas, otros ya se han hecho ricos 🤑",
-    "pt": "Hoje você pode ganhar 5000 € em apenas 15 minutos!\n\n 💵 Enquanto você estiver em dúvida, outros já estão ganhando.  \nEles estão ganhando agora 5000 € !   Dentro de duas horas, o dinheiro já estará em seu cartão.\n 📩 Se você quer entender como ganhar no canal, você pode sempre escrever «NOVATO» e Bruno lhe ensinará tudo passo a passo"
-  },
-  "AdvertisingPhoto": {},
-  "AdvertisingVideo": {},
-  "AdvertisingChoice": {}
+  }
 }
