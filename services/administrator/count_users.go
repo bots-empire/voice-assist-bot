@@ -5,9 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/model"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
 	"github.com/pkg/errors"
 )
 
@@ -16,49 +14,49 @@ const (
 	getDistinctUsersQuery = "SELECT COUNT(DISTINCT id) FROM subs;"
 )
 
-func countUsers(botLang string) int {
+func (a *Admin) countUsers(botLang string) int {
 	dataBase := model.GetDB(botLang)
 	rows, err := dataBase.Query(getUsersCountQuery)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	return readRows(rows)
+	return a.readRows(rows)
 }
 
-func readRows(rows *sql.Rows) int {
+func (a *Admin) readRows(rows *sql.Rows) int {
 	defer rows.Close()
 
 	var count int
 
 	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
-			msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error())
+			a.msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error(), false)
 		}
 	}
 
 	return count
 }
 
-func countAllUsers() int {
+func (a *Admin) countAllUsers() int {
 	var sum int
 	for _, handler := range model.Bots {
 		rows, err := handler.DataBase.Query(getUsersCountQuery)
 		if err != nil {
 			log.Println(err.Error())
 		}
-		sum += readRows(rows)
+		sum += a.readRows(rows)
 	}
 	return sum
 }
 
-func countReferrals(botLang string, amountUsers int) string {
+func (a *Admin) countReferrals(botLang string, amountUsers int) string {
 	var refText string
 	rows, err := model.Bots[botLang].DataBase.Query("SELECT SUM(referral_count) FROM users;")
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	count := readRows(rows)
+	count := a.readRows(rows)
 	refText = strconv.Itoa(count) + " (" + strconv.Itoa(int(float32(count)*100.0/float32(amountUsers))) + "%)"
 	return refText
 }
@@ -69,14 +67,14 @@ func countBlockedUsers(botLang string) int {
 	//	count += value
 	//}
 	//return count
-	return assets.AdminSettings.BlockedUsers[botLang]
+	return model.AdminSettings.GlobalParameters[botLang].BlockedUsers
 }
 
-func countSubscribers(botLang string) int {
+func (a *Admin) countSubscribers(botLang string) int {
 	rows, err := model.Bots[botLang].DataBase.Query(getDistinctUsersQuery)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return readRows(rows)
+	return a.readRows(rows)
 }

@@ -2,12 +2,12 @@ package administrator
 
 import (
 	"fmt"
+	"github.com/bots-empire/base-bot/msgs"
+	"strconv"
 	"strings"
 
-	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/model"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -19,77 +19,74 @@ func (h *AdminCallbackHandlers) GetHandler(command string) model.Handler {
 	return h.Handlers[command]
 }
 
-func (h *AdminCallbackHandlers) Init() {
+func (h *AdminCallbackHandlers) Init(adminSrv *Admin) {
 	//Admin Setting command
-	h.OnCommand("/send_menu", NewAdminMenuCommand())
-	h.OnCommand("/admin_setting", NewAdminSettingCommand())
-	h.OnCommand("/change_language", NewChangeLangCommand())
-	h.OnCommand("/set_language", NewSetNewLangCommand())
-	h.OnCommand("/send_admin_list", NewAdminListCommand())
-	h.OnCommand("/add_admin_msg", NewNewAdminToListCommand())
-	h.OnCommand("/delete_admin", NewDeleteAdminCommand())
-	h.OnCommand("/send_advert_source_menu", NewAdvertSourceMenuCommand())
-	h.OnCommand("/add_new_source", NewAddNewSourceCommand())
+	h.OnCommand("/send_menu", adminSrv.AdminMenuCommand)
+	h.OnCommand("/admin_setting", adminSrv.AdminSettingCommand)
+	h.OnCommand("/change_language", adminSrv.ChangeLangCommand)
+	h.OnCommand("/set_language", adminSrv.SetNewLangCommand)
+	h.OnCommand("/send_admin_list", adminSrv.AdminListCommand)
+	h.OnCommand("/add_admin_msg", adminSrv.NewAdminToListCommand)
+	h.OnCommand("/delete_admin", adminSrv.DeleteAdminCommand)
+	h.OnCommand("/send_advert_source_menu", adminSrv.AdvertSourceMenuCommand)
+	h.OnCommand("/add_new_source", adminSrv.AddNewSourceCommand)
 
 	//Make Money Setting command
-	h.OnCommand("/make_money_setting", NewMakeMoneySettingCommand())
-	h.OnCommand("/make_money", NewChangeParameterCommand())
+	h.OnCommand("/make_money_setting", adminSrv.MakeMoneySettingCommand)
+	h.OnCommand("/make_money", adminSrv.ChangeParameterCommand)
 
 	//Mailing command
-	h.OnCommand("/advertisement", NewAdvertisementMenuCommand())
-	h.OnCommand("/change_url_menu", NewChangeUrlMenuCommand())
-	h.OnCommand("/change_text_menu", NewChangeTextMenuCommand())
-	h.OnCommand("/mailing_menu", NewMailingMenuCommand())
-	//h.OnCommand("/change_advert_button_status", NewChangeUnderAdvertButtonCommand())
-	h.OnCommand("/send_advertisement", NewSelectedLangCommand())
-	h.OnCommand("/start_mailing", NewStartMailingCommand())
+	h.OnCommand("/advertisement", adminSrv.AdvertisementMenuCommand)
+	h.OnCommand("/change_advert_chan", adminSrv.AdvertisementChanMenuCommand)
+	h.OnCommand("/change_url_menu", adminSrv.ChangeUrlMenuCommand)
+	h.OnCommand("/change_text_menu", adminSrv.ChangeTextMenuCommand)
+	h.OnCommand("/change_photo_menu", adminSrv.ChangePhotoMenuCommand)
+	h.OnCommand("/change_video_menu", adminSrv.ChangeVideoMenuCommand)
+	h.OnCommand("/turn", adminSrv.TurnMenuCommand)
+	h.OnCommand("/change_advert_button_status", adminSrv.ChangeUnderAdvertButtonCommand)
+	h.OnCommand("/mailing_menu", adminSrv.MailingMenuCommand)
+	h.OnCommand("/send_advertisement", adminSrv.SelectedLangCommand)
+	h.OnCommand("/start_mailing", adminSrv.StartMailingCommand)
 
 	//Send Statistic command
-	h.OnCommand("/send_statistic", NewStatisticCommand())
+	h.OnCommand("/send_statistic", adminSrv.StatisticCommand)
 }
 
 func (h *AdminCallbackHandlers) OnCommand(command string, handler model.Handler) {
 	h.Handlers[command] = handler
 }
 
-func CheckAdminCallback(s model.Situation) error {
+func (a *Admin) CheckAdminCallback(s *model.Situation) error {
 	if !ContainsInAdmin(s.User.ID) {
-		return notAdmin(s.BotLang, s.User)
+		return a.notAdmin(s.User)
 	}
 
 	s.Command = strings.TrimLeft(s.Command, "admin")
 
 	Handler := model.Bots[s.BotLang].AdminCallBackHandler.GetHandler(s.Command)
 	if Handler != nil {
-		return Handler.Serve(s)
+		return Handler(s)
 	}
 	return model.ErrCommandNotConverted
 }
 
-type AdminLoginCommand struct {
-}
-
-func NewAdminCommand() *AdminLoginCommand {
-	return &AdminLoginCommand{}
-}
-
-func (c *AdminLoginCommand) Serve(s model.Situation) error {
+func (a *Admin) AdminLoginCommand(s *model.Situation) error {
 	if !ContainsInAdmin(s.User.ID) {
-		return notAdmin(s.BotLang, s.User)
+		return a.notAdmin(s.User)
 	}
 
 	updateFirstNameInfo(s.Message)
 	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
 
-	if err := setAdminBackButton(s.BotLang, s.User.ID, "admin_log_in"); err != nil {
+	if err := a.setAdminBackButton(s.User.ID, "admin_log_in"); err != nil {
 		return err
 	}
 	s.Command = "/send_menu"
-	return NewAdminMenuCommand().Serve(s)
+	return a.AdminMenuCommand(s)
 }
 
 func ContainsInAdmin(userID int64) bool {
-	for key := range assets.AdminSettings.AdminID {
+	for key := range model.AdminSettings.AdminID {
 		if key == userID {
 			return true
 		}
@@ -97,58 +94,50 @@ func ContainsInAdmin(userID int64) bool {
 	return false
 }
 
-func notAdmin(botLang string, user *model.User) error {
-	text := assets.LangText(user.Language, "not_admin")
-	return msgs.SendSimpleMsg(botLang, user.ID, text)
+func (a *Admin) notAdmin(user *model.User) error {
+	text := a.bot.LangText(user.Language, "not_admin")
+	return a.msgs.SendSimpleMsg(user.ID, text)
 }
 
 func updateFirstNameInfo(message *tgbotapi.Message) {
 	userID := message.From.ID
-	assets.AdminSettings.AdminID[userID].FirstName = message.From.FirstName
-	assets.SaveAdminSettings()
+	model.AdminSettings.AdminID[userID].FirstName = message.From.FirstName
+	model.SaveAdminSettings()
 }
 
-func setAdminBackButton(botLang string, userID int64, key string) error {
-	lang := assets.AdminLang(userID)
-	text := assets.AdminText(lang, key)
+func (a *Admin) setAdminBackButton(userID int64, key string) error {
+	lang := model.AdminLang(userID)
+	text := a.bot.AdminText(lang, key)
 
 	markUp := msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewAdminButton("admin_log_out_text")),
-	).Build(lang)
+	).Build(a.bot.AdminLibrary[lang])
 
-	return msgs.NewParseMarkUpMessage(botLang, userID, markUp, text)
+	return a.msgs.NewParseMarkUpMessage(userID, markUp, text)
 }
 
-type AdminMenuCommand struct {
-}
-
-func NewAdminMenuCommand() *AdminMenuCommand {
-	return &AdminMenuCommand{}
-}
-
-func (c *AdminMenuCommand) Serve(s model.Situation) error {
+func (a *Admin) AdminMenuCommand(s *model.Situation) error {
 	db.RdbSetUser(s.BotLang, s.User.ID, "admin")
-	lang := assets.AdminLang(s.User.ID)
-	text := assets.AdminText(lang, "admin_main_menu_text")
+	lang := model.AdminLang(s.User.ID)
+	text := a.bot.AdminText(lang, "admin_main_menu_text")
 
 	markUp := msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_admin_button", "admin/admin_setting")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_make_money_button", "admin/make_money_setting")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_advertisement_button", "admin/advertisement")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_statistic_button", "admin/send_statistic")),
-	).Build(lang)
+	).Build(a.bot.AdminLibrary[lang])
 
 	if db.RdbGetAdminMsgID(s.BotLang, s.User.ID) != 0 {
-		_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
-		return msgs.NewEditMarkUpMessage(
-			s.BotLang,
+		_ = a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
+		return a.msgs.NewEditMarkUpMessage(
 			s.User.ID,
 			db.RdbGetAdminMsgID(s.BotLang, s.User.ID),
 			&markUp,
 			text,
 		)
 	}
-	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
+	msgID, err := a.msgs.NewIDParseMarkUpMessage(s.User.ID, markUp, text)
 	if err != nil {
 		return err
 	}
@@ -156,111 +145,94 @@ func (c *AdminMenuCommand) Serve(s model.Situation) error {
 	return nil
 }
 
-type AdminSettingCommand struct {
-}
-
-func NewAdminSettingCommand() *AdminSettingCommand {
-	return &AdminSettingCommand{}
-}
-
-func (c *AdminSettingCommand) Serve(s model.Situation) error {
+func (a *Admin) AdminSettingCommand(s *model.Situation) error {
 	if strings.Contains(s.Params.Level, "delete_admin") {
-		if err := setAdminBackButton(s.BotLang, s.User.ID, "operation_canceled"); err != nil {
+		if err := a.setAdminBackButton(s.User.ID, "operation_canceled"); err != nil {
 			return err
 		}
 		db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
 	}
 
 	db.RdbSetUser(s.BotLang, s.User.ID, "admin/mailing")
-	lang := assets.AdminLang(s.User.ID)
-	text := assets.AdminText(lang, "admin_setting_text")
+	lang := model.AdminLang(s.User.ID)
+	text := a.bot.AdminText(lang, "admin_setting_text")
 
 	markUp := msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlAdminButton("setting_language_button", "admin/change_language")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("admin_list_button", "admin/send_admin_list")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("advertisement_source_button", "admin/send_advert_source_menu")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
-	).Build(lang)
-	if err := sendMsgAdnAnswerCallback(s, &markUp, text); err != nil {
+	).Build(a.bot.AdminLibrary[lang])
+	if err := a.sendMsgAdnAnswerCallback(s, &markUp, text); err != nil {
 		return err
 	}
-	return msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
+	return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
 }
 
-type ChangeLangCommand struct {
-}
-
-func NewChangeLangCommand() *ChangeLangCommand {
-	return &ChangeLangCommand{}
-}
-
-func (c *ChangeLangCommand) Serve(s model.Situation) error {
-	lang := assets.AdminLang(s.User.ID)
-	text := assets.AdminText(lang, "admin_set_lang_text")
+func (a *Admin) ChangeLangCommand(s *model.Situation) error {
+	lang := model.AdminLang(s.User.ID)
+	text := a.bot.AdminText(lang, "admin_set_lang_text")
 
 	markUp := msgs.NewIlMarkUp(
 		msgs.NewIlRow(msgs.NewIlAdminButton("set_lang_en", "admin/set_language?en"),
 			msgs.NewIlAdminButton("set_lang_ru", "admin/set_language?ru")),
 		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_admin_settings", "admin/admin_setting")),
-	).Build(lang)
+	).Build(a.bot.AdminLibrary[lang])
 
-	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
-	return msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), &markUp, text)
+	_ = a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
+	return a.msgs.NewEditMarkUpMessage(s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), &markUp, text)
 }
 
-type SetNewLangCommand struct {
-}
-
-func NewSetNewLangCommand() *SetNewLangCommand {
-	return &SetNewLangCommand{}
-}
-
-func (c *SetNewLangCommand) Serve(s model.Situation) error {
+func (a *Admin) SetNewLangCommand(s *model.Situation) error {
 	lang := strings.Split(s.CallbackQuery.Data, "?")[1]
-	assets.AdminSettings.AdminID[s.User.ID].Language = lang
-	assets.SaveAdminSettings()
+	model.AdminSettings.AdminID[s.User.ID].Language = lang
+	model.SaveAdminSettings()
 
-	if err := setAdminBackButton(s.BotLang, s.User.ID, "language_set"); err != nil {
+	if err := a.setAdminBackButton(s.User.ID, "language_set"); err != nil {
 		return err
 	}
 	s.Command = "admin/admin_setting"
-	return NewAdminSettingCommand().Serve(s)
+	return a.AdminSettingCommand(s)
 }
 
-type AdvertisementMenuCommand struct {
-}
-
-func NewAdvertisementMenuCommand() *AdvertisementMenuCommand {
-	return &AdvertisementMenuCommand{}
-}
-
-func (c *AdvertisementMenuCommand) Serve(s model.Situation) error {
+func (a *Admin) AdvertisementMenuCommand(s *model.Situation) error {
 	if strings.Contains(s.Params.Level, "change_text_url?") {
-		if err := setAdminBackButton(s.BotLang, s.User.ID, "operation_canceled"); err != nil {
+		if err := a.setAdminBackButton(s.User.ID, "operation_canceled"); err != nil {
 			return err
 		}
 		db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
 	}
 
-	markUp, text := getAdvertisementMenu(s.BotLang, s.User.ID)
+	lang := model.AdminLang(s.User.ID)
+	text := a.bot.AdminText(lang, "change_advert_chan_text")
+
 	msgID := db.RdbGetAdminMsgID(s.BotLang, s.User.ID)
+	markUp := msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_advert_chan_1", "admin/change_advert_chan?1")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_advert_chan_2", "admin/change_advert_chan?2")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_advert_chan_3", "admin/change_advert_chan?3")),
+		msgs.NewIlRow(msgs.NewIlAdminButton("global_advertisement", "admin/change_advert_chan?"+strconv.Itoa(model.MainAdvert))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("distribute_button_general", "admin/mailing_menu?"+strconv.Itoa(model.GlobalMailing))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
+	).Build(a.bot.AdminLibrary[lang])
+
 	if msgID == 0 {
 		var err error
-		msgID, err = msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
+		msgID, err = a.msgs.NewIDParseMarkUpMessage(s.User.ID, markUp, text)
 		if err != nil {
 			return err
 		}
 
 		db.RdbSetAdminMsgID(s.BotLang, s.User.ID, msgID)
 	} else {
-		if err := msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, msgID, markUp, text); err != nil {
+		if err := a.msgs.NewEditMarkUpMessage(s.User.ID, msgID, &markUp, text); err != nil {
 			return err
 		}
 	}
 
 	if s.CallbackQuery != nil {
 		if s.CallbackQuery.ID != "" {
-			if err := msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice"); err != nil {
+			if err := a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice"); err != nil {
 				return err
 			}
 		}
@@ -268,124 +240,301 @@ func (c *AdvertisementMenuCommand) Serve(s model.Situation) error {
 	return nil
 }
 
-func getAdvertisementMenu(botLang string, userID int64) (*tgbotapi.InlineKeyboardMarkup, string) {
-	lang := assets.AdminLang(userID)
-	text := assets.AdminText(lang, "advertisement_setting_text")
+func (a *Admin) AdvertisementChanMenuCommand(s *model.Situation) error {
+	data := strings.Split(s.CallbackQuery.Data, "?")
+
+	channel, _ := strconv.Atoi(data[1])
+
+	if channel == 5 {
+		markUp, text := a.getAdvertUrlMenu(s.BotLang, s.User.ID, channel)
+		msgID := db.RdbGetAdminMsgID(s.BotLang, s.User.ID)
+		if msgID == 0 {
+			var err error
+			msgID, err = a.msgs.NewIDParseMarkUpMessage(s.User.ID, markUp, text)
+			if err != nil {
+				return err
+			}
+			db.RdbSetAdminMsgID(s.BotLang, s.User.ID, msgID)
+			return nil
+		} else {
+			return a.msgs.NewEditMarkUpMessage(s.User.ID, msgID, markUp, text)
+		}
+	}
+
+	if strings.Contains(s.Params.Level, "change_text_url?") {
+		if err := a.setAdminBackButton(s.User.ID, "operation_canceled"); err != nil {
+			return err
+		}
+		db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
+	}
+
+	markUp, text := a.getAdvertisementMenu(s.BotLang, s.User.ID, channel)
+	msgID := db.RdbGetAdminMsgID(s.BotLang, s.User.ID)
+	if msgID == 0 {
+		var err error
+		msgID, err = a.msgs.NewIDParseMarkUpMessage(s.User.ID, markUp, text)
+		if err != nil {
+			return err
+		}
+
+		db.RdbSetAdminMsgID(s.BotLang, s.User.ID, msgID)
+	} else {
+		if err := a.msgs.NewEditMarkUpMessage(s.User.ID, msgID, markUp, text); err != nil {
+			return err
+		}
+	}
+
+	if s.CallbackQuery != nil {
+		if s.CallbackQuery.ID != "" {
+			if err := a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice"); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (a *Admin) getAdvertUrlMenu(botLang string, userID int64, channel int) (*tgbotapi.InlineKeyboardMarkup, string) {
+	lang := model.AdminLang(userID)
+	text := a.adminFormatText(lang, "advertisement_setting_text", "Главный")
 
 	markUp := msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlAdminButton("change_url_button", "admin/change_url_menu")),
-		msgs.NewIlRow(msgs.NewIlAdminButton("change_text_button", "admin/change_text_menu")),
-		msgs.NewIlRow(msgs.NewIlAdminButton("distribute_button", "admin/mailing_menu")),
-		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_main_menu", "admin/send_menu")),
-	).Build(lang)
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_url_button", "admin/change_url_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_chan_menu", "admin/advertisement")),
+	).Build(a.bot.AdminLibrary[lang])
 
-	db.RdbSetUser(botLang, userID, "admin/advertisement")
+	db.RdbSetUser(botLang, userID, "admin/change_advert_chan_"+strconv.Itoa(channel))
 	return &markUp, text
 }
 
-type ChangeUrlMenuCommand struct {
+func (a *Admin) getAdvertisementMenu(botLang string, userID int64, channel int) (*tgbotapi.InlineKeyboardMarkup, string) {
+	lang := model.AdminLang(userID)
+	text := a.adminFormatText(lang, "advertisement_setting_text", strconv.Itoa(channel))
+
+	Photo := "photo"
+	Video := "video"
+	Nothing := "nothing"
+
+	switch model.AdminSettings.GlobalParameters[botLang].AdvertisingChoice[channel] {
+	case "photo":
+		Photo = "photo_on"
+	case "video":
+		Video = "video_on"
+	default:
+		Nothing = "nothing_on"
+	}
+
+	markUp := msgs.NewIlMarkUp(
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_url_button", "admin/change_url_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_text_button", "admin/change_text_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_photo_button", "admin/change_photo_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("change_video_button", "admin/change_video_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(
+			msgs.NewIlAdminButton("turn_"+Photo, "admin/turn?photo?"+strconv.Itoa(channel)),
+			msgs.NewIlAdminButton("turn_"+Video, "admin/turn?video?"+strconv.Itoa(channel)),
+			msgs.NewIlAdminButton("turn_"+Nothing, "admin/turn?nothing?"+strconv.Itoa(channel)),
+		),
+		msgs.NewIlRow(msgs.NewIlAdminButton("distribute_button", "admin/mailing_menu?"+strconv.Itoa(channel))),
+		msgs.NewIlRow(msgs.NewIlAdminButton("back_to_chan_menu", "admin/advertisement")),
+	).Build(a.bot.AdminLibrary[lang])
+
+	db.RdbSetUser(botLang, userID, "admin/change_advert_chan_"+strconv.Itoa(channel))
+	return &markUp, text
 }
 
-func NewChangeUrlMenuCommand() *ChangeUrlMenuCommand {
-	return &ChangeUrlMenuCommand{}
-}
+func (a *Admin) ChangeUrlMenuCommand(s *model.Situation) error {
+	data := strings.Split(s.CallbackQuery.Data, "?")
+	channel, _ := strconv.Atoi(data[1])
 
-func (c *ChangeUrlMenuCommand) Serve(s model.Situation) error {
 	key := "set_new_url_text"
-	value := assets.AdminSettings.AdvertisingChan[s.BotLang].Url
+	value := model.AdminSettings.GetAdvertUrl(s.BotLang, channel)
 
-	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_url")
-	if err := promptForInput(s.BotLang, s.User.ID, key, value); err != nil {
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_url?"+data[1])
+	if err := a.promptForInput(s.User.ID, key, value); err != nil {
 		return err
 	}
-	return msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "type_the_text")
+	return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "type_the_text")
 }
 
-type ChangeTextMenuCommand struct {
-}
+func (a *Admin) ChangeTextMenuCommand(s *model.Situation) error {
+	data := strings.Split(s.CallbackQuery.Data, "?")
+	channel, _ := strconv.Atoi(data[1])
 
-func NewChangeTextMenuCommand() *ChangeTextMenuCommand {
-	return &ChangeTextMenuCommand{}
-}
-
-func (c *ChangeTextMenuCommand) Serve(s model.Situation) error {
 	key := "set_new_advertisement_text"
-	value := assets.AdminSettings.AdvertisingText[s.BotLang]
+	value := model.AdminSettings.GetAdvertText(s.BotLang, channel)
 
-	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_text")
-	if err := promptForInput(s.BotLang, s.User.ID, key, value); err != nil {
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_text?"+data[1])
+	if err := a.promptForInput(s.User.ID, key, value); err != nil {
 		return err
 	}
-	return msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "type_the_text")
+	return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "type_the_text")
 }
 
-type MailingMenuCommand struct {
-}
+func (a *Admin) ChangePhotoMenuCommand(s *model.Situation) error {
+	data := strings.Split(s.CallbackQuery.Data, "?")
+	channel, _ := strconv.Atoi(data[1])
 
-func NewMailingMenuCommand() *MailingMenuCommand {
-	return &MailingMenuCommand{}
-}
+	lang := model.AdminLang(s.User.ID)
+	key := "set_new_advertisement_photo"
 
-func (c *MailingMenuCommand) Serve(s model.Situation) error {
-	db.RdbSetUser(s.BotLang, s.User.ID, "admin/mailing")
-	resetSelectedLang()
-	_ = msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
-	return sendMailingMenu(s.BotLang, s.User.ID)
-}
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_photo?"+data[1])
+	err := a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "send_photo")
+	if err != nil {
+		return err
+	}
 
-func promptForInput(botLang string, userID int64, key string, values ...interface{}) error {
-	lang := assets.AdminLang(userID)
+	text := a.bot.AdminText(model.AdminLang(s.User.ID), key)
 
-	text := adminFormatText(lang, key, values...)
+	photoFileBytes := tgbotapi.FileID(model.AdminSettings.GlobalParameters[s.BotLang].AdvertisingPhoto[channel])
+
+	if photoFileBytes == "" {
+		key = "no_photo_found"
+		text = a.bot.AdminText(model.AdminLang(s.User.ID), key)
+		markUp := msgs.NewMarkUp(
+			msgs.NewRow(msgs.NewAdminButton("back_to_advertisement_setting")),
+			msgs.NewRow(msgs.NewAdminButton("exit")),
+		).Build(a.bot.AdminLibrary[lang])
+		return a.msgs.NewParseMarkUpMessage(s.User.ID, &markUp, text)
+	}
+
 	markUp := msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewAdminButton("back_to_advertisement_setting")),
 		msgs.NewRow(msgs.NewAdminButton("exit")),
-	).Build(lang)
+	).Build(a.bot.AdminLibrary[lang])
 
-	return msgs.NewParseMarkUpMessage(botLang, userID, markUp, text)
+	return a.msgs.NewParseMarkUpPhotoMessage(s.User.ID, &markUp, text, photoFileBytes)
 }
 
-type StatisticCommand struct {
+func (a *Admin) ChangeVideoMenuCommand(s *model.Situation) error {
+	data := strings.Split(s.CallbackQuery.Data, "?")
+	channel, _ := strconv.Atoi(data[1])
+
+	lang := model.AdminLang(s.User.ID)
+	key := "set_new_advertisement_video"
+
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/change_text_url?change_video?"+data[1])
+	err := a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "send_the_video")
+	if err != nil {
+		return err
+	}
+
+	text := a.bot.AdminText(model.AdminLang(s.User.ID), key)
+
+	videoFileBytes := tgbotapi.FileID(model.AdminSettings.GlobalParameters[s.BotLang].AdvertisingVideo[channel])
+
+	if videoFileBytes == "" {
+		key = "no_video_found"
+		text = a.bot.AdminText(model.AdminLang(s.User.ID), key)
+		markUp := msgs.NewMarkUp(
+			msgs.NewRow(msgs.NewAdminButton("back_to_advertisement_setting")),
+			msgs.NewRow(msgs.NewAdminButton("exit")),
+		).Build(a.bot.AdminLibrary[lang])
+		return a.msgs.NewParseMarkUpMessage(s.User.ID, &markUp, text)
+	}
+
+	markUp := msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewAdminButton("back_to_advertisement_setting")),
+		msgs.NewRow(msgs.NewAdminButton("exit")),
+	).Build(a.bot.AdminLibrary[lang])
+
+	return a.msgs.NewParseMarkUpVideoMessage(s.User.ID, &markUp, text, videoFileBytes)
 }
 
-func NewStatisticCommand() *StatisticCommand {
-	return &StatisticCommand{}
+func (a *Admin) TurnMenuCommand(s *model.Situation) error {
+
+	//	lang := assets.AdminLang(s.User.ID)
+	data := strings.Split(s.CallbackQuery.Data, "?")
+	channel, _ := strconv.Atoi(data[2])
+	switch data[1] {
+	case "photo":
+		if model.AdminSettings.GlobalParameters[s.BotLang].AdvertisingPhoto[channel] == "" {
+			return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "add_media")
+		}
+	case "video":
+		if model.AdminSettings.GlobalParameters[s.BotLang].AdvertisingVideo[channel] == "" {
+			return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "add_media")
+		}
+	}
+	model.AdminSettings.UpdateAdvertChoice(s.BotLang, channel, data[1])
+
+	err := a.msgs.SendAdminAnswerCallback(s.CallbackQuery, data[1])
+	if err != nil {
+		return err
+	}
+	//db.DeleteOldAdminMsg(lang, s.User.ID)
+
+	callback := &tgbotapi.CallbackQuery{
+		Data: "admin/change_advert_chan?" + data[2],
+	}
+
+	s.CallbackQuery = callback
+	return a.AdvertisementChanMenuCommand(s)
 }
 
-func (c *StatisticCommand) Serve(s model.Situation) error {
-	lang := assets.AdminLang(s.User.ID)
+func (a *Admin) ChangeUnderAdvertButtonCommand(s *model.Situation) error {
+	channel := strings.Split(s.CallbackQuery.Data, "?")[1]
 
-	count := countUsers(s.BotLang)
-	allCount := countAllUsers()
-	referrals := countReferrals(s.BotLang, count)
+	model.AdminSettings.GlobalParameters[s.BotLang].Parameters.ButtonUnderAdvert =
+		!model.AdminSettings.GlobalParameters[s.BotLang].Parameters.ButtonUnderAdvert
+	model.SaveAdminSettings()
+
+	_ = a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
+	return a.sendMailingMenu(s.BotLang, s.CallbackQuery.From.ID, channel)
+}
+
+func (a *Admin) MailingMenuCommand(s *model.Situation) error {
+	channel := strings.Split(s.CallbackQuery.Data, "?")[1]
+	db.RdbSetUser(s.BotLang, s.User.ID, "admin/mailing")
+	_ = a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
+	return a.sendMailingMenu(s.BotLang, s.User.ID, channel)
+}
+
+func (a *Admin) promptForInput(userID int64, key string, values ...interface{}) error {
+	lang := model.AdminLang(userID)
+
+	text := a.adminFormatText(lang, key, values...)
+	markUp := msgs.NewMarkUp(
+		msgs.NewRow(msgs.NewAdminButton("back_to_advertisement_setting")),
+		msgs.NewRow(msgs.NewAdminButton("exit")),
+	).Build(a.bot.AdminLibrary[lang])
+
+	return a.msgs.NewParseMarkUpMessage(userID, markUp, text)
+}
+
+func (a *Admin) StatisticCommand(s *model.Situation) error {
+	lang := model.AdminLang(s.User.ID)
+
+	count := a.countUsers(s.BotLang)
+	allCount := a.countAllUsers()
+	referrals := a.countReferrals(s.BotLang, count)
 	//lastDayUsers := countUserFromLastDay(s.BotLang)
 	blocked := countBlockedUsers(s.BotLang)
-	subscribers := countSubscribers(s.BotLang)
-	text := adminFormatText(lang, "statistic_text",
+	subscribers := a.countSubscribers(s.BotLang)
+	text := a.adminFormatText(lang, "statistic_text",
 		allCount, count, referrals, blocked, subscribers, count-blocked)
 
-	if err := msgs.NewParseMessage(s.BotLang, s.User.ID, text); err != nil {
+	if err := a.msgs.NewParseMessage(s.User.ID, text); err != nil {
 		return err
 	}
 	db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
 	s.Command = "/send_menu"
-	if err := NewAdminMenuCommand().Serve(s); err != nil {
+	if err := a.AdminMenuCommand(s); err != nil {
 		return err
 	}
 
-	return msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
+	return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
 }
 
-func adminFormatText(lang, key string, values ...interface{}) string {
-	formatText := assets.AdminText(lang, key)
+func (a *Admin) adminFormatText(lang, key string, values ...interface{}) string {
+	formatText := a.bot.AdminText(lang, key)
 	return fmt.Sprintf(formatText, values...)
 }
 
-func sendMsgAdnAnswerCallback(s model.Situation, markUp *tgbotapi.InlineKeyboardMarkup, text string) error {
+func (a *Admin) sendMsgAdnAnswerCallback(s *model.Situation, markUp *tgbotapi.InlineKeyboardMarkup, text string) error {
 	if db.RdbGetAdminMsgID(s.BotLang, s.User.ID) != 0 {
-		return msgs.NewEditMarkUpMessage(s.BotLang, s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), markUp, text)
+		return a.msgs.NewEditMarkUpMessage(s.User.ID, db.RdbGetAdminMsgID(s.BotLang, s.User.ID), markUp, text)
 	}
-	msgID, err := msgs.NewIDParseMarkUpMessage(s.BotLang, s.User.ID, markUp, text)
+	msgID, err := a.msgs.NewIDParseMarkUpMessage(s.User.ID, markUp, text)
 	if err != nil {
 		return err
 	}
@@ -393,7 +542,7 @@ func sendMsgAdnAnswerCallback(s model.Situation, markUp *tgbotapi.InlineKeyboard
 
 	if s.CallbackQuery != nil {
 		if s.CallbackQuery.ID != "" {
-			return msgs.SendAdminAnswerCallback(s.BotLang, s.CallbackQuery, "make_a_choice")
+			return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
 		}
 	}
 	return nil

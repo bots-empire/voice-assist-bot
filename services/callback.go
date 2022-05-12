@@ -1,16 +1,15 @@
 package services
 
 import (
+	"fmt"
+	"github.com/Stepan1328/voice-assist-bot/utils"
+	"github.com/bots-empire/base-bot/msgs"
 	"strconv"
 	"strings"
 
-	"github.com/Stepan1328/voice-assist-bot/assets"
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/log"
 	"github.com/Stepan1328/voice-assist-bot/model"
-	"github.com/Stepan1328/voice-assist-bot/msgs"
-	"github.com/Stepan1328/voice-assist-bot/services/administrator"
-	"github.com/Stepan1328/voice-assist-bot/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -22,48 +21,63 @@ func (h *CallBackHandlers) GetHandler(command string) model.Handler {
 	return h.Handlers[command]
 }
 
-func (h *CallBackHandlers) Init() {
+func (h *CallBackHandlers) Init(userSrv *Users) {
 	//Money command
-	h.OnCommand("/language", NewLanguageCommand())
-	h.OnCommand("/send_bonus_to_user", NewGetBonusCommand())
-	h.OnCommand("/withdrawal_money", NewRecheckSubscribeCommand())
-	h.OnCommand("/promotion_case", NewPromotionCaseCommand())
+	h.OnCommand("/language", userSrv.LanguageCommand)
+	h.OnCommand("/send_bonus_to_user", userSrv.GetBonusCommand)
+	h.OnCommand("/withdrawal_money", userSrv.RecheckSubscribeCommand)
+	h.OnCommand("/promotion_case", userSrv.PromotionCaseCommand)
 }
 
 func (h *CallBackHandlers) OnCommand(command string, handler model.Handler) {
 	h.Handlers[command] = handler
 }
 
-func checkCallbackQuery(s model.Situation, logger log.Logger) {
+func (u *Users) checkCallbackQuery(s *model.Situation, logger log.Logger, sortCentre *utils.Spreader) {
 	if strings.Contains(s.Params.Level, "admin") {
-		if err := administrator.CheckAdminCallback(s); err != nil {
-			logger.Warn("error with serve admin callback command: %s", err.Error())
+		if err := u.admin.CheckAdminCallback(s); err != nil {
+			text := fmt.Sprintf("%s // %s // error with serve admin callback command: %s",
+				u.bot.BotLang,
+				u.bot.BotLink,
+				err.Error(),
+			)
+			u.Msgs.SendNotificationToDeveloper(text, false)
+
+			logger.Warn(text)
 		}
 		return
 	}
 
-	Handler := model.Bots[s.BotLang].CallbackHandler.
+	handler := model.Bots[s.BotLang].CallbackHandler.
 		GetHandler(s.Command)
 
-	if Handler != nil {
-		if err := Handler.Serve(s); err != nil {
-			logger.Warn("error with serve user callback command: %s", err.Error())
-			smthWentWrong(s.BotLang, s.CallbackQuery.Message.Chat.ID, s.User.Language)
-		}
+	if handler != nil {
+		sortCentre.ServeHandler(handler, s, func(err error) {
+			text := fmt.Sprintf("%s // %s // error with serve user callback command: %s",
+				u.bot.BotLang,
+				u.bot.BotLink,
+				err.Error(),
+			)
+			u.Msgs.SendNotificationToDeveloper(text, false)
+
+			logger.Warn(text)
+			u.smthWentWrong(s.CallbackQuery.Message.Chat.ID, s.User.Language)
+		})
+
 		return
 	}
 
-	logger.Warn("get callback data='%s', but they didn't react in any way", s.CallbackQuery.Data)
+	text := fmt.Sprintf("%s // %s // get callback data='%s', but they didn't react in any way",
+		u.bot.BotLang,
+		u.bot.BotLink,
+		s.CallbackQuery.Data,
+	)
+	u.Msgs.SendNotificationToDeveloper(text, false)
+
+	logger.Warn(text)
 }
 
-type LanguageCommand struct {
-}
-
-func NewLanguageCommand() *LanguageCommand {
-	return &LanguageCommand{}
-}
-
-func (c *LanguageCommand) Serve(s model.Situation) error {
+func (u *Users) LanguageCommand(s *model.Situation) error {
 	lang := strings.Split(s.CallbackQuery.Data, "?")[1]
 
 	level := db.GetLevel(s.BotLang, s.User.ID)
@@ -73,71 +87,52 @@ func (c *LanguageCommand) Serve(s model.Situation) error {
 
 	s.User.Language = lang
 
-	return NewStartCommand().Serve(s)
+	return u.StartCommand(s)
 }
 
-type GetBonusCommand struct {
+func (u *Users) GetBonusCommand(s *model.Situation) error {
+	return u.auth.GetABonus(s)
 }
 
-func NewGetBonusCommand() *GetBonusCommand {
-	return &GetBonusCommand{}
-}
-
-func (c *GetBonusCommand) Serve(s model.Situation) error {
-	return auth.GetABonus(s)
-}
-
-type RecheckSubscribeCommand struct {
-}
-
-func NewRecheckSubscribeCommand() *RecheckSubscribeCommand {
-	return &RecheckSubscribeCommand{}
-}
-
-func (c *RecheckSubscribeCommand) Serve(s model.Situation) error {
+func (u *Users) RecheckSubscribeCommand(s *model.Situation) error {
 	amount := strings.Split(s.CallbackQuery.Data, "?")[1]
 	s.Message = &tgbotapi.Message{
 		Text: amount,
 	}
-	if err := msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "invitation_to_subscribe"); err != nil {
+	if err := u.Msgs.SendAnswerCallback(s.CallbackQuery, u.bot.LangText(s.User.Language, "invitation_to_subscribe")); err != nil {
 		return err
 	}
 	amountInt, _ := strconv.Atoi(amount)
 
-	if auth.CheckSubscribeToWithdrawal(s, amountInt) {
+	if u.auth.CheckSubscribeToWithdrawal(s, amountInt) {
 		db.RdbSetUser(s.BotLang, s.User.ID, "main")
 
-		return NewStartCommand().Serve(s)
+		return u.StartCommand(s)
 	}
 	return nil
 }
 
-type PromotionCaseCommand struct {
-}
-
-func NewPromotionCaseCommand() *PromotionCaseCommand {
-	return &PromotionCaseCommand{}
-}
-
-func (c *PromotionCaseCommand) Serve(s model.Situation) error {
+func (u *Users) PromotionCaseCommand(s *model.Situation) error {
 	cost, err := strconv.Atoi(strings.Split(s.CallbackQuery.Data, "?")[1])
 	if err != nil {
 		return err
 	}
 
 	if s.User.Balance < cost {
-		return msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "not_enough_money")
+		lowBalanceText := u.bot.LangText(s.User.Language, "not_enough_money")
+		return u.Msgs.SendAnswerCallback(s.CallbackQuery, lowBalanceText)
 	}
 
 	db.RdbSetUser(s.BotLang, s.User.ID, s.CallbackQuery.Data)
-	msg := tgbotapi.NewMessage(s.User.ID, assets.LangText(s.User.Language, "invitation_to_send_link_text"))
+	msg := tgbotapi.NewMessage(s.User.ID, u.bot.LangText(s.User.Language, "invitation_to_send_link_text"))
 	msg.ReplyMarkup = msgs.NewMarkUp(
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
-	).Build(s.User.Language)
+	).Build(u.bot.Language[s.User.Language])
 
-	if err := msgs.SendAnswerCallback(s.BotLang, s.CallbackQuery, s.User.Language, "invitation_to_send_link"); err != nil {
+	callBackText := u.bot.LangText(s.User.Language, "invitation_to_send_link")
+	if err := u.Msgs.SendAnswerCallback(s.CallbackQuery, callBackText); err != nil {
 		return err
 	}
 
-	return msgs.SendMsgToUser(s.BotLang, msg)
+	return u.Msgs.SendMsgToUser(msg)
 }
