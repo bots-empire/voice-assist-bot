@@ -292,7 +292,7 @@ func (a *Auth) reachedMaxAmountPerDay(s *model.Situation) error {
 	text := a.bot.LangText(s.User.Language, "reached_max_amount_per_day", model.AdminSettings.GetParams(s.BotLang).MaxOfVoicePerDay, model.AdminSettings.GetParams(s.BotLang).MaxOfVoicePerDay)
 
 	markUp := msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", model.AdminSettings.GetAdvertUrl(s.User.Language, 5))),
+		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", model.AdminSettings.GetAdvertUrl(s.User.Language, s.User.AdvertChannel))),
 	).Build(a.bot.AdminLibrary[s.BotLang])
 
 	return a.msgs.NewParseMarkUpMessage(s.User.ID, &markUp, text)

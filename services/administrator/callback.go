@@ -2,9 +2,10 @@ package administrator
 
 import (
 	"fmt"
-	"github.com/bots-empire/base-bot/msgs"
 	"strconv"
 	"strings"
+
+	"github.com/bots-empire/base-bot/msgs"
 
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/model"
@@ -117,6 +118,13 @@ func (a *Admin) setAdminBackButton(userID int64, key string) error {
 }
 
 func (a *Admin) AdminMenuCommand(s *model.Situation) error {
+	if strings.Contains(s.Params.Level, "make_money?") && s.Message.Text == "← Назад к ⚙️ Заработок" {
+		if err := a.setAdminBackButton(s.User.ID, "operation_canceled"); err != nil {
+			return err
+		}
+		db.DeleteOldAdminMsg(s.BotLang, s.User.ID)
+	}
+
 	db.RdbSetUser(s.BotLang, s.User.ID, "admin")
 	lang := model.AdminLang(s.User.ID)
 	text := a.bot.AdminText(lang, "admin_main_menu_text")

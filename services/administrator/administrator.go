@@ -1,11 +1,12 @@
 package administrator
 
 import (
-	"github.com/bots-empire/base-bot/msgs"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/bots-empire/base-bot/msgs"
 
 	"github.com/Stepan1328/voice-assist-bot/db"
 	"github.com/Stepan1328/voice-assist-bot/model"
@@ -74,11 +75,11 @@ func (a *Admin) NewAdminToListCommand(s *model.Situation) error {
 	return a.msgs.SendAdminAnswerCallback(s.CallbackQuery, "make_a_choice")
 }
 
-func createNewAdminLink(botLang string) string {
+func createNewAdminLink(botLink string) string {
 	key := generateKey()
 	availableKeys[key] = key
 	go deleteKey(key)
-	return model.GetGlobalBot(botLang).BotLink + "?start=new_admin_" + key
+	return botLink + "?start=new_admin_" + key
 }
 
 func generateKey() string {
