@@ -43,7 +43,7 @@ func (a *Auth) CheckingTheUser(message *tgbotapi.Message) (*model.User, error) {
 
 		model.TotalIncome.WithLabelValues(
 			a.bot.BotLink,
-			a.bot.BotLang,
+			a.bot.BotName,
 		).Inc()
 
 		if user.Language == "not_defined" {
@@ -122,7 +122,7 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 
 		model.IncomeBySource.WithLabelValues(
 			a.bot.BotLink,
-			a.bot.BotLang,
+			a.bot.BotName,
 			"unknown",
 		).Inc()
 
@@ -131,7 +131,7 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 
 	model.IncomeBySource.WithLabelValues(
 		a.bot.BotLink,
-		a.bot.BotLang,
+		a.bot.BotName,
 		linkInfo.Source,
 	).Inc()
 

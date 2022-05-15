@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -29,7 +28,7 @@ func (a *Auth) WithdrawMoneyFromBalance(s *model.Situation, amount string) error
 	}
 
 	if amountInt < model.AdminSettings.GetParams(s.BotLang).MinWithdrawalAmount {
-		return a.minAmountNotReached(s.User, s.BotLang)
+		return a.minAmountNotReached(s.User)
 	}
 
 	if s.User.Balance < amountInt {
@@ -40,9 +39,9 @@ func (a *Auth) WithdrawMoneyFromBalance(s *model.Situation, amount string) error
 	return a.sendInvitationToSubs(s, amount)
 }
 
-func (a *Auth) minAmountNotReached(u *model.User, botLang string) error {
-	text := a.bot.LangText(u.Language, "minimum_amount_not_reached")
-	text = fmt.Sprintf(text, model.AdminSettings.GetParams(u.Language).MinWithdrawalAmount)
+func (a *Auth) minAmountNotReached(u *model.User) error {
+	text := a.bot.LangText(u.Language, "minimum_amount_not_reached",
+		model.AdminSettings.GetParams(u.Language).MinWithdrawalAmount)
 
 	return a.msgs.NewParseMessage(u.ID, text)
 }

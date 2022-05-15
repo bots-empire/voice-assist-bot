@@ -237,7 +237,7 @@
       "BlockedUsers": 5671,
       "LangSelectedMap": null,
       "AdvertisingText": {
-        "1": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
+        "1": "🔥GELD VERDIENEN, SOLANGE DER KANAL ÖFFENTLICH ZUGÄNGLICH IST🔥\n\n💶Verdienen Sie ab 5000€ pro Tag mit dem Sender \"Zeit der Gelegenheit\"\n\n✍️Schreiben Sie \"NEULING\" an Paul Müller und er wird Ihnen helfen, in 30 Minuten Geld zu verdienen\n\n✅Passives Einkommen garantiert",
         "2": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
         "3": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern",
         "5": "🔥GELD VERDIENEN, SOLANGE DER KANAL GEÖFFNET IST🔥\n\n🎯Paul Müller auf dem Kanal \"Zeit der Gelegenheit\" hilft jedem, mindestens 6.000€ zu verdienen \n\n📩Schreiben Sie Paul Müller \"NEULING\" und er wird Ihnen helfen, in 15 Minuten 6.000 € zu verdienen\n\n🏆Hunderte von zufriedenen Nutzern"
@@ -406,9 +406,9 @@
       "BlockedUsers": 407,
       "LangSelectedMap": null,
       "AdvertisingText": {
-        "1": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
-        "2": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
-        "3": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ...",
+        "1": "text 1",
+        "2": "text 2",
+        "3": "text 3",
         "5": "💰 GET £4,100 in just a few hours! 💰\n\n😱 Already today Neil on his channel \"Financial Freedom\" will show you how to earn 4,100£!!!\nAll conditions are listed on the channel. Don't miss this opportunity ...\n\n👇 The link will be available within 2 hours. Hurry up ..."
       },
       "AdvertisingPhoto": {},
@@ -522,6 +522,32 @@
         "3": "nothing",
         "5": "nothing"
       }
+    },
+    "ng": {
+      "Parameters": {
+        "BonusAmount": 0,
+        "MinWithdrawalAmount": 0,
+        "VoiceAmount": 0,
+        "MaxOfVoicePerDay": 0,
+        "ReferralAmount": 0,
+        "ButtonUnderAdvert": false,
+        "Currency": ""
+      },
+      "AdvertisingChan": {
+        "url": {
+          "1": "https://google.com",
+          "2": "https://google.com",
+          "3": "https://google.com",
+          "5": "https://google.com"
+        },
+        "channel_id": {}
+      },
+      "BlockedUsers": 0,
+      "LangSelectedMap": null,
+      "AdvertisingText": {},
+      "AdvertisingPhoto": {},
+      "AdvertisingVideo": {},
+      "AdvertisingChoice": {}
     },
     "pt": {
       "Parameters": {

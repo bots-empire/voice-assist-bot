@@ -26,7 +26,7 @@ const (
 var Bots = make(map[string]*GlobalBot)
 
 type GlobalBot struct {
-	BotLang string
+	BotName string
 
 	Bot      *tgbotapi.BotAPI
 	Chanel   tgbotapi.UpdatesChannel
@@ -160,7 +160,7 @@ func FillBotsConfig() {
 	}
 
 	for lang, bot := range Bots {
-		bot.BotLang = lang
+		bot.BotName = lang
 	}
 
 	fmt.Println(Bots)
@@ -168,6 +168,10 @@ func FillBotsConfig() {
 
 func GetGlobalBot(botLang string) *GlobalBot {
 	return Bots[botLang]
+}
+
+func (b *GlobalBot) GetBotLang() string {
+	return b.BotName
 }
 
 func (b *GlobalBot) GetBot() *tgbotapi.BotAPI {
@@ -183,7 +187,7 @@ func (b *GlobalBot) AvailableLang() []string {
 }
 
 func (b *GlobalBot) GetCurrency() string {
-	return AdminSettings.GetCurrency(b.BotLang)
+	return AdminSettings.GetCurrency(b.BotName)
 }
 
 func (b *GlobalBot) LangText(lang, key string, values ...interface{}) string {
@@ -228,9 +232,9 @@ func (b *GlobalBot) GetAdvertisingVideo(lang string, channel int) string {
 }
 
 func (b *GlobalBot) ButtonUnderAdvert() bool {
-	return AdminSettings.GlobalParameters[b.BotLang].Parameters.ButtonUnderAdvert
+	return AdminSettings.GlobalParameters[b.BotName].Parameters.ButtonUnderAdvert
 }
 
 func (b *GlobalBot) AdvertisingChoice(channel int) string {
-	return AdminSettings.GlobalParameters[b.BotLang].AdvertisingChoice[channel]
+	return AdminSettings.GlobalParameters[b.BotName].AdvertisingChoice[channel]
 }

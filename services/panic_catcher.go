@@ -20,7 +20,7 @@ func (u *Users) panicCather(update *tgbotapi.Update) {
 	}
 
 	panicText := fmt.Sprintf("%s // %s\npanic in backend: message = %s\n%s",
-		u.bot.BotLang,
+		u.bot.BotName,
 		u.bot.BotLink,
 		msg,
 		string(debug.Stack()),
