@@ -20,6 +20,10 @@ github.com/bots-empire/base-bot v1.0.4-0.20220514235827-2aafcbf51fc3 h1:1m0WMjUe
 github.com/bots-empire/base-bot v1.0.4-0.20220514235827-2aafcbf51fc3/go.mod h1:PjJxn2XiFthgFN00DkiwjhD4YUhbRxJQaUjp1Exr/x4=
 github.com/bots-empire/base-bot v1.0.4 h1:+Ylq+d0wxSP66JeGQrMkCxrEiGm0/zKt+suK9Z/fIM8=
 github.com/bots-empire/base-bot v1.0.4/go.mod h1:PjJxn2XiFthgFN00DkiwjhD4YUhbRxJQaUjp1Exr/x4=
+github.com/bots-empire/base-bot v1.0.5-0.20220522224924-30d4b7183cd4 h1:ah9DQUtPavBlYWGVF0A6UyfAAWtSfzPTVpDShW/Sdl8=
+github.com/bots-empire/base-bot v1.0.5-0.20220522224924-30d4b7183cd4/go.mod h1:PjJxn2XiFthgFN00DkiwjhD4YUhbRxJQaUjp1Exr/x4=
+github.com/bots-empire/base-bot v1.0.5-0.20220522230951-a9efbd4eaf59 h1:xgv0If3v8dg3AVm++yMZIoLktwsDuhPAcc9inCgcR8U=
+github.com/bots-empire/base-bot v1.0.5-0.20220522230951-a9efbd4eaf59/go.mod h1:PjJxn2XiFthgFN00DkiwjhD4YUhbRxJQaUjp1Exr/x4=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

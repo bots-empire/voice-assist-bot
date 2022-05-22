@@ -36,7 +36,7 @@
   "bonus_already_have": "Vous avez déjà reçu un bonus",
   "bonus_have_received": "Vous avez reçu un bonus",
   "unfinished_action": "Veuillez compléter l'action en cours",
-  "user_level_not_defined": "Désolé, vous êtes perdu, veuillez entrer / démarrer et tout devrait bien se passer.",
+  "user_level_not_defined": "Désolé, vous êtes perdu, veuillez entrer /start et tout devrait bien se passer.",
   "change_lang_button": "Changer de langue \uD83C\uDDEC\uD83C\uDDE7",
   "lang_button": "français \uD83C\uDDEB\uD83C\uDDF7",
   "select_language": "Veuillez sélectionner une langue:",

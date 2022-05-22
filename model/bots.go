@@ -162,8 +162,6 @@ func FillBotsConfig() {
 	for lang, bot := range Bots {
 		bot.BotName = lang
 	}
-
-	fmt.Println(Bots)
 }
 
 func GetGlobalBot(botLang string) *GlobalBot {
@@ -215,8 +213,8 @@ func (b *GlobalBot) AdminText(adminLang, key string) string {
 func (b *GlobalBot) UpdateBlockedUsers(channel int) {
 }
 
-func (b *GlobalBot) GetAdvertURL(userLang string, channel int) string {
-	return AdminSettings.GetAdvertUrl(userLang, channel)
+func (b *GlobalBot) GetAdvertURL(botLang string, channel int) string {
+	return AdminSettings.GetAdvertUrl(botLang, channel)
 }
 
 func (b *GlobalBot) GetAdvertText(userLang string, channel int) string {
@@ -237,4 +235,9 @@ func (b *GlobalBot) ButtonUnderAdvert() bool {
 
 func (b *GlobalBot) AdvertisingChoice(channel int) string {
 	return AdminSettings.GlobalParameters[b.BotName].AdvertisingChoice[channel]
+}
+
+func (b *GlobalBot) BlockUser(userID int64) error {
+	BlockUser.WithLabelValues(b.BotName).Inc()
+	return nil
 }

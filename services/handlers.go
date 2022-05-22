@@ -194,7 +194,7 @@ func (u *Users) checkMessage(situation *model.Situation, logger log.Logger, sort
 	if model.Bots[situation.BotLang].MaintenanceMode {
 		if situation.User.ID != godUserID {
 			msg := tgbotapi.NewMessage(situation.User.ID, "The bot is under maintenance, please try again later")
-			_ = u.Msgs.SendMsgToUser(msg)
+			_ = u.Msgs.SendMsgToUser(msg, situation.User.ID)
 			return
 		}
 	}
@@ -255,12 +255,12 @@ func (u *Users) checkMessage(situation *model.Situation, logger log.Logger, sort
 
 func (u *Users) smthWentWrong(chatID int64, lang string) {
 	msg := tgbotapi.NewMessage(chatID, u.bot.LangText(lang, "user_level_not_defined"))
-	_ = u.Msgs.SendMsgToUser(msg)
+	_ = u.Msgs.SendMsgToUser(msg, chatID)
 }
 
 func (u *Users) emptyLevel(message *tgbotapi.Message, lang string) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, u.bot.LangText(lang, "user_level_not_defined"))
-	_ = u.Msgs.SendMsgToUser(msg)
+	_ = u.Msgs.SendMsgToUser(msg, message.Chat.ID)
 }
 
 func createMainMenu() msgs.MarkUp {
@@ -317,7 +317,7 @@ func (u *Users) SelectLangCommand(s *model.Situation) error {
 	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = u.createLangMenu(model.GetGlobalBot(s.BotLang).LanguageInBot)
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) createLangMenu(languages []string) tgbotapi.InlineKeyboardMarkup {
@@ -346,7 +346,7 @@ func (u *Users) StartCommand(s *model.Situation) error {
 	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = createMainMenu().Build(u.bot.Language[s.User.Language])
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) SpendMoneyWithdrawalCommand(s *model.Situation) error {
@@ -373,7 +373,7 @@ func (u *Users) PaypalReqCommand(s *model.Situation) error {
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(u.bot.Language[s.User.Language])
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) CreditCardReqCommand(s *model.Situation) error {
@@ -384,7 +384,7 @@ func (u *Users) CreditCardReqCommand(s *model.Situation) error {
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(u.bot.Language[s.User.Language])
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) WithdrawalMethodCommand(s *model.Situation) error {
@@ -395,7 +395,7 @@ func (u *Users) WithdrawalMethodCommand(s *model.Situation) error {
 		msgs.NewRow(msgs.NewDataButton("withdraw_cancel")),
 	).Build(u.bot.Language[s.User.Language])
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) ReqWithdrawalAmountCommand(s *model.Situation) error {
@@ -403,7 +403,7 @@ func (u *Users) ReqWithdrawalAmountCommand(s *model.Situation) error {
 
 	msg := tgbotapi.NewMessage(s.User.ID, u.bot.LangText(s.User.Language, "req_withdrawal_amount"))
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (u *Users) WithdrawalAmountCommand(s *model.Situation) error {
@@ -437,7 +437,7 @@ func (u *Users) MakeMoneyCommand(s *model.Situation) error {
 		msg := tgbotapi.NewMessage(s.User.ID, text)
 		msg.ReplyMarkup = createMainMenu().Build(u.bot.Language[s.User.Language])
 
-		return u.Msgs.SendMsgToUser(msg)
+		return u.Msgs.SendMsgToUser(msg, s.User.ID)
 	}
 
 	return nil
@@ -446,7 +446,7 @@ func (u *Users) MakeMoneyCommand(s *model.Situation) error {
 func (u *Users) MakeMoneyMsgCommand(s *model.Situation) error {
 	if s.Message.Voice == nil {
 		msg := tgbotapi.NewMessage(s.Message.Chat.ID, u.bot.LangText(s.User.Language, "voice_not_recognized"))
-		_ = u.Msgs.SendMsgToUser(msg)
+		_ = u.Msgs.SendMsgToUser(msg, s.User.ID)
 		return nil
 	}
 
@@ -479,5 +479,5 @@ func (u *Users) simpleAdminMsg(s *model.Situation, key string) error {
 	text := u.bot.AdminText(lang, key)
 	msg := tgbotapi.NewMessage(s.User.ID, text)
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }

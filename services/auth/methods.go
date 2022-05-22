@@ -24,7 +24,7 @@ func (a *Auth) WithdrawMoneyFromBalance(s *model.Situation, amount string) error
 	amountInt, err := strconv.Atoi(amount)
 	if err != nil {
 		msg := tgbotapi.NewMessage(s.User.ID, a.bot.LangText(s.User.Language, "incorrect_amount"))
-		return a.msgs.SendMsgToUser(msg)
+		return a.msgs.SendMsgToUser(msg, s.User.ID)
 	}
 
 	if amountInt < model.AdminSettings.GetParams(s.BotLang).MinWithdrawalAmount {
@@ -33,7 +33,7 @@ func (a *Auth) WithdrawMoneyFromBalance(s *model.Situation, amount string) error
 
 	if s.User.Balance < amountInt {
 		msg := tgbotapi.NewMessage(s.User.ID, a.bot.LangText(s.User.Language, "lack_of_funds"))
-		return a.msgs.SendMsgToUser(msg)
+		return a.msgs.SendMsgToUser(msg, s.User.ID)
 	}
 
 	return a.sendInvitationToSubs(s, amount)
@@ -51,11 +51,11 @@ func (a *Auth) sendInvitationToSubs(s *model.Situation, amount string) error {
 
 	msg := tgbotapi.NewMessage(s.User.ID, text)
 	msg.ReplyMarkup = msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", model.AdminSettings.GetAdvertUrl(s.User.Language, 1))),
+		msgs.NewIlRow(msgs.NewIlURLButton("advertising_button", model.AdminSettings.GetAdvertUrl(s.BotLang, s.User.AdvertChannel))),
 		msgs.NewIlRow(msgs.NewIlDataButton("im_subscribe_button", "/withdrawal_money?"+amount)),
-	).Build(a.bot.AdminLibrary[s.BotLang])
+	).Build(a.bot.Language[s.User.Language])
 
-	return a.msgs.SendMsgToUser(msg)
+	return a.msgs.SendMsgToUser(msg, s.User.ID)
 }
 
 func (a *Auth) CheckSubscribeToWithdrawal(s *model.Situation, amount int) bool {
@@ -82,7 +82,7 @@ WHERE id = ?;`,
 	_ = rows.Close()
 
 	msg := tgbotapi.NewMessage(s.User.ID, a.bot.LangText(s.User.Language, "successfully_withdrawn"))
-	_ = a.msgs.SendMsgToUser(msg)
+	_ = a.msgs.SendMsgToUser(msg, s.User.ID)
 	return true
 }
 
@@ -292,8 +292,8 @@ func (a *Auth) reachedMaxAmountPerDay(s *model.Situation) error {
 	text := a.bot.LangText(s.User.Language, "reached_max_amount_per_day", model.AdminSettings.GetParams(s.BotLang).MaxOfVoicePerDay, model.AdminSettings.GetParams(s.BotLang).MaxOfVoicePerDay)
 
 	markUp := msgs.NewIlMarkUp(
-		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", model.AdminSettings.GetAdvertUrl(s.User.Language, s.User.AdvertChannel))),
-	).Build(a.bot.AdminLibrary[s.BotLang])
+		msgs.NewIlRow(msgs.NewIlURLButton("advertisement_button_text", model.AdminSettings.GetAdvertUrl(s.BotLang, s.User.AdvertChannel))),
+	).Build(a.bot.Language[s.User.Language])
 
 	return a.msgs.NewParseMarkUpMessage(s.User.ID, &markUp, text)
 }

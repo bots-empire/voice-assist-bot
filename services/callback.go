@@ -135,5 +135,5 @@ func (u *Users) PromotionCaseCommand(s *model.Situation) error {
 		return err
 	}
 
-	return u.Msgs.SendMsgToUser(msg)
+	return u.Msgs.SendMsgToUser(msg, s.User.ID)
 }

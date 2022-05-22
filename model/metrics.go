@@ -47,4 +47,12 @@ var (
 		},
 		[]string{"bot_link", "bot_name", "advert_link", "source"},
 	)
+
+	BlockUser = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "total_block_users",
+			Help: "Total blocked users",
+		},
+		[]string{"bot_name"},
+	)
 )
