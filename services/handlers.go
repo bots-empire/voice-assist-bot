@@ -86,12 +86,12 @@ func (u *Users) checkUpdate(update *tgbotapi.Update, logger log.Logger, sortCent
 		if err == model.ErrNotSelectedLanguage {
 			command = "/select_language"
 		} else if err != nil {
-			u.smthWentWrong(update.Message.Chat.ID, u.bot.BotName)
+			u.smthWentWrong(update.Message.Chat.ID, u.bot.BotLang)
 			logger.Warn("err with check user: %s", err.Error())
 			return
 		}
 
-		situation := createSituationFromMsg(u.bot.BotName, update.Message, user)
+		situation := createSituationFromMsg(u.bot.BotLang, update.Message, user)
 		situation.Command = command
 
 		u.checkMessage(&situation, logger, sortCentre)
@@ -102,13 +102,13 @@ func (u *Users) checkUpdate(update *tgbotapi.Update, logger log.Logger, sortCent
 		if strings.Contains(update.CallbackQuery.Data, "/language") {
 			err := u.auth.SetStartLanguage(update.CallbackQuery)
 			if err != nil {
-				u.smthWentWrong(update.CallbackQuery.Message.Chat.ID, u.bot.BotName)
+				u.smthWentWrong(update.CallbackQuery.Message.Chat.ID, u.bot.BotLang)
 				logger.Warn("err with set start language: %s", err.Error())
 			}
 		}
-		situation, err := u.createSituationFromCallback(u.bot.BotName, update.CallbackQuery)
+		situation, err := u.createSituationFromCallback(u.bot.BotLang, update.CallbackQuery)
 		if err != nil {
-			u.smthWentWrong(update.CallbackQuery.Message.Chat.ID, u.bot.BotName)
+			u.smthWentWrong(update.CallbackQuery.Message.Chat.ID, u.bot.BotLang)
 			logger.Warn("err with create situation from callback: %s", err.Error())
 			return
 		}
@@ -131,12 +131,12 @@ func (u *Users) printNewUpdate(update *tgbotapi.Update, logger log.Logger) {
 
 	model.HandleUpdates.WithLabelValues(
 		u.bot.BotLink,
-		u.bot.BotName,
+		u.bot.BotLang,
 	).Inc()
 
 	if update.Message != nil {
 		if update.Message.Text != "" {
-			logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotName, update.Message.Text)
+			logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotLang, update.Message.Text)
 			return
 		}
 	}
@@ -146,11 +146,11 @@ func (u *Users) printNewUpdate(update *tgbotapi.Update, logger log.Logger) {
 			return
 		}
 
-		logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotName, update.CallbackQuery.Data)
+		logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotLang, update.CallbackQuery.Data)
 		return
 	}
 
-	logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotName, extraneousUpdate)
+	logger.Info(updatePrintHeader, model.UpdateStatistic.Counter, u.bot.BotLang, extraneousUpdate)
 }
 
 func (u *Users) sendTodayUpdateMsg() {
@@ -210,7 +210,7 @@ func (u *Users) checkMessage(situation *model.Situation, logger log.Logger, sort
 		if handler != nil {
 			sortCentre.ServeHandler(handler, situation, func(err error) {
 				text := fmt.Sprintf("%s // %s // error with serve user msg command: %s",
-					u.bot.BotName,
+					u.bot.BotLang,
 					u.bot.BotLink,
 					err.Error(),
 				)
@@ -231,7 +231,7 @@ func (u *Users) checkMessage(situation *model.Situation, logger log.Logger, sort
 	if handler != nil {
 		sortCentre.ServeHandler(handler, situation, func(err error) {
 			text := fmt.Sprintf("%s // %s // error with serve user level command: %s",
-				u.bot.BotName,
+				u.bot.BotLang,
 				u.bot.BotLink,
 				err.Error(),
 			)

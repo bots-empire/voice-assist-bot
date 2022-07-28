@@ -32,7 +32,7 @@
   "minimum_amount_not_reached": "Error! Minimum withdrawal amount is %d {{currency}}.\n\nSpecify the withdrawal amount \uD83D\uDC47",
   "successfully_withdrawn": "✅ The request was sent to the payment gateway...\n\nIl Payment can take up to 3 business days !",
   "referral_text": "💼 Get bonus money for invited friends\n📲 Send a link to a friend - %s\n\n%d {{currency}} - you get for each invited friend.\n\n\nYou have invited:  %d (number of people)",
-  "more_money_text": "❓DO YOU WANT %dC$ FOR A SUBSCRIPTION TO THE CHANNEL?!\n\n\uD83D\uDC49Subscribe to the channel and view the new entries, and then click on the \"get funds\" button. You will receive %dC$\n\n❗️ Attention: if you cancel your subscription to the sponsor's channel, payment will not be made\n",
+  "more_money_text": "❓DO YOU WANT %d {{currency}} FOR A SUBSCRIPTION TO THE CHANNEL?!\n\n\uD83D\uDC49Subscribe to the channel and view the new entries, and then click on the \"get funds\" button. You will receive %d {{currency}}\n\n❗️ Attention: if you cancel your subscription to the sponsor's channel, payment will not be made\n",
   "bonus_already_have": "You already have got a bonus",
   "bonus_have_received": "You have received a bonus",
   "unfinished_action": "Please complete the current action",

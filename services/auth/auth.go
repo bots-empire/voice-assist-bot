@@ -43,7 +43,7 @@ func (a *Auth) CheckingTheUser(message *tgbotapi.Message) (*model.User, error) {
 
 		model.TotalIncome.WithLabelValues(
 			a.bot.BotLink,
-			a.bot.BotName,
+			a.bot.BotLang,
 		).Inc()
 
 		if user.Language == "not_defined" {
@@ -95,9 +95,36 @@ func (a *Auth) addNewUser(user *model.User, botLang string, referralID int64) er
 	if err != nil {
 		return errors.Wrap(err, "get user")
 	}
+
+	// TODO: refactor accrual system
+
 	baseUser.Balance += model.AdminSettings.GetParams(botLang).ReferralAmount
 	rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
+
+	var lvl int = 4
+	for lvl != 0 {
+		var x, y int
+		if baseUser.ReferralID != 0 {
+			baseUser, err := a.GetUser(referralID)
+			if err != nil {
+				return errors.Wrap(err, "get user")
+			}
+
+			//TODO: обновить бонус
+
+			value := model.AdminSettings.GetParams(botLang).ReferralAmount * x * y
+			model.AdminSettings.UpdateReferralAmount("it", value)
+
+			baseUser.Balance += model.AdminSettings.GetParams(botLang).ReferralAmount
+			rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
+				baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
+		}
+		y++
+		break
+		lvl--
+	}
+
 	if err != nil {
 		text := "Fatal Err with DB - auth.85 //" + err.Error()
 		a.msgs.SendNotificationToDeveloper(text, false)
@@ -122,7 +149,7 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 
 		model.IncomeBySource.WithLabelValues(
 			a.bot.BotLink,
-			a.bot.BotName,
+			a.bot.BotLang,
 			"unknown",
 		).Inc()
 
@@ -131,7 +158,7 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 
 	model.IncomeBySource.WithLabelValues(
 		a.bot.BotLink,
-		a.bot.BotName,
+		a.bot.BotLang,
 		linkInfo.Source,
 	).Inc()
 
@@ -143,6 +170,7 @@ func createSimpleUser(lang string, message *tgbotapi.Message) *model.User {
 		ID:            message.From.ID,
 		Language:      lang,
 		AdvertChannel: rand.Intn(3) + 1,
+		Status:        "active",
 	}
 }
 
@@ -166,29 +194,23 @@ func (a *Auth) ReadUsers(rows *sql.Rows) ([]*model.User, error) {
 	var users []*model.User
 
 	for rows.Next() {
-		var (
-			id                                                               int64
-			balance, completed, completedToday, advertChannel, referralCount int
-			lastVoice                                                        int64
-			takeBonus                                                        bool
-			lang                                                             string
-		)
+		user := &model.User{}
 
-		if err := rows.Scan(&id, &balance, &completed, &completedToday, &lastVoice, &advertChannel, &referralCount, &takeBonus, &lang); err != nil {
+		if err := rows.Scan(
+			&user.ID,
+			&user.Balance,
+			&user.Completed,
+			&user.CompletedToday,
+			&user.LastVoice,
+			&user.AdvertChannel,
+			&user.ReferralCount,
+			&user.TakeBonus,
+			&user.Language,
+			&user.Status); err != nil {
 			a.msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error(), false)
 		}
 
-		users = append(users, &model.User{
-			ID:             id,
-			Balance:        balance,
-			Completed:      completed,
-			CompletedToday: completedToday,
-			LastVoice:      lastVoice,
-			AdvertChannel:  advertChannel,
-			ReferralCount:  referralCount,
-			TakeBonus:      takeBonus,
-			Language:       lang,
-		})
+		users = append(users, user)
 	}
 
 	return users, nil

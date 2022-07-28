@@ -10,4 +10,5 @@ type User struct {
 	ReferralCount  int    `json:"referral_count"`
 	TakeBonus      bool   `json:"take_bonus"`
 	Language       string `json:"language"`
+	Status         string `json:"status"`
 }

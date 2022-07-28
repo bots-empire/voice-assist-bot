@@ -512,11 +512,10 @@ func (a *Admin) promptForInput(userID int64, key string, values ...interface{}) 
 func (a *Admin) StatisticCommand(s *model.Situation) error {
 	lang := model.AdminLang(s.User.ID)
 
-	count := a.countUsers(s.BotLang)
+	count := a.countUsers()
 	allCount := a.countAllUsers()
 	referrals := a.countReferrals(s.BotLang, count)
-	//lastDayUsers := countUserFromLastDay(s.BotLang)
-	blocked := countBlockedUsers(s.BotLang)
+	blocked := a.countBlockedUsers(s.BotLang)
 	subscribers := a.countSubscribers(s.BotLang)
 	text := a.adminFormatText(lang, "statistic_text",
 		allCount, count, referrals, blocked, subscribers, count-blocked)

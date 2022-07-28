@@ -38,7 +38,7 @@ func (u *Users) checkCallbackQuery(s *model.Situation, logger log.Logger, sortCe
 	if strings.Contains(s.Params.Level, "admin") {
 		if err := u.admin.CheckAdminCallback(s); err != nil {
 			text := fmt.Sprintf("%s // %s // error with serve admin callback command: %s",
-				u.bot.BotName,
+				u.bot.BotLang,
 				u.bot.BotLink,
 				err.Error(),
 			)
@@ -55,7 +55,7 @@ func (u *Users) checkCallbackQuery(s *model.Situation, logger log.Logger, sortCe
 	if handler != nil {
 		sortCentre.ServeHandler(handler, s, func(err error) {
 			text := fmt.Sprintf("%s // %s // error with serve user callback command: %s",
-				u.bot.BotName,
+				u.bot.BotLang,
 				u.bot.BotLink,
 				err.Error(),
 			)
@@ -69,7 +69,7 @@ func (u *Users) checkCallbackQuery(s *model.Situation, logger log.Logger, sortCe
 	}
 
 	text := fmt.Sprintf("%s // %s // get callback data='%s', but they didn't react in any way",
-		u.bot.BotName,
+		u.bot.BotLang,
 		u.bot.BotLink,
 		s.CallbackQuery.Data,
 	)

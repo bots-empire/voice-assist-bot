@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-redis/redis"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/Stepan1328/voice-assist-bot/cfg"
 
@@ -21,12 +22,14 @@ const (
 	tokensPath       = "./cfg/tokens.json"
 	dbDriver         = "mysql"
 	redisDefaultAddr = "127.0.0.1:6379"
+
+	statusDeleted = "deleted"
 )
 
 var Bots = make(map[string]*GlobalBot)
 
 type GlobalBot struct {
-	BotName string
+	BotLang string `json:"bot_lang"`
 
 	Bot      *tgbotapi.BotAPI
 	Chanel   tgbotapi.UpdatesChannel
@@ -77,7 +80,15 @@ func UploadDataBase(dbLang string) *sql.DB {
 		log.Fatalf("Failed open database: %s\n", err.Error())
 	}
 
-	dataBase.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS advert_channel int NOT NULL AFTER last_voice;")
+	_, err = dataBase.Exec("ALTER TABLE users ADD COLUMN status text NOT NULL;")
+	if err != nil && err.Error() != "Error 1060: Duplicate column name 'status'" {
+		log.Fatalln(err)
+	}
+
+	_, err = dataBase.Exec("UPDATE users SET status = 'active' WHERE status = '';")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	TakeAllUsers(dataBase)
 
@@ -120,12 +131,12 @@ func ReadUser(rows *sql.Rows) ([]*User, error) {
 			&user.Balance,
 			&user.Completed,
 			&user.CompletedToday,
-			user.LastVoice,
+			&user.LastVoice,
 			&user.AdvertChannel,
 			&user.ReferralCount,
 			&user.TakeBonus,
 			&user.Language,
-		); err != nil {
+			&user.Status); err != nil {
 			//msgs.SendNotificationToDeveloper(errors.Wrap(err, "failed to scan row").Error())
 		}
 
@@ -160,7 +171,7 @@ func FillBotsConfig() {
 	}
 
 	for lang, bot := range Bots {
-		bot.BotName = lang
+		bot.BotLang = lang
 	}
 }
 
@@ -169,7 +180,7 @@ func GetGlobalBot(botLang string) *GlobalBot {
 }
 
 func (b *GlobalBot) GetBotLang() string {
-	return b.BotName
+	return b.BotLang
 }
 
 func (b *GlobalBot) GetBot() *tgbotapi.BotAPI {
@@ -185,7 +196,7 @@ func (b *GlobalBot) AvailableLang() []string {
 }
 
 func (b *GlobalBot) GetCurrency() string {
-	return AdminSettings.GetCurrency(b.BotName)
+	return AdminSettings.GetCurrency(b.BotLang)
 }
 
 func (b *GlobalBot) LangText(lang, key string, values ...interface{}) string {
@@ -230,14 +241,29 @@ func (b *GlobalBot) GetAdvertisingVideo(lang string, channel int) string {
 }
 
 func (b *GlobalBot) ButtonUnderAdvert() bool {
-	return AdminSettings.GlobalParameters[b.BotName].Parameters.ButtonUnderAdvert
+	return AdminSettings.GlobalParameters[b.BotLang].Parameters.ButtonUnderAdvert
 }
 
 func (b *GlobalBot) AdvertisingChoice(channel int) string {
-	return AdminSettings.GlobalParameters[b.BotName].AdvertisingChoice[channel]
+	return AdminSettings.GlobalParameters[b.BotLang].AdvertisingChoice[channel]
 }
 
 func (b *GlobalBot) BlockUser(userID int64) error {
-	BlockUser.WithLabelValues(b.BotName).Inc()
-	return nil
+	_, err := b.GetDataBase().Exec(`
+UPDATE users
+	SET status = ?
+WHERE id = ?`,
+		statusDeleted,
+		userID)
+
+	return err
+}
+
+func (b *GlobalBot) GetMetrics(metricKey string) *prometheus.CounterVec {
+	metricsByKey := map[string]*prometheus.CounterVec{
+		"total_mailing_users": MailToUser,
+		"total_block_users":   BlockUser,
+	}
+
+	return metricsByKey[metricKey]
 }
