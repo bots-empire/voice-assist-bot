@@ -9,7 +9,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (a *Admin) countUsers() int {
+const (
+	getUsersCountQuery    = "SELECT COUNT(*) FROM users;"
+	getDistinctUsersQuery = "SELECT COUNT(DISTINCT id) FROM subs;"
+)
+
+func (a *Admin) CountUsers() int {
 	rows, err := a.bot.GetDataBase().Query(`
 SELECT COUNT(*) FROM users;`)
 	if err != nil {

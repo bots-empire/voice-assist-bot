@@ -5,6 +5,7 @@
   "main_statistic": "📊 Statistique",
   "main_withdrawal_of_money": "💳 Retrait de fonds",
   "main_money_for_a_friend": "💼 Argent pour inviter un ami",
+  "main_top_players": "\uD83D\uDD1D Meilleurs joueurs",
   "main_more_money": "💰 Plus d'argent",
   "main_back": "⬅️ Arrière",
   "back_to_main_menu_button": "⬅️ Menu principal",
@@ -50,5 +51,11 @@
   "invitation_to_subscribe": "Nous avons vérifié votre abonnement",
   "user_dont_subscribe": "Vous n'êtes pas abonné à la chaîne",
   "invalid_link_err": "Erreur, le lien n'est pas valide",
-  "select_lang_menu": "Veuillez sélectionner une langue"
+  "select_lang_menu": "Veuillez sélectionner une langue",
+  "top_players": "\uD83D\uDCE3 <b> Aujourd'hui, vous êtes dans %d à la place \uD83C\uDFC6</b>\n\n<b>\uD83C\uDF81 Pour recevoir une récompense, vous devez faire partie des 3 meilleurs joueurs pour l'équilibre</b> \uD83C\uDF81\n------------------\n <b>Top \uD83E\uDD47</b>\n <b> Besoin d'équilibre</b>: %d {{currency}}\n <b>Bounty</b>: %d {{currency}}\n------------------ \n <b>Main \uD83E\uDD48</b>\n <b>Besoin d'équilibre</b>: %d {{currency}}\n <b>Bounty</b>: %d {{currency}}\n------------------\n <b>Top \uD83E\uDD49</b>\n <b>Besoin d'équilibre</b>: %d {{currency}}\n <b>Bounty</b>: %d {{currency}}\n\n\n <b> équilibre</b>: %d {{currency}}\nle joueur qui est au-dessus dans %d a plutôt un équilibre de: %d {{currency}}",
+  "top_3_players_main": "\uD83C\uDF89 <b>Félicitations, aujourd'hui vous\uD83D \uDD1D %d\uD83D\uDD1D joueur pour l'équilibre</b>\n <b> équilibre</b>: %d {{currency}}\n\n<b>votre récompense: %d {{currency}}</b>\n\n------------------\n <b>Top \uD83E\uDD47</b>\n <b>Prime</b>: %d{{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}\n------ ------------ \n<b>Top\uD83E\uDD48</b> \n <b>Prime</b>: %d {{currency}}\n<b>Besoin d'équilibre </b>: %d {{currency}}\n------------------\n<b>Up \uD83E\uDD49</b>\n <b> Bounty</b>: %d {{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}\n\n vous pouvez réclamer votre récompense par la poste à partir de la fin-haut",
+  "top_3_players": "\uD83C\uDF89 <b>Félicitations, aujourd'hui vous\uD83D \uDD1D %d\uD83D\uDD1D joueur pour l'équilibre</b> \n <b> équilibre</b>: %d {{currency}}\n\n<b>votre récompense: %d {{currency}}</b>\n\n------------------\n <b>Top \uD83E\uDD47</b>\n <b>Prime</b>: %d{{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}\n------ ------------\n <b>Top \uD83E\uDD48</b>\n <b>Prime</b>: %d {{currency}}\n<b>Besoin d'équilibre </b>: %d {{currency}}\n------------------\n <b>Up \uD83E\uDD49</b>\n<b> Prime</b>: %d {{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}",
+  "top_3_players_reward_taken": "\uD83C\uDF89 <b>Félicitations ,vous\uD83D \uDD1D %d\uD83D\uDD1D joueur pour solde</b> \n <b> solde</b>: %d {{currency}} \n\n<b>La récompense d'aujourd'hui a déjà été récupérée matin ✅</b>\n\n------------------\n <b>Top \uD83E\uDD47 </b>\n <b>Prime</b>: %d{{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}\n--------- ---------\n<b>Main \uD83E\uDD48</b>\n <b>Prime</b>: %d {{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}\n------------------\n <b>Top \uD83E\uDD49</b>\n <b>Prime</b>: %d {{currency}}\n<b>Besoin d'équilibre</b>: %d {{currency}}",
+  "got_reward": "Vous avez reçu une récompense! ✅",
+  "get_reward": "\uD83C\udf81cliquez pour recevoir la récompense! \uD83C\uDF81"
 }

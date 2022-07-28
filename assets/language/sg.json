@@ -5,6 +5,7 @@
   "main_statistic": "📊 Statistics",
   "main_withdrawal_of_money": "💳 Withdrawal of money",
   "main_money_for_a_friend": "💼 Money for a friend",
+  "main_top_players" : "\uD83D\uDD1D Pemain terbaik",
   "main_more_money": "💰 More money",
   "main_back": "⬅️ Back",
   "back_to_main_menu_button": "⬅️ Main menu",
@@ -50,5 +51,11 @@
   "invitation_to_subscribe": "We checked your subscription",
   "user_dont_subscribe": "you are not subscribed to the channel",
   "invalid_link_err": "Error, link is invalid",
-  "select_lang_menu": "Please select a language"
+  "select_lang_menu": "Please select a language",
+  "top_players" : "\uD83D\uDCE3 <b>Hari ini anda berada di %d tempat \uD83C\uDFC6</b>\n\n<b>\uD83C\uDF81 Untuk menerima ganjaran, anda mesti berada dalam 3 Teratas pemain mengikut keseimbangan</b> \uD83C\uDF81\n------------------\n<b>Top \uD83E\uDD47</b>\n<b> Perlukan baki</b>: %d {{currency}}\n<b>Ganjaran</b>: %d {{currency}}\n---------------- --\n<b>Top \uD83E\uDD48</b>\n<b>Memerlukan baki</b>: %d {{currency}}\n<b>Ganjaran</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Memerlukan baki</b>: % d {{currency}}\n<b>Ganjaran</b>: %d {{currency}}\n\n\n<b>Baki anda</b>: %d {{currency}}\nPemain di atas anda di %d tempat mempunyai baki: %d {{currency}}",
+  "top_3_players_main" : "\uD83C\uDF89 <b>Tahniah hari ini anda adalah \uD83D\uDD1D %d \uD83D\uDD1D pemain mengikut baki</b>\n<b>Baki anda</b>: %d {{currency}}\n\n<b>ganjaran anda: %d {{currency}}</b>\n\n-------------------\n<b> \uD83E\uDD47</b>\n<b>Ganjaran</b>: %d{{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}\n-- ----------------\n<b>Top \uD83E\uDD48</b>\n<b>Ganjaran</b>: %d {{currency}}\n <b>Memerlukan baki</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Ganjaran</b>: %d {{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}\n\n Anda boleh menuntut ganjaran anda pada waktu petang mel atas",
+  "top_3_players" : "\uD83C\uDF89 <b>Tahniah hari ini anda adalah \uD83D\uDD1D %d \uD83D\uDD1D pemain mengikut baki</b>\n<b>Baki anda</b>: %d {{currency}}\n\n<b>ganjaran anda: %d {{currency}}</b>\n\n-------------------\n<b> \uD83E\uDD47</b>\n<b>Ganjaran</b>: %d{{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}\n-- ----------------\n<b>Top \uD83E\uDD48</b>\n<b>Ganjaran</b>: %d {{currency}}\n <b>Memerlukan baki</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Ganjaran</b>: %d {{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}",
+  "top_3_players_reward_taken" : "\uD83C\uDF89 <b>Tahniah anda adalah \uD83D\uDD1D %d \uD83D\uDD1D pemain mengikut baki</b>\n<b>Baki anda</b>: %d {{currency}}\n\n<b>Ganjaran hari ini sudah diambil semula esok ✅</b>\n\n-------------------\n<b>Top \uD83E\uDD47</b>\n<b>Ganjaran</b>: %d{{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}\n------ ------------\n<b>Top \uD83E\uDD48</b>\n<b>Ganjaran</b>: %d {{currency}}\n<b>Perlu baki</b>: %d {{{{currency}}}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Ganjaran</b>: %d {{currency}}\n<b>Memerlukan baki</b>: %d {{currency}}",
+  "got_reward" : "Anda menerima ganjaran! ✅",
+  "get_reward" : "\uD83C\uDF81 Klik untuk mengambil ganjaran! \uD83C\uDF81"
 }

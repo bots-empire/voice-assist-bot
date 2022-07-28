@@ -22,6 +22,8 @@
   "withdrawal_method_5": "/credit_card_method",
   "main_back" : "/start",
   "moreMoney/getBonus": "moreMoney/getBonus",
+  "main_top_players": "/main_top_players",
+
 
   "/make_money" : "/make_money",
 

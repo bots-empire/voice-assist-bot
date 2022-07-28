@@ -11,6 +11,7 @@ require (
 	github.com/mbndr/figlet4go v0.0.0-20190224160619-d6cef5b186ea
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.2
+	github.com/roylee0704/gron v0.0.0-20160621042432-e78485adab46
 )
 
 require (

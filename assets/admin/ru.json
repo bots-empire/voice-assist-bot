@@ -10,6 +10,13 @@
   "setting_advertisement_button": "⚙️ Реклама \uD83D\uDCB5",
   "setting_statistic_button": "Статистика \uD83D\uDCCA",
   "back_to_main_menu": "← Назад в главное меню",
+  "change_change_top_amount_button" : "Награда за топ \uD83D\uDD1D",
+  "top_level_button": "⬇️ Топ ⬇️",
+  "top_amount_button" : "⬇ Награда за топ ⬇",
+  "not_clickable_button": "Кнопка информации ℹ️",
+  "change_top_settings_button": "Награда за топ \uD83D\uDD1D\n\nВы можете изменить данные ⤵",
+  "already_min_level": "Нет уровня ниже",
+  "already_max_level": "Уже последний уровень",
 
   "admin_setting_text": "<b>Настройки Администраторов</b> \uD83E\uDD34️\n\nВыберите интересующий вас раздел:",
   "setting_language_button": "Язык \uD83C\uDDF7\uD83C\uDDFA",

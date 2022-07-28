@@ -80,7 +80,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 500,
         "ButtonUnderAdvert": true,
-        "Currency": "AR$"
+        "Currency": "AR$",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -131,7 +132,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 150,
         "ButtonUnderAdvert": true,
-        "Currency": "BRL"
+        "Currency": "BRL",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -177,7 +179,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 45,
         "ButtonUnderAdvert": true,
-        "Currency": "USD"
+        "Currency": "USD",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -218,7 +221,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 100,
         "ButtonUnderAdvert": true,
-        "Currency": "EUR"
+        "Currency": "EUR",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -264,7 +268,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 15,
         "ButtonUnderAdvert": false,
-        "Currency": "$"
+        "Currency": "$",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -300,7 +305,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 50,
         "ButtonUnderAdvert": true,
-        "Currency": "EUR"
+        "Currency": "EUR",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -341,7 +347,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 100,
         "ButtonUnderAdvert": true,
-        "Currency": "EUR"
+        "Currency": "EUR",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -387,7 +394,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 100,
         "ButtonUnderAdvert": true,
-        "Currency": "£"
+        "Currency": "£",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -423,7 +431,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 3000,
         "ButtonUnderAdvert": false,
-        "Currency": "INR"
+        "Currency": "INR",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -449,7 +458,12 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 50,
         "ButtonUnderAdvert": true,
-        "Currency": "€"
+        "Currency": "€",
+        "top_reward": [
+          10,
+          10,
+          10
+        ]
       },
       "AdvertisingChan": {
         "url": {
@@ -485,7 +499,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 150,
         "ButtonUnderAdvert": true,
-        "Currency": "$"
+        "Currency": "$",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -531,7 +546,8 @@
         "MaxOfVoicePerDay": 0,
         "ReferralAmount": 0,
         "ButtonUnderAdvert": false,
-        "Currency": ""
+        "Currency": "",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {
@@ -557,7 +573,8 @@
         "MaxOfVoicePerDay": 20,
         "ReferralAmount": 100,
         "ButtonUnderAdvert": false,
-        "Currency": "EUR"
+        "Currency": "EUR",
+        "top_reward": null
       },
       "AdvertisingChan": {
         "url": {

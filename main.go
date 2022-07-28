@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/roylee0704/gron"
+	"github.com/roylee0704/gron/xtime"
 	"math/rand"
 	"net/http"
 	"sync"
@@ -42,7 +44,7 @@ func startAllBot(log log.Logger) []*services.Users {
 	for lang, globalBot := range model.Bots {
 		startBot(globalBot, log, lang)
 
-		service := msgs.NewService(globalBot, []int64{872383555, 1418862576, -1001683837960})
+		service := msgs.NewService(globalBot, []int64{872383555, 1418862576, -1001736803459})
 
 		authSrv := auth.NewAuthService(globalBot, service)
 		mail := mailing.NewService(service, 100)
@@ -92,16 +94,24 @@ func startPrometheusHandler(logger log.Logger) {
 
 func startHandlers(srvs []*services.Users, logger log.Logger) {
 	wg := new(sync.WaitGroup)
+	cron := gron.New()
+	cron.AddFunc(gron.Every(1*xtime.Day).At("20:59"), srvs[0].SendTodayUpdateMsg)
 
 	for _, service := range srvs {
 		wg.Add(1)
-		go func(handler *services.Users, wg *sync.WaitGroup) {
+		go func(handler *services.Users, wg *sync.WaitGroup, cron *gron.Cron) {
 			defer wg.Done()
-			handler.ActionsWithUpdates(logger, utils.NewSpreader(time.Minute))
-		}(service, wg)
+			handler.ActionsWithUpdates(logger, utils.NewSpreader(time.Minute), cron)
+		}(service, wg, cron)
 
 		service.Msgs.SendNotificationToDeveloper("Bot is restarted", false)
 	}
+
+	go func() {
+		time.Sleep(5 * time.Second)
+
+		cron.Start()
+	}()
 
 	logger.Ok("All handlers are running")
 

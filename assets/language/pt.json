@@ -5,6 +5,7 @@
   "main_statistic": "📊 Estatística",
   "main_withdrawal_of_money": "💳 Retirar dinheiro",
   "main_money_for_a_friend": "💼 Dinheiro para um amigo",
+  "main_top_players" : "\uD83D\uDD1D Melhores jogadores",
   "main_more_money": "💰 Mais dinheiro",
   "main_back": "⬅️ Voltar",
   "back_to_main_menu_button": "⬅️ Menu principal",
@@ -52,5 +53,11 @@
   "invitation_to_subscribe": "We checked your subscription",
   "user_dont_subscribe": "você não está inscrito no canal",
 
-  "invalid_link_err": "Error, link is invalid"
+  "invalid_link_err": "Error, link is invalid",
+  "top_players" : "\uD83D\uDCE3 <b>Hoje você está em %d lugar \uD83C\uDFC6</b>\n\n<b>\uD83C\uDF81 Para receber uma recompensa, você deve estar entre os 3 melhores jogadores por saldo</b> \uD83C\uDF81\n------------------\n<b>Principais \uD83E\uDD47</b>\n<b> Equilíbrio necessário</b>: %d {{currency}}\n<b>Recompensa</b>: %d {{currency}}\n------------------ \n<b>Principal \uD83E\uDD48</b>\n<b>Precisa de saldo</b>: %d {{currency}}\n<b>Recompensa</b>: %d {{currency}}\n------------------\n<b>Principal \uD83E\uDD49</b>\n<b>Precisa de saldo</b>: %d {{currency}}\n<b>Recompensa</b>: %d {{currency}}\n\n\n<b>Seu saldo</b>: %d {{currency}}\nO jogador acima de você em %d lugar tem um saldo de: %d {{currency}}",
+  "top_3_players_main" : "\uD83C\uDF89 <b>Parabéns hoje você é \uD83D\uDD1D %d \uD83D\uDD1D jogador por saldo</b>\n<b>Seu saldo</b>: %d {{currency}}\n\n<b>sua recompensa: %d {{currency}}</b>\n\n------------------\n<b>Principal \uD83E\uDD47</b>\n<b>Recompensa</b>: %d{{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}\n------ ------------\n<b>Principal \uD83E\uDD48</b>\n<b>Recompensa</b>: %d {{currency}}\n<b>Precisa de saldo </b>: %d {{currency}}\n------------------\n<b>Principal \uD83E\uDD49</b>\n<b> Recompensa</b>: %d {{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}\n\n Você pode reivindicar sua recompensa na mala direta da noite",
+  "top_3_players" : "\uD83C\uDF89 <b>Parabéns hoje você é \uD83D\uDD1D %d \uD83D\uDD1D jogador por saldo</b>\n<b>Seu saldo</b>: %d {{currency}}\n\n<b>sua recompensa: %d {{currency}}</b>\n\n------------------\n<b>Principal \uD83E\uDD47</b>\n<b>Recompensa</b>: %d{{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}\n------ ------------\n<b>Principal \uD83E\uDD48</b>\n<b>Recompensa</b>: %d {{currency}}\n<b>Precisa de saldo </b>: %d {{currency}}\n------------------\n<b>Principal \uD83E\uDD49</b>\n<b> Recompensa</b>: %d {{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}",
+  "top_3_players_reward_taken" : "\uD83C\uDF89 <b>Parabéns você é \uD83D\uDD1D %d \uD83D\uDD1D jogador por saldo</b>\n<b>Seu saldo</b>: %d {{currency}} \n\n<b>Recompensa de hoje já aceita retorno amanhã ✅</b>\n\n------------------\n<b>Principal \uD83E\uDD47 </b>\n<b>Recompensa</b>: %d{{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}\n----- ---------\n<b>Principal \uD83E\uDD48</b>\n<b>Recompensa</b>: %d {{currency}}\n<b>Precisa de equilíbrio</b> >: %d {{currency}}\n------------------\n<b>Principal \uD83E\uDD49</b>\n<b>Recompensa</b> b>: %d {{currency}}\n<b>Precisa de saldo</b>: %d {{currency}}",
+  "got_reward" : "Você recebeu recompensa! ✅",
+  "get_reward" : "\uD83C\uDF81 Clique para receber a recompensa! \uD83C\uDF81"
 }

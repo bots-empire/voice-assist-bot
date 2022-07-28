@@ -5,6 +5,7 @@
   "main_statistic": "📊 Statistics",
   "main_withdrawal_of_money": "💳 Withdrawal of money",
   "main_money_for_a_friend": "💼 Money for a friend",
+  "main_top_players" : "\uD83D\uDD1D Top players",
   "main_more_money": "💰 More money",
   "main_back": "⬅️ Back",
   "back_to_main_menu_button": "⬅️ Main menu",
@@ -50,5 +51,11 @@
   "invitation_to_subscribe": "We checked your subscription",
   "user_dont_subscribe": "you are not subscribed to the channel",
   "invalid_link_err": "Error, link is invalid",
-  "select_lang_menu": "Please select a language"
+  "select_lang_menu": "Please select a language",
+  "top_players" : "\uD83D\uDCE3 <b>Today you are on %d place \uD83C\uDFC6</b>\n\n<b>\uD83C\uDF81 To receive a reward, you must be in the Top 3 players by balance</b> \uD83C\uDF81\n------------------\n<b>Top \uD83E\uDD47</b>\n<b>Need balance</b>: %d {{currency}}\n<b>Reward</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD48</b>\n<b>Need balance</b>: %d {{currency}}\n<b>Reward</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Need balance</b>: %d {{currency}}\n<b>Reward</b>: %d {{currency}}\n\n\n<b>Your balance</b>: %d {{currency}}\nThe player above you on %d place has a balance of: %d {{currency}}",
+  "top_3_players_main" : "\uD83C\uDF89 <b>Congratulations today you are \uD83D\uDD1D %d \uD83D\uDD1D player by balance</b>\n<b>Your balance</b>: %d {{currency}}\n\n<b>your reward: %d {{currency}}</b>\n\n------------------\n<b>Top \uD83E\uDD47</b>\n<b>Reward</b>: %d{{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD48</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}\n\n You can claim your reward in the evening mailing top",
+  "top_3_players" : "\uD83C\uDF89 <b>Congratulations today you are \uD83D\uDD1D %d \uD83D\uDD1D player by balance</b>\n<b>Your balance</b>: %d {{currency}}\n\n<b>your reward: %d {{currency}}</b>\n\n------------------\n<b>Top \uD83E\uDD47</b>\n<b>Reward</b>: %d{{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD48</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}",
+  "top_3_players_reward_taken" : "\uD83C\uDF89 <b>Congratulations you are \uD83D\uDD1D %d \uD83D\uDD1D player by balance</b>\n<b>Your balance</b>: %d {{currency}}\n\n<b>Today reward already taken comeback tomorrow ✅</b>\n\n------------------\n<b>Top \uD83E\uDD47</b>\n<b>Reward</b>: %d{{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD48</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Reward</b>: %d {{currency}}\n<b>Need balance</b>: %d {{currency}}",
+  "got_reward" : "You received reward! ✅",
+  "get_reward" : "\uD83C\uDF81 Click to take reward! \uD83C\uDF81"
 }

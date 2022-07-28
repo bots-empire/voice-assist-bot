@@ -50,6 +50,8 @@ type Params struct {
 	ButtonUnderAdvert bool
 
 	Currency string
+
+	TopReward []int `json:"top_reward"`
 }
 
 type AdvertChannel struct {
@@ -104,6 +106,16 @@ func nilSettings(settings *Admin, lang string) {
 				5: "https://google.com"},
 			ChannelID: make(map[int]int64),
 		}
+	}
+
+	if settings.GlobalParameters[lang].Parameters == nil {
+		settings.GlobalParameters[lang].Parameters = &Params{
+			TopReward: []int{10, 10, 10},
+		}
+	}
+
+	if settings.GlobalParameters[lang].Parameters.TopReward == nil {
+		settings.GlobalParameters[lang].Parameters.TopReward = []int{10, 10, 10}
 	}
 
 	if settings.GlobalParameters[lang].AdvertisingChoice == nil {

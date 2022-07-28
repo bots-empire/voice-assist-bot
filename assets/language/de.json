@@ -5,6 +5,7 @@
   "main_statistic": "📊 Statistiken",
   "main_withdrawal_of_money": "💳 Geld abheben",
   "main_money_for_a_friend": "💼 Geld für einen Freund",
+  "main_top_players": "\uD83D\uDD1D Schöne Spiele",
   "main_more_money": "💰 Mehr Geld",
   "main_back": "⬅️ Zurück",
   "back_to_main_menu_button": "⬅️ Hauptmenü",
@@ -50,5 +51,11 @@
   "invitation_to_subscribe": "Wir haben Ihr Abonnement überprüft",
   "user_dont_subscribe": "Sie haben den Kanal nicht abonniert",
   "invalid_link_err": "Fehler, Link ist ungültig",
-  "select_lang_menu": "Bitte wählen Sie eine Sprache aus"
+  "select_lang_menu": "Bitte wählen Sie eine Sprache aus",
+  "top_players" : "\uD83D\uDCE3 <b>Heute bist du auf %d Platz \uD83C\uDFC6</b>\n\n<b>\uD83C\uDF81 Um eine Belohnung zu erhalten, musst du unter den Top 3 sein Spieler nach Balance</b> \uD83C\uDF81\n------------------\n<b>Oben \uD83E\uDD47</b>\n<b> Guthaben erforderlich</b>: %d {{currency}}\n<b>Belohnung</b>: %d {{currency}}\n------------------ \n<b>Top \uD83E\uDD48</b>\n<b>Guthaben erforderlich</b>: %d {{currency}}\n<b>Belohnung</b>: %d {{currency}}\n------------------\n<b>Oben \uD83E\uDD49</b>\n<b>Guthaben erforderlich</b>: %d {{currency}}\n<b>Belohnung</b>: %d {{currency}}\n\n\n<b>Ihr Guthaben</b>: %d {{currency}}\nDer Spieler über Ihnen auf %d Platz hat ein Guthaben von: %d {{currency}}",
+  "top_3_players_main": "\uD83C\uDF89 <b>Herzlichen Glückwunsch heute, Sie sind \uD83D\uDD1D %d \uD83D\uDD1D Spieler nach Guthaben</b>\n<b>Ihr Guthaben</b>: %d {{currency}}\n\n<b>Ihre Belohnung: %d {{currency}}</b>\n\n------------------\n<b>Oben \uD83E\uDD47</b>\n<b>Belohnung</b>: %d{{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}\n------ ------------\n<b>Top \uD83E\uDD48</b>\n<b>Belohnung</b>: %d {{currency}}\n<b>Guthaben erforderlich </b>: %d {{currency}}\n------------------\n<b>Oben \uD83E\uDD49</b>\n<b> Belohnung</b>: %d {{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}\n\n Sie können Ihre Belohnung im Abendmailing oben anfordern",
+  "top_3_players": "\uD83C\uDF89 <b>Herzlichen Glückwunsch heute, Sie sind \uD83D\uDD1D %d \uD83D\uDD1D Spieler nach Guthaben</b>\n<b>Ihr Guthaben</b>: %d {{currency}}\n\n<b>Ihre Belohnung: %d {{currency}}</b>\n\n------------------\n<b>Oben \uD83E\uDD47</b>\n<b>Belohnung</b>: %d{{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}\n------ ------------\n<b>Top \uD83E\uDD48</b>\n<b>Belohnung</b>: %d {{currency}}\n<b>Guthaben erforderlich </b>: %d {{currency}}\n------------------\n<b>Oben \uD83E\uDD49</b>\n<b> Belohnung</b>: %d {{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}",
+  "top_3_players_reward_taken" : "\uD83C\uDF89 <b>Herzlichen Glückwunsch, Sie sind \uD83D\uDD1D %d \uD83D\uDD1D Spieler nach Guthaben</b>\n<b>Ihr Guthaben</b>: %d {{currency}} \n\n<b>Heute Belohnung bereits genommen Comeback morgen ✅</b>\n\n------------------\n<b>Top \uD83E\uDD47 </b>\n<b>Belohnung</b>: %d{{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}\n--------- ---------\n<b>Top \uD83E\uDD48</b>\n<b>Belohnung</b>: %d {{currency}}\n<b>Guthaben erforderlich</b >: %d {{currency}}\n------------------\n<b>Top \uD83E\uDD49</b>\n<b>Belohnung</ b>: %d {{currency}}\n<b>Guthaben erforderlich</b>: %d {{currency}}",
+  "got_reward": "Du hast eine Belohnung erhalten! ✅",
+  "get_reward": "\uD83C\uDF81 Klicken, um Belohnung zu erhalten! \uD83C\uDF81"
 }

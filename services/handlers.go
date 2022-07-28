@@ -2,6 +2,8 @@ package services
 
 import (
 	"fmt"
+	"github.com/roylee0704/gron"
+	"github.com/roylee0704/gron/xtime"
 	"strings"
 	"time"
 
@@ -51,6 +53,7 @@ func (h *MessagesHandlers) Init(userSrv *Users, adminSrv *administrator.Admin) {
 	h.OnCommand("/withdrawal_method", userSrv.WithdrawalMethodCommand)
 	h.OnCommand("/withdrawal_req_amount", userSrv.ReqWithdrawalAmountCommand)
 	h.OnCommand("/withdrawal_exit", userSrv.WithdrawalAmountCommand)
+	h.OnCommand("/main_top_players", userSrv.TopListPlayerCommand)
 
 	//Log out command
 	h.OnCommand("/admin_log_out", userSrv.AdminLogOutCommand)
@@ -60,7 +63,10 @@ func (h *MessagesHandlers) OnCommand(command string, handler model.Handler) {
 	h.Handlers[command] = handler
 }
 
-func (u *Users) ActionsWithUpdates(logger log.Logger, sortCentre *utils.Spreader) {
+func (u *Users) ActionsWithUpdates(logger log.Logger, sortCentre *utils.Spreader, cron *gron.Cron) {
+	//start top handler
+	cron.AddFunc(gron.Every(1*xtime.Day).At("15:05"), u.TopListPlayers)
+
 	for update := range u.bot.Chanel {
 		localUpdate := update
 
@@ -253,6 +259,16 @@ func (u *Users) checkMessage(situation *model.Situation, logger log.Logger, sort
 	}
 }
 
+func (u *Users) SendTodayUpdateMsg() {
+	model.UpdateStatistic.Mu.Lock()
+	defer model.UpdateStatistic.Mu.Unlock()
+
+	text := fmt.Sprintf(updateCounterHeader, model.UpdateStatistic.Counter)
+	u.Msgs.SendNotificationToDeveloper(text, true)
+
+	model.UpdateStatistic.Counter = 0
+}
+
 func (u *Users) smthWentWrong(chatID int64, lang string) {
 	msg := tgbotapi.NewMessage(chatID, u.bot.LangText(lang, "user_level_not_defined"))
 	_ = u.Msgs.SendMsgToUser(msg, chatID)
@@ -270,7 +286,8 @@ func createMainMenu() msgs.MarkUp {
 			msgs.NewDataButton("main_statistic")),
 		msgs.NewRow(msgs.NewDataButton("main_withdrawal_of_money"),
 			msgs.NewDataButton("main_money_for_a_friend")),
-		msgs.NewRow(msgs.NewDataButton("main_more_money")),
+		msgs.NewRow(msgs.NewDataButton("main_more_money"),
+			msgs.NewDataButton("main_top_players")),
 	)
 }
 
