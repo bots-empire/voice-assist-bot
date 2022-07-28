@@ -72,7 +72,7 @@ func (a *Auth) SetStartLanguage(callback *tgbotapi.CallbackQuery) error {
 
 func (a *Auth) addNewUser(user *model.User, botLang string, referralID int64) error {
 	dataBase := a.bot.GetDataBase()
-	rows, err := dataBase.Query("INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+	rows, err := dataBase.Query("INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		user.ID,
 		user.Balance,
 		user.Completed,
@@ -81,7 +81,8 @@ func (a *Auth) addNewUser(user *model.User, botLang string, referralID int64) er
 		user.AdvertChannel,
 		user.ReferralCount,
 		user.TakeBonus,
-		user.Language)
+		user.Language,
+		user.Status)
 	if err != nil {
 		return errors.Wrap(err, "query failed")
 	}
@@ -99,38 +100,13 @@ func (a *Auth) addNewUser(user *model.User, botLang string, referralID int64) er
 	// TODO: refactor accrual system
 
 	baseUser.Balance += model.AdminSettings.GetParams(botLang).ReferralAmount
-	rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
+	_, err = dataBase.Exec("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
 		baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
-
-	var lvl int = 4
-	for lvl != 0 {
-		var x, y int
-		if baseUser.ReferralID != 0 {
-			baseUser, err := a.GetUser(referralID)
-			if err != nil {
-				return errors.Wrap(err, "get user")
-			}
-
-			//TODO: обновить бонус
-
-			value := model.AdminSettings.GetParams(botLang).ReferralAmount * x * y
-			model.AdminSettings.UpdateReferralAmount("it", value)
-
-			baseUser.Balance += model.AdminSettings.GetParams(botLang).ReferralAmount
-			rows, err = dataBase.Query("UPDATE users SET balance = ?, referral_count = ? WHERE id = ?;",
-				baseUser.Balance, baseUser.ReferralCount+1, baseUser.ID)
-		}
-		y++
-		break
-		lvl--
-	}
-
 	if err != nil {
 		text := "Fatal Err with DB - auth.85 //" + err.Error()
 		a.msgs.SendNotificationToDeveloper(text, false)
 		return err
 	}
-	_ = rows.Close()
 
 	return nil
 }
@@ -156,6 +132,13 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 		return 0
 	}
 
+	if err = a.saveIncomeUser(&model.IncomeInfo{
+		UserID: message.From.ID,
+		Source: linkInfo.Source,
+	}); err != nil {
+		a.msgs.SendNotificationToDeveloper("some error in save income info: "+err.Error(), false)
+	}
+
 	model.IncomeBySource.WithLabelValues(
 		a.bot.BotLink,
 		a.bot.BotLang,
@@ -163,6 +146,20 @@ func (a *Auth) pullReferralID(message *tgbotapi.Message) int64 {
 	).Inc()
 
 	return linkInfo.ReferralID
+}
+
+func (a *Auth) saveIncomeUser(info *model.IncomeInfo) error {
+	_, err := a.bot.GetDataBase().Exec(`
+INSERT INTO 
+	income_info(user_id, source)
+VALUES(?, ?);`,
+		info.UserID,
+		info.Source)
+	if err != nil {
+		return errors.Wrap(err, "failed insert income info")
+	}
+
+	return nil
 }
 
 func createSimpleUser(lang string, message *tgbotapi.Message) *model.User {

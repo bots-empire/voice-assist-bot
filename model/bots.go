@@ -72,6 +72,7 @@ func UploadDataBase(dbLang string) *sql.DB {
 	dataBase.Exec("CREATE TABLE IF NOT EXISTS users (" + cfg.UserTable + ");")
 	dataBase.Exec("CREATE TABLE IF NOT EXISTS links (" + cfg.Links + ");")
 	dataBase.Exec("CREATE TABLE IF NOT EXISTS subs (" + cfg.Subs + ");")
+	dataBase.Exec("CREATE TABLE IF NOT EXISTS income_info (" + cfg.IncomeInfo + ");")
 
 	dataBase.Close()
 
